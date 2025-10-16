@@ -3,8 +3,9 @@ from datetime import datetime
 
 @dataclass
 class Matricula:
-    idTurma: int
-    idAluno: int
-    DataMatricula: datetime
-    ValorMensalidade: int
-    DataVencimento: datetime
+    id_Matricula: int
+    id_Turma: int
+    id_Aluno: int
+    Data_Matricula: datetime
+    Valor_Mensalidade: int
+    Data_Vencimento: datetime
