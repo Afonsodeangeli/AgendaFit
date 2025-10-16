@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
+
+from model.usuario_model import Usuario
 
 @dataclass
 class Endereco:
@@ -13,3 +16,6 @@ class Endereco:
     cidade: str
     uf: str
     cep: int
+
+    usuario: Optional[Usuario]
+    
