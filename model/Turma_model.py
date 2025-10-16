@@ -4,6 +4,6 @@ from datetime import datetime
 
 @dataclass
 class Turma:
-    idatividade: int
-    idprofessor: int
-    datacadastro: datetime
+    id_atividade: int
+    id_professor: int
+    data_cadastro: datetime
