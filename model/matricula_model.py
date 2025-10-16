@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
+
+from model.Turma_model import Turma
+from model.usuario_model import Usuario
 
 @dataclass
 class Matricula:
@@ -9,3 +13,6 @@ class Matricula:
     data_matricula: datetime
     valor_mensalidade: float
     data_vencimento: datetime
+
+    turma: Optional[Turma]
+    aluno: Optional[Usuario]
