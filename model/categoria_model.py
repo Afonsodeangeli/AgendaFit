@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class categoria:
-    idcategoria: int
+class Categoria:
+    id_categoria: int
     nome: str
     descricao: str
