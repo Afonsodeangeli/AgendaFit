@@ -4,7 +4,7 @@ from datetime import datetime
 
 @dataclass
 class Atividade:
-    idcategoria: int
+    id_categoria: int
     nome: str
     descricao: str
-    DataCadastro: datetime
+    data_cadastro: datetime
