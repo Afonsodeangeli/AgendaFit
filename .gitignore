@@ -76,6 +76,7 @@ codebase.md
 .aidigestignore
 codebase*
 GUIA_*
+prompt*
 
 # Imagens
 static/img/usuarios/*
