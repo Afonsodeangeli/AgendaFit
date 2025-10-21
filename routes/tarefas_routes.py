@@ -65,7 +65,11 @@ async def post_cadastrar(
         return RedirectResponse("/tarefas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        erros = { erro["loc"][-1]: erro['msg'].replace("Value error, ", "") for erro in e.errors() }
+        erros = {}
+        for erro in e.errors():
+            campo = erro["loc"][-1] if erro["loc"] else "geral"
+            mensagem = erro['msg'].replace("Value error, ", "")
+            erros[campo] = mensagem
         informar_erro(request, "Há campos com erros de validação.")
         return templates.TemplateResponse(
             "tarefas/cadastrar.html",

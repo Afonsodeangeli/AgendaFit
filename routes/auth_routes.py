@@ -135,10 +135,19 @@ async def post_login(request: Request, email: str = Form(...), senha: str = Form
         return RedirectResponse("/usuario", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        erros = {
-            erro["loc"][-1]: erro["msg"].replace("Value error, ", "")
-            for erro in e.errors()
-        }
+        erros = {}
+        for erro in e.errors():
+            campo = erro["loc"][-1] if erro["loc"] else None
+            mensagem = erro["msg"].replace("Value error, ", "")
+
+            # Se não há campo (erro de validação de modelo), inferir campo pela mensagem
+            if not campo:
+                if "senha" in mensagem.lower() and "coincid" in mensagem.lower():
+                    campo = "confirmar_senha"
+                else:
+                    campo = "geral"
+
+            erros[campo] = mensagem
         informar_erro(request, "Há campos com erros de validação.")
         return templates.TemplateResponse(
             "auth/login.html",
@@ -235,10 +244,19 @@ async def post_cadastrar(
             )
 
     except ValidationError as e:
-        erros = {
-            erro["loc"][-1]: erro["msg"].replace("Value error, ", "")
-            for erro in e.errors()
-        }
+        erros = {}
+        for erro in e.errors():
+            campo = erro["loc"][-1] if erro["loc"] else None
+            mensagem = erro["msg"].replace("Value error, ", "")
+
+            # Se não há campo (erro de validação de modelo), inferir campo pela mensagem
+            if not campo:
+                if "senha" in mensagem.lower() and "coincid" in mensagem.lower():
+                    campo = "confirmar_senha"
+                else:
+                    campo = "geral"
+
+            erros[campo] = mensagem
         informar_erro(request, "Há campos com erros de validação.")
         return templates.TemplateResponse(
             "auth/cadastro.html",
@@ -305,10 +323,19 @@ async def post_esqueci_senha(request: Request, email: str = Form(...)):
         return RedirectResponse("/login", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        erros = {
-            erro["loc"][-1]: erro["msg"].replace("Value error, ", "")
-            for erro in e.errors()
-        }
+        erros = {}
+        for erro in e.errors():
+            campo = erro["loc"][-1] if erro["loc"] else None
+            mensagem = erro["msg"].replace("Value error, ", "")
+
+            # Se não há campo (erro de validação de modelo), inferir campo pela mensagem
+            if not campo:
+                if "senha" in mensagem.lower() and "coincid" in mensagem.lower():
+                    campo = "confirmar_senha"
+                else:
+                    campo = "geral"
+
+            erros[campo] = mensagem
         informar_erro(request, "Há campos com erros de validação.")
         return templates.TemplateResponse(
             "auth/esqueci_senha.html",
