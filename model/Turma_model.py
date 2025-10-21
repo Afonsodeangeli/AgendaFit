@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 
-from model.atividade_model import Atividade
+from model.Atividade_model import Atividade
 from model.usuario_model import Usuario
 
 
