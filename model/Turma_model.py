@@ -8,6 +8,7 @@ from model.usuario_model import Usuario
 
 @dataclass
 class Turma:
+    id_turma: int
     id_atividade: int
     id_professor: int
     data_cadastro: datetime
