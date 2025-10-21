@@ -5,14 +5,14 @@
 
 **Versão:** 2.0 - Completa e Detalhada
 **Data:** 20 de outubro de 2025
-**Tempo Estimado Total:** 18 semanas (~350 horas)
+**Tempo Estimado Total:** ~70 horas
 **Projeto Integrador** - IFES Campus Cachoeiro de Itapemirim
 
 ---
 
 ## 📑 ÍNDICE GERAL
 
-### **[FASE 1: ADAPTAÇÕES BASE](#fase-1-adaptações-base)** (20h - 1 semana)
+### **[FASE 1: ADAPTAÇÕES BASE](#fase-1-adaptações-base)** (4h)
 - 1.1 Atualizar Sistema de Perfis
 - 1.2 Expandir Modelo Usuario
 - 1.3 Atualizar SQL e Repositório
@@ -21,7 +21,7 @@
 - 1.6 Remover Entidade Tarefa
 - 1.7 Testes da Fase 1
 
-### **[FASE 2: INFRAESTRUTURA DE DADOS](#fase-2-infraestrutura-de-dados)** (40h - 2 semanas)
+### **[FASE 2: INFRAESTRUTURA DE DADOS](#fase-2-infraestrutura-de-dados)** (8h)
 - 2.1 Repositório de Categoria
 - 2.2 Repositório de Atividade
 - 2.3 Repositório de Turma
@@ -34,14 +34,14 @@
 - 2.10 Seeds de Dados
 - 2.11 Testes da Fase 2
 
-### **[FASE 3: CRUDS ADMINISTRATIVOS](#fase-3-cruds-administrativos)** (60h - 3 semanas)
+### **[FASE 3: CRUDS ADMINISTRATIVOS](#fase-3-cruds-administrativos)** (12h)
 - 3.1 CRUD Completo de Categorias
 - 3.2 CRUD Completo de Atividades
 - 3.3 CRUD Completo de Turmas
 - 3.4 Dashboard Administrativo
 - 3.5 Testes da Fase 3
 
-### **[FASE 4: ÁREA DO ALUNO](#fase-4-área-do-aluno)** (60h - 3 semanas)
+### **[FASE 4: ÁREA DO ALUNO](#fase-4-área-do-aluno)** (12h)
 - 4.1 Dashboard do Aluno
 - 4.2 Explorar Atividades Disponíveis
 - 4.3 Sistema de Matrícula
@@ -51,7 +51,7 @@
 - 4.7 Meus Pagamentos
 - 4.8 Testes da Fase 4
 
-### **[FASE 5: ÁREA DO PROFESSOR](#fase-5-área-do-professor)** (50h - 2,5 semanas)
+### **[FASE 5: ÁREA DO PROFESSOR](#fase-5-área-do-professor)** (10h)
 - 5.1 Dashboard do Professor
 - 5.2 Gestão de Turmas
 - 5.3 Sistema de Presença
@@ -59,21 +59,21 @@
 - 5.5 Visualização de Alunos
 - 5.6 Testes da Fase 5
 
-### **[FASE 6: SISTEMAS AVANÇADOS](#fase-6-sistemas-avançados)** (60h - 3 semanas)
+### **[FASE 6: SISTEMAS AVANÇADOS](#fase-6-sistemas-avançados)** (12h)
 - 6.1 Calendário Visual de Aulas
 - 6.2 Sistema de Notificações
 - 6.3 Relatórios e Estatísticas
 - 6.4 Sistema de Pagamentos Completo
 - 6.5 Testes da Fase 6
 
-### **[FASE 7: TESTES E REFINAMENTOS](#fase-7-testes-e-refinamentos)** (40h - 2 semanas)
+### **[FASE 7: TESTES E REFINAMENTOS](#fase-7-testes-e-refinamentos)** (8h)
 - 7.1 Testes Unitários
 - 7.2 Testes de Integração
 - 7.3 Testes E2E
 - 7.4 Ajustes de UI/UX
 - 7.5 Performance
 
-### **[FASE 8: DOCUMENTAÇÃO](#fase-8-documentação)** (20h - 1 semana)
+### **[FASE 8: DOCUMENTAÇÃO](#fase-8-documentação)** (4h)
 - 8.1 Documentação Técnica
 - 8.2 Manual do Usuário
 - 8.3 Guia de Instalação
@@ -121,7 +121,7 @@ Cada seção contém:
 
 # FASE 1: ADAPTAÇÕES BASE
 
-**Duração:** 20 horas (1 semana)
+**Duração:** 4 horas
 **Objetivo:** Preparar a base do projeto para o domínio de academias
 
 ---
@@ -1452,7 +1452,7 @@ Abrir `data/agendafit.db` no DB Browser e verificar:
 
 # FASE 2: INFRAESTRUTURA DE DADOS
 
-**Duração:** 40 horas (2 semanas)
+**Duração:** 8 horas
 **Objetivo:** Criar toda a camada de acesso a dados para as entidades do AgendaFit
 
 Esta fase é CRÍTICA pois todas as fases seguintes dependem dela. Vamos criar:
@@ -3917,7 +3917,7 @@ Remover código desnecessário e garantir consistência em todo o projeto antes 
 - 2.8 Testes dos Repositórios
 - 2.9 Limpeza de Código
 
-**Estimativa de tempo:** 40-50 horas
+**Estimativa de tempo:** 8-10 horas
 **Próxima fase:** FASE 3 - CRUDs Administrativos
 
 ---
@@ -5465,7 +5465,7 @@ Atualizar o menu de navegação (navbar) para incluir links para as novas seçõ
 - Área do Professor (Fase 5)
 - Sistemas Avançados (Fase 6)
 
-**Estimativa de tempo Fase 3:** 50-60 horas
+**Estimativa de tempo Fase 3:** 10-12 horas
 **Próxima fase:** FASE 4 - Área do Aluno
 
 ---
@@ -6049,7 +6049,7 @@ logger.info("Router de aluno incluído")
 - 4.3 Minhas Turmas
 - 4.4 Registrar Router
 
-**Estimativa de tempo Fase 4:** 25-30 horas
+**Estimativa de tempo Fase 4:** 5-6 horas
 **Próxima fase:** FASE 5 - Área do Professor
 
 ---
@@ -6294,7 +6294,7 @@ logger.info("Router de professor incluído")
 - 5.2 Minhas Turmas
 - 5.3 Registrar Router
 
-**Estimativa de tempo Fase 5:** 20-25 horas
+**Estimativa de tempo Fase 5:** 4-5 horas
 **Próxima fase:** FASE 6 - Testes e Documentação Final
 
 ---
@@ -6433,7 +6433,7 @@ AgendaFit/
 
 🎉 **Projeto AgendaFit Completo!**
 
-**Total estimado:** 150-180 horas de desenvolvimento
+**Total estimado:** 30-36 horas de desenvolvimento
 
 ---
 
@@ -6470,6 +6470,6 @@ AgendaFit/
 
 **FIM DO GUIA COMPLETO DE IMPLEMENTAÇÃO DO AGENDAFIT**
 
-**Total:** ~6,200 linhas
-**Versão:** 1.0
-**Data:** 2025
+- **Total:** ~6,200 linhas
+- **Versão:** 1.0
+- **Data:** 2025
