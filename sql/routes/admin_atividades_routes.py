@@ -8,9 +8,9 @@ from util.perfis import Perfil
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.exceptions import FormValidationError
-from sql.dtos.atividade_dto import AtividadeCreateDTO, AtividadeUpdateDTO
-from model.Atividade_model import Atividade
-from sql.repo import atividade_repo, categoria_repo
+from dtos.atividade_dto import AtividadeCreateDTO, AtividadeUpdateDTO
+from model.atividade_model import Atividade
+from repo import atividade_repo, categoria_repo
 
 router = APIRouter(prefix="/admin/atividades")
 templates = criar_templates("templates/admin/atividades")

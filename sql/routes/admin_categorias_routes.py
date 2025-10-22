@@ -7,9 +7,9 @@ from util.perfis import Perfil
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.exceptions import FormValidationError
-from sql.dtos.categoria_dto import CategoriaCreateDTO, CategoriaUpdateDTO
+from dtos.categoria_dto import CategoriaCreateDTO, CategoriaUpdateDTO
 from model.categoria_model import Categoria
-from sql.repo import categoria_repo
+from repo import categoria_repo
 
 router = APIRouter(prefix="/admin/categorias")
 templates = criar_templates("templates/admin/categorias")

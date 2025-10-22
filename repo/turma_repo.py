@@ -1,10 +1,10 @@
 from typing import Optional
 from datetime import datetime
 
-from model.Turma_model import Turma
+from model.turma_model import Turma
 from model.atividade_model import Atividade
 from model.usuario_model import Usuario
-from model.sql.turma_sql import *
+from sql.turma_sql import *
 from util.db_util import get_connection
 
 

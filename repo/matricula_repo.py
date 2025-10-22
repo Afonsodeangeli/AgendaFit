@@ -2,7 +2,7 @@ from typing import Optional, List
 from datetime import datetime
 
 from model.matricula_model import Matricula
-from model.Turma_model import Turma
+from model.turma_model import Turma
 from model.usuario_model import Usuario
 from sql.matricula_sql import *
 from util.db_util import get_connection

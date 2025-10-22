@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from util.auth_decorator import requer_autenticacao
 from util.perfis import Perfil
 from util.template_util import criar_templates
-from sql.repo import atividade_repo
+from repo import atividade_repo
 
 router = APIRouter(prefix="/aluno/atividades")
 templates = criar_templates("templates/aluno/atividades")

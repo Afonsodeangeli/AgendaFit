@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import datetime
-from model.Atividade_model import Atividade
+from model.atividade_model import Atividade
 from model.categoria_model import Categoria
 from sql.atividade_sql import *
 from util.db_util import get_connection

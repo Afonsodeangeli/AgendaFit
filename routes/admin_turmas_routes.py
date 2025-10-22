@@ -8,7 +8,7 @@ from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.exceptions import FormValidationError
 from dtos.turma_dto import TurmaCreateDTO
-from model.Turma_model import Turma
+from model.turma_model import Turma
 from repo import turma_repo, atividade_repo, usuario_repo
 
 router = APIRouter(prefix="/admin/turmas")
