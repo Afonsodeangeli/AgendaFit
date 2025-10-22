@@ -2317,7 +2317,7 @@ JOIN matricula m ON p.id_matricula = m.id_matricula
 JOIN usuario u ON p.id_aluno = u.id
 WHERE p.id_aluno = ?
 ORDER BY p.data_pagamento DESC
-```
+ """
 
 OBTER_POR_MATRICULA = "SELECT * FROM pagamento WHERE id_matricula = ?"
 ```
