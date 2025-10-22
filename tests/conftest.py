@@ -3,11 +3,18 @@ Configurações e fixtures para testes pytest.
 
 Fornece fixtures reutilizáveis e helpers para testes da aplicação.
 """
+import os
+import tempfile
+
+# IMPORTANTE: Configurar variáveis de ambiente ANTES de qualquer importação
+os.environ['RUNNING_MODE'] = 'Development'
+os.environ['LOG_LEVEL'] = 'ERROR'
+os.environ['RESEND_API_KEY'] = ''
+
+# Agora sim importar o resto
 import pytest
 from fastapi.testclient import TestClient
 from fastapi import status
-import os
-import tempfile
 from pathlib import Path
 from typing import Optional
 from util.perfis import Perfil
@@ -23,12 +30,6 @@ def setup_test_database():
 
     # Configurar variável de ambiente para usar DB de teste
     os.environ['DATABASE_PATH'] = test_db_path
-
-    # Desabilitar envio de e-mails durante testes
-    os.environ['RESEND_API_KEY'] = ''
-
-    # Configurar nível de log para testes
-    os.environ['LOG_LEVEL'] = 'ERROR'
 
     yield test_db_path
 
@@ -79,6 +80,10 @@ def limpar_banco_dados():
         """Limpa tabelas se elas existirem"""
         with get_connection() as conn:
             cursor = conn.cursor()
+
+            # Desabilitar foreign keys temporariamente para permitir limpeza
+            cursor.execute("PRAGMA foreign_keys = OFF")
+
             # Verificar se tabelas existem antes de limpar
             cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'"
@@ -107,6 +112,9 @@ def limpar_banco_dados():
                 cursor.execute("DELETE FROM configuracao")
 
             conn.commit()
+
+            # Reabilitar foreign keys
+            cursor.execute("PRAGMA foreign_keys = ON")
 
     # Limpar antes do teste
     _limpar_tabelas()

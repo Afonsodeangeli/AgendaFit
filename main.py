@@ -35,11 +35,6 @@ from routes.perfil_routes import router as perfil_router
 from routes.usuario_routes import router as usuario_router
 from routes.public_routes import router as public_router
 from routes.examples_routes import router as examples_router
-from sql.routes.admin_categorias_routes import router as admin_cat_router
-from sql.routes.admin_atividades_routes import router as admin_ativ_router
-from routes.admin_turmas_routes import router as admin_turmas_router
-from sql.routes.aluno_atividades_routes import router as aluno_ativ_router
-from sql.routes.professor_atividades_routes import router as professor_ativ_router
 
 # Seeds
 from util.seed_data import inicializar_dados
@@ -121,21 +116,6 @@ logger.info("Router admin de backups incluído")
 
 app.include_router(usuario_router, tags=["Usuário"])
 logger.info("Router de usuário incluído")
-
-app.include_router(admin_cat_router, tags=["Admin - Categorias"])
-logger.info("Router admin de categorias incluído")
-
-app.include_router(admin_ativ_router, tags=["Admin - Atividades"])
-logger.info("Router admin de atividades incluído")
-
-app.include_router(admin_turmas_router, tags=["Admin - Turmas"])
-logger.info("Router admin de turmas incluído")
-
-app.include_router(aluno_ativ_router, tags=["Aluno - Atividades"])
-logger.info("Router de atividades do aluno incluído")
-
-app.include_router(professor_ativ_router, tags=["Professor - Atividades"])
-logger.info("Router de atividades do professor incluído")
 
 # Rotas públicas (deve ser por último para não sobrescrever outras rotas)
 app.include_router(public_router, tags=["Público"])
