@@ -19,10 +19,31 @@ import re
 from typing import Optional, Set, Callable, Any
 from datetime import datetime
 from pathlib import Path
+from util.perfis import Perfil
 
 
 # ===== VALIDAÇÕES DE CAMPOS DE TEXTO =====
 
+def validar_perfil_agendafit(perfil: str) -> str:
+    """
+    Valida se o perfil é válido para o AgendaFit.
+
+    Args:
+        perfil: String do perfil a validar
+
+    Returns:
+        O perfil validado
+
+    Raises:
+        ValueError: Se o perfil for inválido
+    """
+    if not Perfil.existe(perfil):
+        perfis_validos = ", ".join(Perfil.valores())
+        raise ValueError(
+            f"Perfil inválido: '{perfil}'. "
+            f"Perfis válidos: {perfis_validos}"
+        )
+    return perfil
 
 def validar_string_obrigatoria(
     nome_campo: str = "Campo",
