@@ -1,0 +1,101 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Gerenciar Backups{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-database"></i> Gerenciar Backups</h2>
+            <form method="post" action="/admin/backups/criar">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Criar Backup
+                </button>
+            </form>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {% if backups %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Nome do Arquivo</th>
+                                <th scope="col">Data/Hora</th>
+                                <th scope="col">Tamanho</th>
+                                <th scope="col" class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for backup in backups %}
+                            <tr>
+                                <td>{{ backup.nome }}</td>
+                                <td>{{ backup.data_hora }}</td>
+                                <td>{{ backup.tamanho }}</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="/admin/backups/download/{{ backup.nome }}"
+                                            class="btn btn-outline-success"
+                                            title="Download"
+                                            aria-label="Download do backup {{ backup.nome }}">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-primary"
+                                            title="Restaurar"
+                                            aria-label="Restaurar backup {{ backup.nome }}"
+                                            onclick="restaurarBackup('{{ backup.nome }}')">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger"
+                                            title="Excluir"
+                                            aria-label="Excluir backup {{ backup.nome }}"
+                                            onclick="excluirBackup('{{ backup.nome }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center mb-0">
+                    <i class="bi bi-info-circle"></i> Nenhum backup encontrado.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function restaurarBackup(nomeBackup) {
+        abrirModalConfirmacao({
+            url: `/admin/backups/restaurar/${nomeBackup}`,
+            mensagem: 'Tem certeza que deseja restaurar este backup?',
+            detalhes: `<div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Atenção:</strong> Esta ação irá substituir todos os dados atuais.
+                Um backup automático será criado antes da restauração.
+            </div>
+            <p><strong>Backup:</strong> ${nomeBackup}</p>`
+        });
+    }
+
+    function excluirBackup(nomeBackup) {
+        abrirModalConfirmacao({
+            url: `/admin/backups/excluir/${nomeBackup}`,
+            mensagem: 'Tem certeza que deseja excluir este backup?',
+            detalhes: `<p><strong>Backup:</strong> ${nomeBackup}</p>
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                Esta ação não pode ser desfeita.
+            </div>`
+        });
+    }
+</script>
+{% endblock %}
