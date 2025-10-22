@@ -22,7 +22,7 @@ from util.exception_handlers import (
 from util.exceptions import FormValidationError
 
 # Repositórios
-from repo import usuario_repo, configuracao_repo, tarefa_repo
+from repo import usuario_repo, configuracao_repo, tarefa_repo, indices_repo
 from repo import categoria_repo, atividade_repo
 
 # Rotas
@@ -47,6 +47,11 @@ app = FastAPI(title=APP_NAME, version=VERSION)
 
 # Configurar SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
+# Configurar CSRF Protection Middleware
+from util.csrf_protection import CSRFProtectionMiddleware
+app.add_middleware(CSRFProtectionMiddleware)
+logger.info("CSRF Protection habilitado")
 
 # Registrar Exception Handlers
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)  # type: ignore[arg-type]
@@ -78,6 +83,9 @@ try:
 
     atividade_repo.criar_tabela()
     logger.info("Tabela 'atividade' criada/verificada")
+
+    # Criar índices para otimização de performance
+    indices_repo.criar_indices()
 
 except Exception as e:
     logger.error(f"Erro ao criar tabelas: {e}")
