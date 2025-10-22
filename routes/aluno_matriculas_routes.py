@@ -3,7 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
 
-from util.auth_decorator import requer_aluno
+from util.auth_decorator import requer_autenticacao
+from util.perfis import Perfil
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from dtos.matricula_dto import MatriculaCreateDTO
@@ -15,7 +16,7 @@ templates = criar_templates("templates/aluno/matriculas")
 
 
 @router.get("")
-@requer_aluno
+@requer_autenticacao([Perfil.ALUNO.value])
 async def listar_matriculas(request: Request):
     usuario_logado = request.session.get("usuario_logado")
     id_aluno = usuario_logado["id"]
@@ -24,7 +25,7 @@ async def listar_matriculas(request: Request):
 
 
 @router.post("/nova")
-@requer_aluno
+@requer_autenticacao([Perfil.ALUNO.value])
 async def matricular(request: Request, id_turma: int = Form(), valor_mensalidade: float = Form(), data_vencimento: str = Form()):
     """Aluno se matricula em uma turma"""
     usuario_logado = request.session.get("usuario_logado")

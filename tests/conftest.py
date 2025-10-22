@@ -125,7 +125,7 @@ def usuario_teste():
         "nome": "Usuario Teste",
         "email": "teste@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.CLIENTE.value  # Usa Enum Perfil
+        "perfil": Perfil.ALUNO.value  # Usa Enum Perfil
     }
 
 
@@ -146,7 +146,7 @@ def criar_usuario(client):
     Fixture que retorna uma função para criar usuários
     Útil para criar múltiplos usuários em um teste
     """
-    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.CLIENTE.value):
+    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.ALUNO.value):
         """Cadastra um usuário via endpoint de cadastro"""
         response = client.post("/cadastrar", data={
             "perfil": perfil,
@@ -257,7 +257,7 @@ def vendedor_teste():
         "nome": "Vendedor Teste",
         "email": "vendedor@example.com",
         "senha": "Vendedor@123",
-        "perfil": Perfil.VENDEDOR.value
+        "perfil": Perfil.PROFESSOR.value
     }
 
 
@@ -277,7 +277,7 @@ def vendedor_autenticado(client, criar_usuario, fazer_login, vendedor_teste):
         nome=vendedor_teste["nome"],
         email=vendedor_teste["email"],
         senha=criar_hash_senha(vendedor_teste["senha"]),
-        perfil=Perfil.VENDEDOR.value
+        perfil=Perfil.PROFESSOR.value
     )
     usuario_repo.inserir(vendedor)
 
@@ -385,13 +385,13 @@ def dois_usuarios(client, criar_usuario):
         "nome": "Usuario Um",
         "email": "usuario1@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.CLIENTE.value
+        "perfil": Perfil.ALUNO.value
     }
     usuario2 = {
         "nome": "Usuario Dois",
         "email": "usuario2@example.com",
         "senha": "Senha@456",
-        "perfil": Perfil.CLIENTE.value
+        "perfil": Perfil.ALUNO.value
     }
 
     # Criar ambos usuários

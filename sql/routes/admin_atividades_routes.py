@@ -3,19 +3,20 @@ from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 from datetime import datetime
 
-from util.auth_decorator import requer_admin
+from util.auth_decorator import requer_autenticacao
+from util.perfis import Perfil
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.exceptions import FormValidationError
-from dtos.atividade_dto import AtividadeCreateDTO, AtividadeUpdateDTO
+from sql.dtos.atividade_dto import AtividadeCreateDTO, AtividadeUpdateDTO
 from model.Atividade_model import Atividade
-from repo import atividade_repo, categoria_repo
+from sql.repo import atividade_repo, categoria_repo
 
 router = APIRouter(prefix="/admin/atividades")
 templates = criar_templates("templates/admin/atividades")
 
 @router.get("")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def listar_atividades(request: Request):
     atividades = atividade_repo.obter_todas()
     return templates.TemplateResponse("lista.html", {
@@ -24,7 +25,7 @@ async def listar_atividades(request: Request):
     })
 
 @router.get("/nova")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def get_nova_atividade(request: Request):
     categorias = categoria_repo.obter_todas()
     return templates.TemplateResponse("form.html", {
@@ -34,7 +35,7 @@ async def get_nova_atividade(request: Request):
     })
 
 @router.post("/nova")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def post_nova_atividade(
     request: Request,
     id_categoria: int = Form(),

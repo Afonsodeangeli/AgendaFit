@@ -2,19 +2,20 @@ from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
-from util.auth_decorator import requer_admin
+from util.auth_decorator import requer_autenticacao
+from util.perfis import Perfil
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.exceptions import FormValidationError
-from dtos.categoria_dto import CategoriaCreateDTO, CategoriaUpdateDTO
+from sql.dtos.categoria_dto import CategoriaCreateDTO, CategoriaUpdateDTO
 from model.categoria_model import Categoria
-from repo import categoria_repo
+from sql.repo import categoria_repo
 
 router = APIRouter(prefix="/admin/categorias")
 templates = criar_templates("templates/admin/categorias")
 
 @router.get("")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def listar_categorias(request: Request):
     """Lista todas as categorias"""
     categorias = categoria_repo.obter_todas()
@@ -24,7 +25,7 @@ async def listar_categorias(request: Request):
     })
 
 @router.get("/nova")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def get_nova_categoria(request: Request):
     """Formulário de nova categoria"""
     return templates.TemplateResponse("form.html", {
@@ -33,7 +34,7 @@ async def get_nova_categoria(request: Request):
     })
 
 @router.post("/nova")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def post_nova_categoria(
     request: Request,
     nome: str = Form(),
@@ -56,7 +57,7 @@ async def post_nova_categoria(
         raise FormValidationError(erros)
 
 @router.get("/{id}/editar")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def get_editar_categoria(request: Request, id: int):
     """Formulário de edição"""
     categoria = categoria_repo.obter_por_id(id)
@@ -71,7 +72,7 @@ async def get_editar_categoria(request: Request, id: int):
     })
 
 @router.post("/{id}/editar")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def post_editar_categoria(
     request: Request,
     id: int,
@@ -94,7 +95,7 @@ async def post_editar_categoria(
         raise FormValidationError(erros)
 
 @router.post("/{id}/excluir")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def excluir_categoria(request: Request, id: int):
     """Exclui categoria"""
     if categoria_repo.excluir(id):

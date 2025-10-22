@@ -23,7 +23,7 @@ from util.exceptions import FormValidationError
 
 # Repositórios
 from repo import usuario_repo, configuracao_repo, tarefa_repo, indices_repo
-from repo import categoria_repo, atividade_repo
+from sql.repo import categoria_repo, atividade_repo
 
 # Rotas
 from routes.auth_routes import router as auth_router

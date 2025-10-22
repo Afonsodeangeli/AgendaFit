@@ -89,7 +89,7 @@ class TestCadastrarUsuario:
             "nome": "Novo Vendedor",
             "email": "novovendedor@example.com",
             "senha": "SenhaVendedor@123",
-            "perfil": Perfil.VENDEDOR.value
+            "perfil": Perfil.PROFESSOR.value
         }, follow_redirects=False)
 
         assert response.status_code == status.HTTP_303_SEE_OTHER
@@ -98,7 +98,7 @@ class TestCadastrarUsuario:
         from repo import usuario_repo
         usuario = usuario_repo.obter_por_email("novovendedor@example.com")
         assert usuario is not None
-        assert usuario.perfil == Perfil.VENDEDOR.value
+        assert usuario.perfil == Perfil.PROFESSOR.value
 
     def test_cadastrar_usuario_email_duplicado(self, admin_autenticado, admin_teste):
         """Deve rejeitar email já cadastrado"""
@@ -174,7 +174,7 @@ class TestEditarUsuario:
         response = admin_autenticado.post(f"/admin/usuarios/editar/{usuario.id}", data={
             "nome": "Usuario Editado",
             "email": "editado@example.com",
-            "perfil": Perfil.VENDEDOR.value
+            "perfil": Perfil.PROFESSOR.value
         }, follow_redirects=False)
 
         assert response.status_code == status.HTTP_303_SEE_OTHER
@@ -183,7 +183,7 @@ class TestEditarUsuario:
         usuario_editado = usuario_repo.obter_por_id(usuario.id)
         assert usuario_editado.nome == "Usuario Editado"
         assert usuario_editado.email == "editado@example.com"
-        assert usuario_editado.perfil == Perfil.VENDEDOR.value
+        assert usuario_editado.perfil == Perfil.PROFESSOR.value
 
     def test_editar_usuario_email_duplicado(self, admin_autenticado, criar_usuario):
         """Deve rejeitar email já usado por outro usuário"""
