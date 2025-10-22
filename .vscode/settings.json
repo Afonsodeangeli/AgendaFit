@@ -1,0 +1,10 @@
+{
+<<<<<<< HEAD
+    "python-envs.pythonProjects": []
+=======
+    "python.analysis.extraPaths": [
+        "./sql",
+        "./sql"
+    ]
+>>>>>>> c375e2cbf82f80ba43f0aaeae85b2cb1cbaa7adc
+}
