@@ -31,7 +31,6 @@ env/
 .env
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -75,7 +74,6 @@ codebase.md
 .mcp/
 .aidigestignore
 codebase*
-GUIA_*
 prompt*
 
 # Imagens
