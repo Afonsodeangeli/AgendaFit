@@ -3,7 +3,8 @@ from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
-from util.auth_decorator import requer_admin
+from util.auth_decorator import requer_autenticacao
+from util.perfis import Perfil
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.exceptions import FormValidationError
@@ -16,15 +17,17 @@ templates = criar_templates("templates/admin/turmas")
 
 
 @router.get("")
-@requer_admin
-async def listar_turmas(request: Request):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def listar_turmas(request: Request, usuario_logado: Optional[dict] = None):
+    """Lista todas as turmas"""
     turmas = turma_repo.obter_todas()
-    return templates.TemplateResponse("lista.html", {"request": request, "turmas": turmas})
+    return templates.TemplateResponse("admin/turmas/lista.html", {"request": request, "turmas": turmas})
 
 
 @router.get("/nova")
-@requer_admin
-async def get_nova_turma(request: Request):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_nova_turma(request: Request, usuario_logado: Optional[dict] = None):
+    """Formulário de nova turma"""
     atividades = atividade_repo.obter_todas()
     # tentar obter apenas professores, se existir função específica
     try:
@@ -32,7 +35,7 @@ async def get_nova_turma(request: Request):
     except Exception:
         professores = usuario_repo.obter_todos()
 
-    return templates.TemplateResponse("form.html", {
+    return templates.TemplateResponse("admin/turmas/form.html", {
         "request": request,
         "atividades": atividades,
         "professores": professores,
@@ -41,12 +44,14 @@ async def get_nova_turma(request: Request):
 
 
 @router.post("/nova")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def post_nova_turma(
     request: Request,
     id_atividade: int = Form(),
-    id_professor: int = Form()
+    id_professor: int = Form(),
+    usuario_logado: Optional[dict] = None
 ):
+    """Cria nova turma"""
     try:
         dto = TurmaCreateDTO(id_atividade=id_atividade, id_professor=id_professor)
         turma = Turma(
@@ -62,16 +67,20 @@ async def post_nova_turma(
             informar_sucesso(request, "Turma criada com sucesso!")
             return RedirectResponse("/admin/turmas", status_code=status.HTTP_303_SEE_OTHER)
 
-        raise FormValidationError({"geral": "Erro ao criar turma"})
+        informar_erro(request, "Erro ao criar turma")
+        return RedirectResponse("/admin/turmas/nova", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        erros = {err['loc'][0]: err['msg'] for err in e.errors()}
-        raise FormValidationError(erros)
+        erros = e.errors()
+        mensagem = "; ".join([f"{err['loc'][0]}: {err['msg']}" for err in erros])
+        informar_erro(request, f"Erro de validação: {mensagem}")
+        return RedirectResponse("/admin/turmas/nova", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.get("/{id}/editar")
-@requer_admin
-async def get_editar_turma(request: Request, id: int):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_editar_turma(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Formulário de edição"""
     turma = turma_repo.obter_por_id(id)
     if not turma:
         informar_erro(request, "Turma não encontrada")
@@ -83,7 +92,7 @@ async def get_editar_turma(request: Request, id: int):
     except Exception:
         professores = usuario_repo.obter_todos()
 
-    return templates.TemplateResponse("form.html", {
+    return templates.TemplateResponse("admin/turmas/form.html", {
         "request": request,
         "turma": turma,
         "atividades": atividades,
@@ -93,13 +102,15 @@ async def get_editar_turma(request: Request, id: int):
 
 
 @router.post("/{id}/editar")
-@requer_admin
+@requer_autenticacao([Perfil.ADMIN.value])
 async def post_editar_turma(
     request: Request,
     id: int,
     id_atividade: int = Form(),
-    id_professor: int = Form()
+    id_professor: int = Form(),
+    usuario_logado: Optional[dict] = None
 ):
+    """Atualiza turma"""
     try:
         dto = TurmaCreateDTO(id_atividade=id_atividade, id_professor=id_professor)
         turma = Turma(
@@ -115,16 +126,20 @@ async def post_editar_turma(
             informar_sucesso(request, "Turma atualizada com sucesso!")
             return RedirectResponse("/admin/turmas", status_code=status.HTTP_303_SEE_OTHER)
 
-        raise FormValidationError({"geral": "Erro ao atualizar turma"})
+        informar_erro(request, "Erro ao atualizar turma")
+        return RedirectResponse(f"/admin/turmas/{id}/editar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        erros = {err['loc'][0]: err['msg'] for err in e.errors()}
-        raise FormValidationError(erros)
+        erros = e.errors()
+        mensagem = "; ".join([f"{err['loc'][0]}: {err['msg']}" for err in erros])
+        informar_erro(request, f"Erro de validação: {mensagem}")
+        return RedirectResponse("/admin/turmas/nova", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.post("/{id}/excluir")
-@requer_admin
-async def excluir_turma(request: Request, id: int):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def excluir_turma(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui turma"""
     if turma_repo.excluir(id):
         informar_sucesso(request, "Turma excluída com sucesso!")
     else:

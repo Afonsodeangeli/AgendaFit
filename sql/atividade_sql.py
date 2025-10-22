@@ -1,3 +1,6 @@
+# IMPORTANTE: id_categoria é FOREIGN KEY - deve existir em categoria
+# data_cadastro é preenchida automaticamente pelo banco via CURRENT_TIMESTAMP
+# Queries com JOIN retornam campos prefixados: categoria_nome, categoria_descricao
 CRIAR_TABELA = """
 CREATE TABLE IF NOT EXISTS atividade (
     id_atividade INTEGER PRIMARY KEY AUTOINCREMENT,

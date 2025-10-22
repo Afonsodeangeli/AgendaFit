@@ -1,0 +1,68 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Gerenciar Turmas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-people-fill"></i> Gerenciar Turmas</h2>
+            <a href="/admin/turmas/nova" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nova Turma
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {% if turmas %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Atividade</th>
+                                <th scope="col">Professor</th>
+                                <th scope="col">Data Cadastro</th>
+                                <th scope="col" class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for turma in turmas %}
+                            <tr>
+                                <td>{{ turma.id_turma }}</td>
+                                <td>{{ turma.atividade.nome if turma.atividade else '-' }}</td>
+                                <td>{{ turma.professor.nome if turma.professor else '-' }}</td>
+                                <td>{{ turma.data_cadastro|data_br if turma.data_cadastro else '-' }}</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="/admin/turmas/{{ turma.id_turma }}/editar"
+                                            class="btn btn-outline-primary"
+                                            title="Editar"
+                                            aria-label="Editar turma {{ turma.id_turma }}">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="post" action="/admin/turmas/{{ turma.id_turma }}/excluir" style="display: inline;">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                title="Excluir"
+                                                aria-label="Excluir turma {{ turma.id_turma }}"
+                                                onclick="return confirm('Tem certeza que deseja excluir esta turma?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center mb-0">
+                    <i class="bi bi-info-circle"></i> Nenhuma turma cadastrada.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

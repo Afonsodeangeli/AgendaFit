@@ -1,0 +1,42 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Atividades Disponíveis{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-4">
+            <h2><i class="bi bi-activity"></i> Atividades Disponíveis</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {% if atividades %}
+                <div class="row g-3">
+                    {% for atividade in atividades %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ atividade.nome }}</h5>
+                                <p class="card-text text-muted small">
+                                    <i class="bi bi-tag"></i> {{ atividade.categoria.nome if atividade.categoria else '-' }}
+                                </p>
+                                <p class="card-text">{{ atividade.descricao }}</p>
+                                <a href="/aluno/atividades/{{ atividade.id_atividade }}" class="btn btn-sm btn-primary">
+                                    Ver detalhes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center mb-0">
+                    <i class="bi bi-info-circle"></i> Nenhuma atividade disponível no momento.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

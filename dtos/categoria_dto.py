@@ -1,28 +1,19 @@
 from pydantic import BaseModel, field_validator
+from dtos.validators import validar_string_obrigatoria
 
 class CategoriaCreateDTO(BaseModel):
+    """DTO para criação de categoria de atividades"""
+
     nome: str
     descricao: str
 
-    @field_validator('nome')
-    @classmethod
-    def validar_nome(cls, v: str) -> str:
-        v = v.strip()
-        if len(v) < 3:
-            raise ValueError('Nome deve ter no mínimo 3 caracteres')
-        if len(v) > 100:
-            raise ValueError('Nome deve ter no máximo 100 caracteres')
-        return v
-
-    @field_validator('descricao')
-    @classmethod
-    def validar_descricao(cls, v: str) -> str:
-        v = v.strip()
-        if len(v) < 10:
-            raise ValueError('Descrição deve ter no mínimo 10 caracteres')
-        if len(v) > 500:
-            raise ValueError('Descrição deve ter no máximo 500 caracteres')
-        return v
+    _validar_nome = field_validator("nome")(
+        validar_string_obrigatoria("Nome", tamanho_minimo=3, tamanho_maximo=100)
+    )
+    _validar_descricao = field_validator("descricao")(
+        validar_string_obrigatoria("Descrição", tamanho_minimo=10, tamanho_maximo=500)
+    )
 
 class CategoriaUpdateDTO(CategoriaCreateDTO):
+    """DTO para atualização de categoria de atividades"""
     pass

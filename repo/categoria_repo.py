@@ -1,7 +1,19 @@
 from typing import Optional
+from datetime import datetime
 from model.categoria_model import Categoria
 from sql.categoria_sql import *
 from util.db_util import get_connection
+
+
+def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
+    """Converte string de data do banco em objeto datetime"""
+    if not data_str:
+        return None
+    try:
+        # SQLite retorna datas no formato 'YYYY-MM-DD HH:MM:SS'
+        return datetime.strptime(data_str, '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        return None
 
 def criar_tabela() -> bool:
     with get_connection() as conn:
@@ -36,7 +48,8 @@ def obter_por_id(id: int) -> Optional[Categoria]:
             return Categoria(
                 id_categoria=row["id_categoria"],
                 nome=row["nome"],
-                descricao=row["descricao"]
+                descricao=row["descricao"],
+                data_cadastro=_converter_data(row["data_cadastro"] if "data_cadastro" in row.keys() else None)
             )
         return None
 
@@ -49,7 +62,8 @@ def obter_todas() -> list[Categoria]:
             Categoria(
                 id_categoria=row["id_categoria"],
                 nome=row["nome"],
-                descricao=row["descricao"]
+                descricao=row["descricao"],
+                data_cadastro=_converter_data(row["data_cadastro"] if "data_cadastro" in row.keys() else None)
             )
             for row in rows
         ]

@@ -5,6 +5,25 @@ from model.categoria_model import Categoria
 from sql.atividade_sql import *
 from util.db_util import get_connection
 
+
+def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
+    """Converte string de data do banco em objeto datetime"""
+    if not data_str:
+        return None
+    try:
+        # SQLite retorna datas no formato 'YYYY-MM-DD HH:MM:SS'
+        return datetime.strptime(data_str, '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        return None
+
+
+def _row_get(row, key: str, default=None):
+    """Helper para acessar valores de sqlite3.Row com fallback"""
+    try:
+        return row[key]
+    except (KeyError, IndexError):
+        return default
+
 def criar_tabela() -> bool:
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -47,14 +66,15 @@ def obter_por_id(id: int) -> Optional[Atividade]:
             categoria = Categoria(
                 id_categoria=row["id_categoria"],
                 nome=row["categoria_nome"],
-                descricao=row["categoria_descricao"]
+                descricao=row["categoria_descricao"],
+                data_cadastro=None
             )
             return Atividade(
                 id_atividade=row["id_atividade"],
                 id_categoria=row["id_categoria"],
                 nome=row["nome"],
                 descricao=row["descricao"],
-                data_cadastro=datetime.fromisoformat(row["data_cadastro"]),
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
                 categoria=categoria
             )
         return None
@@ -70,11 +90,12 @@ def obter_todas() -> list[Atividade]:
                 id_categoria=row["id_categoria"],
                 nome=row["nome"],
                 descricao=row["descricao"],
-                data_cadastro=datetime.fromisoformat(row["data_cadastro"]),
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
                 categoria=Categoria(
                     id_categoria=row["id_categoria"],
                     nome=row["categoria_nome"],
-                    descricao=row["categoria_descricao"]
+                    descricao=row["categoria_descricao"],
+                    data_cadastro=None
                 )
             )
             for row in rows
@@ -91,11 +112,12 @@ def obter_por_categoria(id_categoria: int) -> list[Atividade]:
                 id_categoria=row["id_categoria"],
                 nome=row["nome"],
                 descricao=row["descricao"],
-                data_cadastro=datetime.fromisoformat(row["data_cadastro"]),
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
                 categoria=Categoria(
                     id_categoria=row["id_categoria"],
                     nome=row["categoria_nome"],
-                    descricao=row["categoria_descricao"]
+                    descricao=row["categoria_descricao"],
+                    data_cadastro=None
                 )
             )
             for row in rows

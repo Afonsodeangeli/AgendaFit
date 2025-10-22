@@ -1,3 +1,8 @@
+# IMPORTANTE: Turma representa uma classe de atividade ministrada por um professor
+# id_atividade é FOREIGN KEY - deve existir em atividade
+# id_professor é FOREIGN KEY - deve existir em usuario com perfil Professor
+# data_cadastro é preenchida automaticamente pelo banco via CURRENT_TIMESTAMP
+# Queries com JOIN retornam campos prefixados: atividade_nome, professor_nome, etc
 CRIAR_TABELA = """
 CREATE TABLE IF NOT EXISTS turma (
     id_turma INTEGER PRIMARY KEY AUTOINCREMENT,

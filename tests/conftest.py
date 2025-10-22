@@ -81,11 +81,24 @@ def limpar_banco_dados():
             cursor = conn.cursor()
             # Verificar se tabelas existem antes de limpar
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'usuario', 'configuracao')"
+                "SELECT name FROM sqlite_master WHERE type='table'"
             )
             tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
-            # Limpar apenas tabelas que existem (respeitando foreign keys)
+            # Limpar apenas tabelas que existem (respeitando foreign keys - deletar filhos antes de pais)
+            # Ordem: matricula -> turma -> atividade -> categoria, tarefa -> usuario, configuracao
+
+            # AgendaFit tables (ordem correta: child -> parent)
+            if 'matricula' in tabelas_existentes:
+                cursor.execute("DELETE FROM matricula")
+            if 'turma' in tabelas_existentes:
+                cursor.execute("DELETE FROM turma")
+            if 'atividade' in tabelas_existentes:
+                cursor.execute("DELETE FROM atividade")
+            if 'categoria' in tabelas_existentes:
+                cursor.execute("DELETE FROM categoria")
+
+            # DefaultWebApp tables
             if 'tarefa' in tabelas_existentes:
                 cursor.execute("DELETE FROM tarefa")
             if 'usuario' in tabelas_existentes:

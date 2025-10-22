@@ -20,6 +20,14 @@ def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
             return None
 
 
+def _row_get(row, key: str, default=None):
+    """Helper para acessar valores de sqlite3.Row com fallback"""
+    try:
+        return row[key]
+    except (KeyError, IndexError):
+        return default
+
+
 def criar_tabela() -> bool:
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -61,17 +69,17 @@ def obter_por_aluno(id_aluno: int) -> List[Matricula]:
         for row in rows:
             turma = Turma(
                 id_turma=row["id_turma"],
-                id_atividade=row.get("id_atividade", 0),
-                id_professor=row.get("id_professor", 0),
+                id_atividade=_row_get(row,"id_atividade", 0),
+                id_professor=_row_get(row,"id_professor", 0),
                 data_cadastro=None,
                 atividade=None,
                 professor=None
             )
 
             aluno = Usuario(
-                id=row.get("id_aluno"),
-                nome=row.get("aluno_nome") or "",
-                email=row.get("aluno_email") or "",
+                id=_row_get(row,"id_aluno"),
+                nome=_row_get(row,"aluno_nome") or "",
+                email=_row_get(row,"aluno_email") or "",
                 senha="",
                 perfil="",
                 token_redefinicao=None,
@@ -83,9 +91,9 @@ def obter_por_aluno(id_aluno: int) -> List[Matricula]:
                 id_matricula=row["id_matricula"],
                 id_turma=row["id_turma"],
                 id_aluno=row["id_aluno"],
-                data_matricula=_converter_data(row.get("data_matricula")),
-                valor_mensalidade=row.get("valor_mensalidade"),
-                data_vencimento=_converter_data(row.get("data_vencimento")),
+                data_matricula=_converter_data(_row_get(row,"data_matricula")),
+                valor_mensalidade=_row_get(row,"valor_mensalidade"),
+                data_vencimento=_converter_data(_row_get(row,"data_vencimento")),
                 turma=turma,
                 aluno=aluno
             )
@@ -101,9 +109,9 @@ def obter_por_turma(id_turma: int) -> List[Matricula]:
         result: List[Matricula] = []
         for row in rows:
             aluno = Usuario(
-                id=row.get("id_aluno"),
-                nome=row.get("aluno_nome") or "",
-                email=row.get("aluno_email") or "",
+                id=_row_get(row,"id_aluno"),
+                nome=_row_get(row,"aluno_nome") or "",
+                email=_row_get(row,"aluno_email") or "",
                 senha="",
                 perfil="",
                 token_redefinicao=None,
@@ -115,9 +123,9 @@ def obter_por_turma(id_turma: int) -> List[Matricula]:
                 id_matricula=row["id_matricula"],
                 id_turma=row["id_turma"],
                 id_aluno=row["id_aluno"],
-                data_matricula=_converter_data(row.get("data_matricula")),
-                valor_mensalidade=row.get("valor_mensalidade"),
-                data_vencimento=_converter_data(row.get("data_vencimento")),
+                data_matricula=_converter_data(_row_get(row,"data_matricula")),
+                valor_mensalidade=_row_get(row,"valor_mensalidade"),
+                data_vencimento=_converter_data(_row_get(row,"data_vencimento")),
                 turma=None,
                 aluno=aluno
             )
