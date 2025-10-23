@@ -158,6 +158,110 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
     )
 
 
+@router.post("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_editar(
+    request: Request,
+    id: int,
+    nome: str = Form(...),
+    email: str = Form(...),
+    usuario_logado: Optional[dict] = None
+):
+    """Edita um aluno existente"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_alunos_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se aluno existe
+    aluno_atual = usuario_repo.obter_por_id(id)
+    if not aluno_atual or aluno_atual.perfil != Perfil.ALUNO.value:
+        informar_erro(request, "Aluno não encontrado")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Armazena dados do formulário
+    dados_formulario: dict = {"id": id, "nome": nome, "email": email}
+
+    try:
+        # Validar com DTO
+        dto = AlterarAlunoDTO(id=id, nome=nome, email=email)
+
+        # Verificar se email já existe em outro usuário
+        disponivel, mensagem_erro = verificar_email_disponivel_aluno(dto.email, id)
+        if not disponivel:
+            informar_erro(request, mensagem_erro)
+            return templates.TemplateResponse(
+                "admin/alunos/editar.html",
+                {
+                    "request": request,
+                    "aluno": aluno_atual,
+                    "dados": dados_formulario
+                }
+            )
+
+        # Atualizar aluno
+        aluno_atualizado = Usuario(
+            id=id,
+            nome=dto.nome,
+            email=dto.email,
+            senha=aluno_atual.senha,  # Mantém senha existente
+            perfil=Perfil.ALUNO.value
+        )
+
+        usuario_repo.alterar(aluno_atualizado)
+        logger.info(f"Aluno {id} alterado por admin {usuario_logado['id']}")
+
+        informar_sucesso(request, "Aluno alterado com sucesso!")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        dados_formulario["aluno"] = usuario_repo.obter_por_id(id)
+        raise FormValidationError(
+            validation_error=e,
+            template_path="admin/alunos/editar.html",
+            dados_formulario=dados_formulario,
+            campo_padrao="nome",
+        )
+
+
+@router.post("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui um aluno"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_alunos_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    aluno = usuario_repo.obter_por_id(id)
+
+    if not aluno or aluno.perfil != Perfil.ALUNO.value:
+        informar_erro(request, "Aluno não encontrado")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se há matrículas associadas a este aluno
+    from repo import matricula_repo
+    matriculas = matricula_repo.obter_por_aluno(id)
+    if matriculas:
+        informar_erro(
+            request,
+            f"Não é possível excluir este aluno pois há {len(matriculas)} matrícula(s) ativa(s)."
+        )
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    usuario_repo.excluir(id)
+    logger.info(f"Aluno {id} excluído por admin {usuario_logado['id']}")
+
+    informar_sucesso(request, "Aluno excluído com sucesso!")
+    return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.get("/cadastrar")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
