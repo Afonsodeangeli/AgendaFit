@@ -11,9 +11,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
 # Instala dependências do projeto
-# Garanta que seu projeto tenha um requirements.txt no diretório raiz
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia o script de entrypoint primeiro
+COPY entrypoint.sh ./
+RUN chmod +x /app/entrypoint.sh
 
 # Copia o restante do código
 COPY . .
@@ -21,5 +24,5 @@ COPY . .
 # Porta interna onde o Uvicorn escutará
 EXPOSE 8000
 
-# Módulo ASGI do projeto
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Usa o entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]

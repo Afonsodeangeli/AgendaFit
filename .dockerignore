@@ -26,6 +26,7 @@ ENV/
 Dockerfile
 docker-compose.yml
 rebuild.sh
+!entrypoint.sh
 
 # Logs e databases locais (se houver)
 *.log
