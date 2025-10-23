@@ -1,0 +1,240 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-bar-chart-fill"></i> Dashboard de Estatísticas</h2>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2 opacity-75">Total de Alunos</h6>
+                                <h2 class="card-title mb-0">{{ total_alunos }}</h2>
+                            </div>
+                            <div>
+                                <i class="bi bi-person-circle" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2 opacity-75">Total de Professores</h6>
+                                <h2 class="card-title mb-0">{{ total_professores }}</h2>
+                            </div>
+                            <div>
+                                <i class="bi bi-person-badge" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-info text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2 opacity-75">Total de Turmas</h6>
+                                <h2 class="card-title mb-0">{{ total_turmas }}</h2>
+                            </div>
+                            <div>
+                                <i class="bi bi-people-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-warning text-dark shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2 opacity-75">Total de Categorias</h6>
+                                <h2 class="card-title mb-0">{{ total_categorias }}</h2>
+                            </div>
+                            <div>
+                                <i class="bi bi-tags" style="font-size: 3rem; opacity: 0.3;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-secondary text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2 opacity-75">Total de Atividades</h6>
+                                <h2 class="card-title mb-0">{{ total_atividades }}</h2>
+                            </div>
+                            <div>
+                                <i class="bi bi-activity" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark text-white shadow-sm">
+                            <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2 opacity-75">Total de Matrículas</h6>
+                                <h2 class="card-title mb-0">{{ total_matriculas }}</h2>
+                            </div>
+                            <div>
+                                <i class="bi bi-card-checklist" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Turmas Mais Populares -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-trophy"></i> Top 5 Turmas (Mais Matriculadas)</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if top_turmas %}
+                        <div class="list-group list-group-flush">
+                            {% for item in top_turmas %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ item.turma.nome }}</h6>
+                                        <small class="text-muted">
+                                            {{ item.num_matriculas }} / {{ item.turma.vagas }} alunos
+                                            ({{ item.percentual_ocupacao }}% ocupação)
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary rounded-pill">{{ item.num_matriculas }}</span>
+                                    </div>
+                                </div>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" role="progressbar"
+                                         data-percent="{{ item.percentual_ocupacao }}"
+                                         aria-valuenow="{{ item.percentual_ocupacao }}"
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted mb-0">Nenhuma turma cadastrada.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atividades Mais Populares -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-fire"></i> Top 5 Atividades (Mais Alunos)</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if top_atividades %}
+                        <div class="list-group list-group-flush">
+                            {% for item in top_atividades %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ item.atividade.nome }}</h6>
+                                        <small class="text-muted">
+                                            {{ item.num_turmas }} turma(s) | {{ item.num_alunos }} aluno(s)
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-success rounded-pill">{{ item.num_alunos }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted mb-0">Nenhuma atividade cadastrada.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professores e Cargas -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-person-workspace"></i> Professores e Cargas Horárias</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if professores_com_turmas %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Professor</th>
+                                        <th class="text-center">Turmas</th>
+                                        <th class="text-center">Total de Alunos</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in professores_com_turmas %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ item.professor.nome }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ item.professor.email }}</small>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-info">{{ item.num_turmas }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">{{ item.num_alunos }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted mb-0">Nenhum professor cadastrado.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Apply percentual widths to progress bars using data-percent to avoid inline CSS parse issues
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.progress-bar[data-percent]').forEach(function (el) {
+            var pct = el.getAttribute('data-percent') || '0';
+            // ensure numeric and clamp 0-100
+            var n = Math.max(0, Math.min(100, Number(pct) || 0));
+            el.style.width = n + '%';
+            el.setAttribute('aria-valuenow', String(n));
+        });
+    });
+</script>
+{% endblock %}
