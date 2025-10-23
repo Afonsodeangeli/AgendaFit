@@ -3,6 +3,8 @@ FROM python:3.12-slim
 # Evita geração de .pyc e buffer no stdout
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
+# Define o diretório de trabalho
+WORKDIR /app
 # Instala dependências do projeto
 # Garanta que seu projeto tenha um requirements.txt no diretório raiz
 COPY requirements.txt ./
