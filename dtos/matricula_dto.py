@@ -1,25 +1,29 @@
+"""
+DTOs para validação de dados de Matrícula.
+
+Fornece validação de campos para operações CRUD de matrículas.
+"""
 from pydantic import BaseModel, field_validator
-from datetime import datetime
+from dtos.validators import validar_id_positivo
 
 
-class MatriculaCreateDTO(BaseModel):
-    id_turma: int
+class CriarMatriculaDTO(BaseModel):
+    """DTO para criação de matrícula"""
+
     id_aluno: int
-    valor_mensalidade: float
-    data_vencimento: str
+    id_turma: int
 
-    @field_validator('valor_mensalidade')
-    @classmethod
-    def validar_valor(cls, v: float) -> float:
-        if v <= 0:
-            raise ValueError('Valor deve ser maior que zero')
-        return v
+    _validar_id_aluno = field_validator("id_aluno")(validar_id_positivo())
+    _validar_id_turma = field_validator("id_turma")(validar_id_positivo())
 
-    @field_validator('data_vencimento')
-    @classmethod
-    def validar_data(cls, v: str) -> str:
-        try:
-            datetime.fromisoformat(v)
-            return v
-        except:
-            raise ValueError('Data inválida')
+
+class AlterarMatriculaDTO(BaseModel):
+    """DTO para alteração de matrícula"""
+
+    id: int
+    id_aluno: int
+    id_turma: int
+
+    _validar_id = field_validator("id")(validar_id_positivo())
+    _validar_id_aluno = field_validator("id_aluno")(validar_id_positivo())
+    _validar_id_turma = field_validator("id_turma")(validar_id_positivo())
