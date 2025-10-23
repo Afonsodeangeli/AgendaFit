@@ -204,3 +204,146 @@ async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None)
             "professores": professores
         }
     )
+
+
+@router.post("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_editar(
+    request: Request,
+    id: int,
+    nome: str = Form(...),
+    id_atividade: int = Form(...),
+    id_professor: int = Form(...),
+    horario_inicio: str = Form(...),
+    horario_fim: str = Form(...),
+    dias_semana: str = Form(...),
+    vagas: int = Form(...),
+    usuario_logado: Optional[dict] = None
+):
+    """Edita uma turma existente"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_turmas_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se turma existe
+    turma_atual = turma_repo.obter_por_id(id)
+    if not turma_atual:
+        informar_erro(request, "Turma não encontrada")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Armazena dados do formulário
+    dados_formulario: dict = {
+        "id": id,
+        "nome": nome,
+        "id_atividade": id_atividade,
+        "id_professor": id_professor,
+        "horario_inicio": horario_inicio,
+        "horario_fim": horario_fim,
+        "dias_semana": dias_semana,
+        "vagas": vagas
+    }
+
+    try:
+        # Validar com DTO
+        dto = AlterarTurmaDTO(
+            id=id,
+            nome=nome,
+            id_atividade=id_atividade,
+            id_professor=id_professor,
+            horario_inicio=horario_inicio,
+            horario_fim=horario_fim,
+            dias_semana=dias_semana,
+            vagas=vagas
+        )
+
+        # Verificar se atividade existe
+        atividade = atividade_repo.obter_por_id(dto.id_atividade)
+        if not atividade:
+            informar_erro(request, "Atividade selecionada não existe.")
+            dados_formulario["turma"] = turma_atual
+            dados_formulario["atividades"] = atividade_repo.obter_todos()
+            dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+            return templates.TemplateResponse(
+                "admin/turmas/editar.html",
+                {"request": request, **dados_formulario}
+            )
+
+        # Verificar se professor existe
+        professor = usuario_repo.obter_por_id(dto.id_professor)
+        if not professor or professor.perfil != Perfil.PROFESSOR.value:
+            informar_erro(request, "Professor selecionado não existe.")
+            dados_formulario["turma"] = turma_atual
+            dados_formulario["atividades"] = atividade_repo.obter_todos()
+            dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+            return templates.TemplateResponse(
+                "admin/turmas/editar.html",
+                {"request": request, **dados_formulario}
+            )
+
+        # Atualizar turma
+        turma_atualizada = Turma(
+            id=id,
+            nome=dto.nome,
+            id_atividade=dto.id_atividade,
+            id_professor=dto.id_professor,
+            horario_inicio=dto.horario_inicio,
+            horario_fim=dto.horario_fim,
+            dias_semana=dto.dias_semana,
+            vagas=dto.vagas
+        )
+
+        turma_repo.alterar(turma_atualizada)
+        logger.info(f"Turma {id} alterada por admin {usuario_logado['id']}")
+
+        informar_sucesso(request, "Turma alterada com sucesso!")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        dados_formulario["turma"] = turma_repo.obter_por_id(id)
+        dados_formulario["atividades"] = atividade_repo.obter_todos()
+        dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+        raise FormValidationError(
+            validation_error=e,
+            template_path="admin/turmas/editar.html",
+            dados_formulario=dados_formulario,
+            campo_padrao="nome",
+        )
+
+
+@router.post("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui uma turma"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_turmas_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    turma = turma_repo.obter_por_id(id)
+
+    if not turma:
+        informar_erro(request, "Turma não encontrada")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se há matrículas associadas a esta turma
+    from repo import matricula_repo
+    matriculas = matricula_repo.obter_por_turma(id)
+    if matriculas:
+        informar_erro(
+            request,
+            f"Não é possível excluir esta turma pois há {len(matriculas)} matrícula(s) de aluno(s)."
+        )
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    turma_repo.excluir(id)
+    logger.info(f"Turma {id} excluída por admin {usuario_logado['id']}")
+
+    informar_sucesso(request, "Turma excluída com sucesso!")
+    return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
