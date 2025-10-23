@@ -52,3 +52,28 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
             "turmas_dict": turmas_dict
         }
     )
+
+
+@router.get("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de cadastro de matrícula"""
+    alunos = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+    turmas = turma_repo.obter_todos()
+
+    if not alunos:
+        informar_erro(request, "É necessário cadastrar pelo menos um aluno antes de criar matrículas.")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    if not turmas:
+        informar_erro(request, "É necessário cadastrar pelo menos uma turma antes de criar matrículas.")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse(
+        "admin/matriculas/cadastrar.html",
+        {
+            "request": request,
+            "alunos": alunos,
+            "turmas": turmas
+        }
+    )

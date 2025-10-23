@@ -1,0 +1,115 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Matrículas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-card-checklist"></i> Matrículas</h2>
+            <a href="/admin/matriculas/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Nova Matrícula
+            </a>
+        </div>
+
+        {% if matriculas %}
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 35%">Aluno</th>
+                                <th style="width: 35%">Turma</th>
+                                <th style="width: 15%">Data Matrícula</th>
+                                <th class="text-end" style="width: 10%">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for matricula in matriculas %}
+                            <tr>
+                                <td>{{ matricula.id }}</td>
+                                <td>
+                                    <strong>{{ alunos_dict.get(matricula.id_aluno, 'N/A') }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">
+                                        {{ turmas_dict.get(matricula.id_turma, 'N/A') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small>{{ matricula.data_matricula.strftime('%d/%m/%Y') }}</small>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/admin/matriculas/editar/{{ matricula.id }}"
+                                           class="btn btn-outline-primary"
+                                           title="Editar matrícula">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-outline-danger"
+                                                title="Cancelar matrícula"
+                                                onclick="excluirMatricula({{ matricula.id }}, '{{ alunos_dict.get(matricula.id_aluno, "")|replace("'", "\\'") }}', '{{ turmas_dict.get(matricula.id_turma, "")|replace("'", "\\'") }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <small><i class="bi bi-info-circle"></i> Total: {{ matriculas|length }} matrícula(s)</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhuma matrícula cadastrada</h4>
+            <p>Não há matrículas cadastradas no sistema. Clique em "Nova Matrícula" para começar.</p>
+            <hr>
+            <a href="/admin/matriculas/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Cadastrar Primeira Matrícula
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/**
+ * Abre modal de confirmação para excluir matrícula
+ */
+function excluirMatricula(matriculaId, alunoNome, turmaNome) {
+    const detalhes = `
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title mb-2">
+                    <i class="bi bi-person-circle"></i> Aluno:
+                </h6>
+                <p class="mb-2"><strong>${alunoNome}</strong></p>
+                <h6 class="card-title mb-2">
+                    <i class="bi bi-people-fill"></i> Turma:
+                </h6>
+                <p class="mb-0"><strong>${turmaNome}</strong></p>
+            </div>
+        </div>
+        <div class="alert alert-warning mt-3 mb-0">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Atenção:</strong> Esta ação cancelará a matrícula do aluno nesta turma.
+        </div>
+    `;
+
+    abrirModalConfirmacao({
+        url: `/admin/matriculas/${matriculaId}/excluir`,
+        mensagem: 'Tem certeza que deseja cancelar esta matrícula?',
+        detalhes: detalhes
+    });
+}
+</script>
+{% endblock %}
