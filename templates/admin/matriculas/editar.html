@@ -1,0 +1,54 @@
+{% extends "base_privada.html" %}
+{% from "macros/form_fields.html" import field with context %}
+
+{% block titulo %}Editar Matrícula{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-card-checklist"></i> Editar Matrícula</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <form method="POST" action="/admin/matriculas/editar/{{ dados.id if dados.id is defined else matricula.id }}">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-12">
+                            {% include "components/alerta_erro.html" %}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {% set alunos_dict = {} %}
+                            {% for aluno in alunos %}
+                            {% set _ = alunos_dict.update({aluno.id|string: aluno.nome ~ ' (' ~ aluno.email ~ ')'}) %}
+                            {% endfor %}
+                            {{ field(name='id_aluno', label='Aluno', type='select', required=true,
+                                   options=alunos_dict, value=dados.id_aluno) }}
+                        </div>
+
+                        <div class="col-12">
+                            {% set turmas_dict = {} %}
+                            {% for turma in turmas %}
+                            {% set _ = turmas_dict.update({turma.id|string: turma.nome}) %}
+                            {% endfor %}
+                            {{ field(name='id_turma', label='Turma', type='select', required=true,
+                                   options=turmas_dict, value=dados.id_turma, wrapper_class='mb-0') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-4">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Salvar Alterações
+                        </button>
+                        <a href="/admin/matriculas/listar" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
