@@ -1,0 +1,79 @@
+{% extends "base_privada.html" %}
+{% from "macros/form_fields.html" import field with context %}
+
+{% block titulo %}Editar Turma{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-people-fill"></i> Editar Turma</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <form method="POST" action="/admin/turmas/editar/{{ dados.id if dados.id is defined else turma.id }}">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-12">
+                            {% include "components/alerta_erro.html" %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='nome', label='Nome da Turma', type='text', required=true,
+                                   value=dados.nome, attributes={'maxlength': 100}) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {% set atividades_dict = {} %}
+                            {% for ativ in atividades %}
+                            {% set _ = atividades_dict.update({ativ.id|string: ativ.nome}) %}
+                            {% endfor %}
+                            {{ field(name='id_atividade', label='Atividade', type='select', required=true,
+                                   options=atividades_dict, value=dados.id_atividade) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {% set professores_dict = {} %}
+                            {% for prof in professores %}
+                            {% set _ = professores_dict.update({prof.id|string: prof.nome}) %}
+                            {% endfor %}
+                            {{ field(name='id_professor', label='Professor', type='select', required=true,
+                                   options=professores_dict, value=dados.id_professor) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='vagas', label='Número de Vagas', type='number', required=true,
+                                   value=dados.vagas, attributes={'min': '1', 'max': '100'}) }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='horario_inicio', label='Horário Início', type='time', required=true,
+                                   value=dados.horario_inicio) }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='horario_fim', label='Horário Fim', type='time', required=true,
+                                   value=dados.horario_fim) }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='dias_semana', label='Dias da Semana', type='text', required=true,
+                                   value=dados.dias_semana, attributes={'maxlength': 50}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-4">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Salvar Alterações
+                        </button>
+                        <a href="/admin/turmas/listar" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
