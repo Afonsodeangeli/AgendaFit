@@ -1,0 +1,114 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Alunos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-person-circle"></i> Alunos</h2>
+            <a href="/admin/alunos/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Novo Aluno
+            </a>
+        </div>
+
+        {% if alunos %}
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 35%">Nome</th>
+                                <th style="width: 40%">Email</th>
+                                <th class="text-end" style="width: 20%">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for aluno in alunos %}
+                            <tr>
+                                <td>{{ aluno.id }}</td>
+                                <td>
+                                    <strong>{{ aluno.nome }}</strong>
+                                </td>
+                                <td>
+                                    <small>{{ aluno.email }}</small>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/admin/alunos/editar/{{ aluno.id }}"
+                                           class="btn btn-outline-primary"
+                                           title="Editar aluno">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-outline-danger"
+                                                title="Excluir aluno"
+                                                data-id="{{ aluno.id }}"
+                                                data-nome="{{ aluno.nome|e }}"
+                                                onclick="excluirAlunoFromButton(this)">
+                                            <i class="bi bi-trash"></i> Excluir
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <small><i class="bi bi-info-circle"></i> Total: {{ alunos|length }} aluno(s)</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhum aluno cadastrado</h4>
+            <p>Não há alunos cadastrados no sistema. Clique em "Novo Aluno" para começar.</p>
+            <hr>
+            <a href="/admin/alunos/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Cadastrar Primeiro Aluno
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/**
+ * Abre modal de confirmação para excluir aluno
+ */
+function excluirAluno(alunoId, alunoNome) {
+    const detalhes = `
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title mb-2">
+                    <i class="bi bi-person-circle"></i> Aluno:
+                </h6>
+                <p class="mb-0"><strong>${alunoNome}</strong></p>
+            </div>
+        </div>
+        <div class="alert alert-warning mt-3 mb-0">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Atenção:</strong> Esta ação não pode ser desfeita.
+            Todas as matrículas deste aluno serão excluídas.
+        </div>
+    `;
+
+    abrirModalConfirmacao({
+        url: `/admin/alunos/${alunoId}/excluir`,
+        mensagem: 'Tem certeza que deseja excluir este aluno?',
+        detalhes: detalhes
+    });
+}
+
+function excluirAlunoFromButton(btn) {
+    const id = btn.getAttribute('data-id');
+    const nome = btn.getAttribute('data-nome');
+    excluirAluno(id, nome);
+}
+</script>
+{% endblock %}

@@ -56,3 +56,115 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
             "alunos": alunos
         }
     )
+
+
+@router.get("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de cadastro de aluno"""
+    return templates.TemplateResponse(
+        "admin/alunos/cadastrar.html",
+        {
+            "request": request,
+        }
+    )
+
+
+@router.post("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_cadastrar(
+    request: Request,
+    nome: str = Form(...),
+    email: str = Form(...),
+    senha: str = Form(...),
+    usuario_logado: Optional[dict] = None
+):
+    """Cadastra um novo aluno"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_alunos_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Armazena dados do formulário
+    dados_formulario: dict = {"nome": nome, "email": email}
+
+    try:
+        # Validar com DTO
+        dto = CriarAlunoDTO(nome=nome, email=email, senha=senha)
+
+        # Verificar se email já existe
+        disponivel, mensagem_erro = verificar_email_disponivel_aluno(dto.email)
+        if not disponivel:
+            informar_erro(request, mensagem_erro)
+            return templates.TemplateResponse(
+                "admin/alunos/cadastrar.html",
+                {
+                    "request": request,
+                    "dados": dados_formulario
+                }
+            )
+
+        # Criar hash da senha
+        senha_hash = criar_hash_senha(dto.senha)
+
+        # Criar aluno
+        aluno = Usuario(
+            id=0,
+            nome=dto.nome,
+            email=dto.email,
+            senha=senha_hash,
+            perfil=Perfil.ALUNO.value
+        )
+
+        usuario_repo.inserir(aluno)
+        logger.info(f"Aluno '{dto.email}' cadastrado por admin {usuario_logado['id']}")
+
+        informar_sucesso(request, "Aluno cadastrado com sucesso!")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        raise FormValidationError(
+            validation_error=e,
+            template_path="admin/alunos/cadastrar.html",
+            dados_formulario=dados_formulario,
+            campo_padrao="nome",
+        )
+
+
+@router.get("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de edição de aluno"""
+    aluno = usuario_repo.obter_por_id(id)
+
+    if not aluno or aluno.perfil != Perfil.ALUNO.value:
+        informar_erro(request, "Aluno não encontrado")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Criar cópia dos dados sem senha
+    dados_aluno = aluno.__dict__.copy()
+    dados_aluno.pop('senha', None)
+
+    return templates.TemplateResponse(
+        "admin/alunos/editar.html",
+        {
+            "request": request,
+            "aluno": aluno,
+            "dados": dados_aluno
+        }
+    )
+
+
+@router.get("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de cadastro de aluno"""
+    return templates.TemplateResponse(
+        "admin/alunos/cadastrar.html",
+        {
+            "request": request,
+        }
+    )
