@@ -1,0 +1,118 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Atividades{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-activity"></i> Atividades Físicas</h2>
+            <a href="/admin/atividades/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Nova Atividade
+            </a>
+        </div>
+
+        {% if atividades %}
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%">Nome</th>
+                                <th style="width: 15%">Categoria</th>
+                                <th style="width: 40%">Descrição</th>
+                                <th class="text-end" style="width: 20%">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for atividade in atividades %}
+                            <tr>
+                                <td>
+                                    <strong>{{ atividade.nome }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">
+                                        {{ categorias_dict.get(atividade.id_categoria, 'Sem categoria') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if atividade.descricao %}
+                                    {{ atividade.descricao[:100] }}{% if atividade.descricao|length > 100 %}...{% endif %}
+                                    {% else %}
+                                    <em class="text-muted">Sem descrição</em>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                                     <a href="/admin/atividades/editar/{{ atividade.id_atividade }}"
+                                           class="btn btn-outline-primary"
+                                           title="Editar atividade">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                    <button type="button"
+                        class="btn btn-outline-danger"
+                        title="Excluir atividade"
+                        data-id="{{ atividade.id_atividade }}"
+                        data-nome="{{ atividade.nome|e }}"
+                        onclick="excluirAtividadeElement(this)">
+                                            <i class="bi bi-trash"></i> Excluir
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <small><i class="bi bi-info-circle"></i> Total: {{ atividades|length }} atividade(s)</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhuma atividade cadastrada</h4>
+            <p>Não há atividades cadastradas no sistema. Clique em "Nova Atividade" para começar.</p>
+            <hr>
+            <a href="/admin/atividades/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Cadastrar Primeira Atividade
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/**
+ * Abre modal de confirmação para excluir atividade
+ */
+function excluirAtividadeElement(el) {
+    const atividadeId = el.dataset.id;
+    const atividadeNome = el.dataset.nome;
+    const detalhes = `
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title mb-2">
+                    <i class="bi bi-activity"></i> Atividade:
+                </h6>
+                <p class="mb-0"><strong>${atividadeNome}</strong></p>
+            </div>
+        </div>
+        <div class="alert alert-warning mt-3 mb-0">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Atenção:</strong> Esta ação não pode ser desfeita.
+            Todas as turmas associadas a esta atividade poderão ser afetadas.
+        </div>
+    `;
+
+    abrirModalConfirmacao({
+        url: `/admin/atividades/${atividadeId}/excluir`,
+        mensagem: 'Tem certeza que deseja excluir esta atividade?',
+        detalhes: detalhes
+    });
+}
+</script>
+{% endblock %}
