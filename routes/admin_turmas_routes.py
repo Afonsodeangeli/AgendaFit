@@ -51,3 +51,28 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
             "professores_dict": professores_dict
         }
     )
+
+
+@router.get("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de cadastro de turma"""
+    atividades = atividade_repo.obter_todos()
+    professores = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+
+    if not atividades:
+        informar_erro(request, "É necessário cadastrar pelo menos uma atividade antes de criar turmas.")
+        return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    if not professores:
+        informar_erro(request, "É necessário cadastrar pelo menos um professor antes de criar turmas.")
+        return RedirectResponse("/admin/professores/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse(
+        "admin/turmas/cadastrar.html",
+        {
+            "request": request,
+            "atividades": atividades,
+            "professores": professores
+        }
+    )
