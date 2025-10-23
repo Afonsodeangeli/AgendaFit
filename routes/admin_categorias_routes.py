@@ -42,3 +42,15 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
             "categorias": categorias
         }
     )
+
+
+@router.get("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de cadastro de categoria"""
+    return templates.TemplateResponse(
+        "admin/categorias/cadastrar.html",
+        {
+            "request": request,
+        }
+    )
