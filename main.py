@@ -23,7 +23,7 @@ from util.exceptions import FormValidationError
 
 # Repositórios
 from repo import usuario_repo, configuracao_repo, tarefa_repo, indices_repo
-from repo import categoria_repo, atividade_repo
+from repo import categoria_repo, atividade_repo, turma_repo, matricula_repo
 
 # Rotas
 from routes.auth_routes import router as auth_router
@@ -80,6 +80,12 @@ try:
 
     atividade_repo.criar_tabela()
     logger.info("Tabela 'atividade' criada/verificada")
+
+    turma_repo.criar_tabela()
+    logger.info("Tabela 'turma' criada/verificada")
+
+    matricula_repo.criar_tabela()
+    logger.info("Tabela 'matricula' criada/verificada")
 
     # Criar índices para otimização de performance
     indices_repo.criar_indices()
