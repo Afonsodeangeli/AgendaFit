@@ -56,3 +56,15 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
             "alunos": alunos
         }
     )
+
+
+@router.get("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de cadastro de aluno"""
+    return templates.TemplateResponse(
+        "admin/alunos/cadastrar.html",
+        {
+            "request": request,
+        }
+    )
