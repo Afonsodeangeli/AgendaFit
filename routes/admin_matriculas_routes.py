@@ -200,3 +200,113 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
             "turmas": turmas
         }
     )
+
+
+@router.post("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_editar(
+    request: Request,
+    id: int,
+    id_aluno: int = Form(...),
+    id_turma: int = Form(...),
+    usuario_logado: Optional[dict] = None
+):
+    """Edita uma matrícula existente"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_matriculas_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se matrícula existe
+    matricula_atual = matricula_repo.obter_por_id(id)
+    if not matricula_atual:
+        informar_erro(request, "Matrícula não encontrada")
+        return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Armazena dados do formulário
+    dados_formulario: dict = {
+        "id": id,
+        "id_aluno": id_aluno,
+        "id_turma": id_turma
+    }
+
+    try:
+        # Validar com DTO
+        dto = AlterarMatriculaDTO(id=id, id_aluno=id_aluno, id_turma=id_turma)
+
+        # Verificar se aluno existe
+        aluno = usuario_repo.obter_por_id(dto.id_aluno)
+        if not aluno or aluno.perfil != Perfil.ALUNO.value:
+            informar_erro(request, "Aluno selecionado não existe.")
+            dados_formulario["matricula"] = matricula_atual
+            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["turmas"] = turma_repo.obter_todos()
+            return templates.TemplateResponse(
+                "admin/matriculas/editar.html",
+                {"request": request, **dados_formulario}
+            )
+
+        # Verificar se turma existe
+        turma = turma_repo.obter_por_id(dto.id_turma)
+        if not turma:
+            informar_erro(request, "Turma selecionada não existe.")
+            dados_formulario["matricula"] = matricula_atual
+            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["turmas"] = turma_repo.obter_todos()
+            return templates.TemplateResponse(
+                "admin/matriculas/editar.html",
+                {"request": request, **dados_formulario}
+            )
+
+        # Atualizar matrícula
+        matricula_atualizada = Matricula(
+            id=id,
+            id_aluno=dto.id_aluno,
+            id_turma=dto.id_turma,
+            data_matricula=matricula_atual.data_matricula
+        )
+
+        matricula_repo.alterar(matricula_atualizada)
+        logger.info(f"Matrícula {id} alterada por admin {usuario_logado['id']}")
+
+        informar_sucesso(request, "Matrícula alterada com sucesso!")
+        return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        dados_formulario["matricula"] = matricula_repo.obter_por_id(id)
+        dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+        dados_formulario["turmas"] = turma_repo.obter_todos()
+        raise FormValidationError(
+            validation_error=e,
+            template_path="admin/matriculas/editar.html",
+            dados_formulario=dados_formulario,
+            campo_padrao="id_aluno",
+        )
+
+
+@router.post("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui uma matrícula (cancela matrícula do aluno)"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_matriculas_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    matricula = matricula_repo.obter_por_id(id)
+
+    if not matricula:
+        informar_erro(request, "Matrícula não encontrada")
+        return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    matricula_repo.excluir(id)
+    logger.info(f"Matrícula {id} excluída por admin {usuario_logado['id']}")
+
+    informar_sucesso(request, "Matrícula cancelada com sucesso!")
+    return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
