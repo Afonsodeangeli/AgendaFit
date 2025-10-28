@@ -1,0 +1,6 @@
+services:
+  web:
+    container_name: agendafit.cachoeiro.es
+    build: .
+    ports:
+      - "8405:8000"

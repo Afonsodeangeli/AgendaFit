@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from model.Turma_model import Turma
+from model.turma_model import Turma
 from model.usuario_model import Usuario
 
 @dataclass

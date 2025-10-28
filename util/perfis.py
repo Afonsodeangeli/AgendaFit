@@ -3,25 +3,24 @@ from typing import Optional
 
 class Perfil(str, Enum):
     """
-    Enum centralizado para perfis de usuário.
+    Enum centralizado para perfis de usuário do AgendaFit.
 
     Este é a FONTE ÚNICA DA VERDADE para perfis no sistema.
     SEMPRE use este Enum ao referenciar perfis, NUNCA strings literais.
 
     Exemplos:
         - Correto: perfil = Perfil.ADMIN.value
-        - Correto: perfil = Perfil.CLIENTE.value
-        - Correto: perfil = Perfil.VENDEDOR.value
+        - Correto: perfil = Perfil.ALUNO.value
+        - Correto: perfil = Perfil.PROFESSOR.value
         - ERRADO: perfil = "admin"
-        - ERRADO: perfil = "cliente"
-        - ERRADO: perfil = "vendedor"
+        - ERRADO: perfil = "aluno"
     """
 
-    # PERFIS DO SEU SISTEMA #####################################
+    # PERFIS DO AGENDAFIT #####################################
     ADMIN = "Administrador"
-    CLIENTE = "Cliente"
-    VENDEDOR = "Vendedor"
-    # FIM DOS PERFIS ############################################
+    ALUNO = "Aluno"
+    PROFESSOR = "Professor"
+    # FIM DOS PERFIS ##########################################
 
     def __str__(self) -> str:
         """Retorna o valor do perfil como string"""
@@ -33,7 +32,7 @@ class Perfil(str, Enum):
         Retorna lista de todos os valores de perfis.
 
         Returns:
-            Lista com os valores: ["admin", "cliente"]
+            Lista com os valores: ["Administrador", "Aluno", "Professor"]
         """
         return [perfil.value for perfil in cls]
 
@@ -56,14 +55,14 @@ class Perfil(str, Enum):
         Converte uma string para o Enum Perfil correspondente.
 
         Args:
-            valor: String do perfil ("admin" ou "cliente")
+            valor: String do perfil
 
         Returns:
             Enum Perfil correspondente ou None se inválido
 
         Examples:
-            >>> Perfil.from_string("admin")
-            <Perfil.ADMIN: 'admin'>
+            >>> Perfil.from_string("Administrador")
+            <Perfil.ADMIN: 'Administrador'>
             >>> Perfil.from_string("invalido")
             None
         """

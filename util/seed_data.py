@@ -4,6 +4,7 @@ from util.security import criar_hash_senha
 from util.logger_config import logger
 from util.perfis import Perfil
 
+
 def carregar_usuarios_seed():
     """
     Carrega usuários padrão gerando automaticamente 1 usuário para cada perfil do enum.
@@ -13,14 +14,16 @@ def carregar_usuarios_seed():
     Formato gerado:
     - id: sequencial iniciando em 1
     - nome: {Perfil} Padrão
-    - email: {perfil}@email.com
+    - email: padrao@{perfil}.com
     - senha: 1234aA@#
     - perfil: {Perfil}
     """
     # Verificar se já existem usuários cadastrados
     quantidade_usuarios = usuario_repo.obter_quantidade()
     if quantidade_usuarios > 0:
-        logger.info(f"Já existem {quantidade_usuarios} usuários cadastrados. Seed não será executado.")
+        logger.info(
+            f"Já existem {quantidade_usuarios} usuários cadastrados. Seed não será executado."
+        )
         return
 
     usuarios_criados = 0
@@ -44,7 +47,7 @@ def carregar_usuarios_seed():
                 nome=nome,
                 email=email,
                 senha=criar_hash_senha(senha_plain),
-                perfil=perfil_valor
+                perfil=perfil_valor,
             )
 
             usuario_id = usuario_repo.inserir(usuario)
@@ -56,11 +59,16 @@ def carregar_usuarios_seed():
                 usuarios_com_erro += 1
 
         except Exception as e:
-            logger.error(f"✗ Erro ao processar usuário do perfil {perfil_enum.name}: {e}")
+            logger.error(
+                f"✗ Erro ao processar usuário do perfil {perfil_enum.name}: {e}"
+            )
             usuarios_com_erro += 1
 
     # Resumo
-    logger.info(f"Resumo do seed de usuários: {usuarios_criados} criados, {usuarios_com_erro} com erro")
+    logger.info(
+        f"Resumo do seed de usuários: {usuarios_criados} criados, {usuarios_com_erro} com erro"
+    )
+
 
 def inicializar_dados():
     """Inicializa todos os dados seed"""

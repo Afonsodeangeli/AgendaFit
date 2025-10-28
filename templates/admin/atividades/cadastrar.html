@@ -1,0 +1,56 @@
+{% extends "base_privada.html" %}
+{% from "macros/form_fields.html" import field with context %}
+
+{% block titulo %}Cadastrar Atividade{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-plus-circle"></i> Cadastrar Nova Atividade</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <form method="POST" action="/admin/atividades/cadastrar">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-12">
+                            {% include "components/alerta_erro.html" %}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {{ field(name='nome', label='Nome da Atividade', type='text', required=true,
+                                   attributes={'maxlength': 100, 'placeholder': 'Ex: Musculação Básica, Yoga Avançado'}) }}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {% set categorias_dict = {} %}
+                            {% for cat in categorias %}
+                            {% set _ = categorias_dict.update({cat.id|string: cat.nome}) %}
+                            {% endfor %}
+                            {{ field(name='id_categoria', label='Categoria', type='select', required=true,
+                                   options=categorias_dict) }}
+                        </div>
+
+                        <div class="col-12">
+                            {{ field(name='descricao', label='Descrição', type='textarea', rows=4,
+                                   attributes={'maxlength': 1000, 'placeholder': 'Descrição detalhada da atividade'},
+                                   wrapper_class='mb-0') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-4">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Cadastrar
+                        </button>
+                        <a href="/admin/atividades/listar" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
