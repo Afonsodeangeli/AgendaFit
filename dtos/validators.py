@@ -132,7 +132,9 @@ def validar_texto_minimo_palavras(
         valor = v.strip()
 
         if len(valor.split()) < min_palavras:
-            raise ValueError(f"{nome_campo} deve ter no mínimo {min_palavras} palavras.")
+            raise ValueError(
+                f"{nome_campo} deve ter no mínimo {min_palavras} palavras."
+            )
 
         if len(valor) > tamanho_maximo:
             raise ValueError(
@@ -481,6 +483,56 @@ def validar_senha_forte(
     return validator
 
 
+def validar_senhas_coincidem(
+    campo_senha: str = "senha",
+    campo_confirmacao: str = "confirmar_senha",
+    mensagem_erro: str = "As senhas não coincidem.",
+) -> Callable[[Any], Any]:
+    """
+    Valida se dois campos de senha são iguais (model validator).
+
+    Esta é uma função factory que retorna um model_validator para
+    verificar se dois campos de senha coincidem.
+
+    Args:
+        campo_senha: Nome do campo com a senha (padrão: "senha")
+        campo_confirmacao: Nome do campo com a confirmação (padrão: "confirmar_senha")
+        mensagem_erro: Mensagem de erro customizada
+
+    Returns:
+        Função validadora para uso com @model_validator(mode="after")
+
+    Example:
+        class MeuDTO(BaseModel):
+            senha: str
+            confirmar_senha: str
+
+            _validar_match = model_validator(mode="after")(
+                validar_senhas_coincidem()
+            )
+
+        # Para campos com nomes diferentes:
+        class AlterarSenhaDTO(BaseModel):
+            senha_nova: str
+            confirmar_senha: str
+
+            _validar_match = model_validator(mode="after")(
+                validar_senhas_coincidem("senha_nova", "confirmar_senha")
+            )
+    """
+
+    def validator(model: Any) -> Any:  # noqa: ANN401
+        senha = getattr(model, campo_senha, None)
+        confirmacao = getattr(model, campo_confirmacao, None)
+
+        if senha != confirmacao:
+            raise ValueError(mensagem_erro)
+
+        return model
+
+    return validator
+
+
 # ===== VALIDAÇÕES DE IDENTIFICADORES =====
 
 
@@ -610,7 +662,7 @@ def validar_tamanho_arquivo(
     return validator
 
 
-# ===== VALIDAÇÕES DE DATA E URL =====
+# ===== VALIDAÇÕES DE TIPOS ESPECÍFICOS =====
 
 
 def validar_data(
@@ -694,29 +746,27 @@ def validar_url(requer_protocolo: bool = True) -> Callable[[Any, Any], Any]:
     return validator
 
 
-# ===== VALIDAÇÕES DE DOMÍNIO ESPECÍFICO =====
-
-
-def validar_perfil_usuario(perfil_enum: Any) -> Callable[[Any, Any], Any]:
+def validar_tipo(nome_campo: str, tipo_enum: Any) -> Callable[[Any, Any], Any]:
     """
-    Valida perfil de usuário usando um Enum.
+    Valida tipo usando um Enum.
 
     Args:
-        perfil_enum: Classe Enum com método existe() e valores()
+        tipo_enum: Classe Enum com método existe() e valores()
 
     Returns:
         Função validadora para uso com field_validator
 
     Example:
-        from util.perfis import Perfil
-        _validar_perfil = field_validator('perfil')(validar_perfil_usuario(Perfil))
+        from model.chamado_model import StatusChamado
+        _validar_status = field_validator('status')(validar_tipo(StatusChamado))
     """
 
     def validator(cls: Any, v: Any) -> Any:  # noqa: N805
-        if not perfil_enum.existe(v):
-            perfis_validos = ", ".join([f"'{p}'" for p in perfil_enum.valores()])
+        valores_validos = [t.value for t in tipo_enum]
+        if v not in valores_validos:
+            tipos_validos = ", ".join([f"'{t.value}'" for t in tipo_enum])
             raise ValueError(
-                f'Perfil inválido: "{v}". ' f"Valores válidos: {perfis_validos}."
+                f"{nome_campo} deve ter um valor válido. Valores válidos: {tipos_validos}."
             )
         return v
 
