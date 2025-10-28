@@ -78,3 +78,6 @@ prompt*
 # Imagens
 static/img/usuarios/*
 backups/
+
+# Tema
+static/css/bootstrap.min.css
