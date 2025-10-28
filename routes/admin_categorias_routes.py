@@ -1,8 +1,3 @@
-"""
-Rotas administrativas para gerenciamento de categorias.
-
-Fornece CRUD completo de categorias para administradores.
-"""
 from typing import Optional
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
@@ -53,6 +48,71 @@ async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None)
         "admin/categorias/cadastrar.html",
         {
             "request": request,
+        }
+    )
+
+
+@router.post("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_cadastrar(
+    request: Request,
+    nome: str = Form(...),
+    descricao: str = Form(""),
+    usuario_logado: Optional[dict] = None
+):
+    """Cadastra uma nova categoria"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_categorias_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Armazena dados do formulário para reexibição em caso de erro
+    dados_formulario: dict = {"nome": nome, "descricao": descricao}
+
+    try:
+        # Validar com DTO
+        dto = CriarCategoriaDTO(nome=nome, descricao=descricao)
+
+        # Criar categoria
+        categoria = Categoria(
+            id=0,
+            nome=dto.nome,
+            descricao=dto.descricao
+        )
+
+        categoria_repo.inserir(categoria)
+        logger.info(f"Categoria '{dto.nome}' cadastrada por admin {usuario_logado['id']}")
+
+        informar_sucesso(request, "Categoria cadastrada com sucesso!")
+        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        raise FormValidationError(
+            validation_error=e,
+            template_path="admin/categorias/cadastrar.html",
+            dados_formulario=dados_formulario,
+            campo_padrao="nome",
+        )
+
+
+@router.get("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de edição de categoria"""
+    categoria = categoria_repo.obter_por_id(id)
+
+    if not categoria:
+        informar_erro(request, "Categoria não encontrada")
+        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse(
+        "admin/categorias/editar.html",
+        {
+            "request": request,
+            "categoria": categoria
         }
     )
 
@@ -110,7 +170,7 @@ async def post_editar(
         )
 
 
-@router.post("/excluir/{id}")
+@router.post("/{id}/excluir")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Exclui uma categoria"""
@@ -143,49 +203,3 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
 
     informar_sucesso(request, "Categoria excluída com sucesso!")
     return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
-
-
-@router.post("/cadastrar")
-@requer_autenticacao([Perfil.ADMIN.value])
-async def post_cadastrar(
-    request: Request,
-    nome: str = Form(...),
-    descricao: str = Form(""),
-    usuario_logado: Optional[dict] = None
-):
-    """Cadastra uma nova categoria"""
-    assert usuario_logado is not None
-
-    # Rate limiting
-    ip = obter_identificador_cliente(request)
-    if not admin_categorias_limiter.verificar(ip):
-        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
-        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
-
-    # Armazena dados do formulário para reexibição em caso de erro
-    dados_formulario: dict = {"nome": nome, "descricao": descricao}
-
-    try:
-        # Validar com DTO
-        dto = CriarCategoriaDTO(nome=nome, descricao=descricao)
-
-        # Criar categoria
-        categoria = Categoria(
-            id=0,
-            nome=dto.nome,
-            descricao=dto.descricao
-        )
-
-        categoria_repo.inserir(categoria)
-        logger.info(f"Categoria '{dto.nome}' cadastrada por admin {usuario_logado['id']}")
-
-        informar_sucesso(request, "Categoria cadastrada com sucesso!")
-        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
-
-    except ValidationError as e:
-        raise FormValidationError(
-            validation_error=e,
-            template_path="admin/categorias/cadastrar.html",
-            dados_formulario=dados_formulario,
-            campo_padrao="nome",
-        )

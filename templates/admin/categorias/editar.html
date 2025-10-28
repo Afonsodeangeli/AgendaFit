@@ -20,12 +20,12 @@
 
                         <div class="col-12 mb-3">
                             {{ field(name='nome', label='Nome da Categoria', type='text', required=true,
-                                   value=dados.nome, attributes={'maxlength': 100}) }}
+                                   value=dados.nome, attributes={'maxlength': 50}) }}
                         </div>
 
                         <div class="col-12">
                             {{ field(name='descricao', label='Descrição', type='textarea', rows=3,
-                                   value=dados.descricao, attributes={'maxlength': 500}, wrapper_class='mb-0') }}
+                                   value=dados.descricao, attributes={'maxlength': 200}, wrapper_class='mb-0') }}
                         </div>
                     </div>
                 </div>

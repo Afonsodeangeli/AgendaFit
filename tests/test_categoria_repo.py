@@ -42,7 +42,7 @@ class TestInserir:
         categoria_repo.criar_tabela()
 
         categoria = Categoria(
-            id_categoria=0,
+            id=0,
             nome="Musculação",
             descricao="Atividades de fortalecimento muscular"
         )
@@ -57,7 +57,7 @@ class TestInserir:
         categoria_repo.criar_tabela()
 
         categoria = Categoria(
-            id_categoria=0,
+            id=0,
             nome="Yoga",
             descricao="Práticas de yoga e meditação"
         )
@@ -67,21 +67,21 @@ class TestInserir:
 
         assert categoria_recuperada is not None
         assert categoria_recuperada.data_cadastro is not None
-        assert isinstance(categoria_recuperada.data_cadastro, datetime)
+        assert isinstance(categoria_recuperada.data_cadastro, str)
 
     def test_inserir_categoria_nome_duplicado(self):
         """Não deve permitir inserir categoria com nome duplicado"""
         categoria_repo.criar_tabela()
 
         categoria1 = Categoria(
-            id_categoria=0,
+            id=0,
             nome="Pilates",
             descricao="Primeira descrição"
         )
         categoria_repo.inserir(categoria1)
 
         categoria2 = Categoria(
-            id_categoria=0,
+            id=0,
             nome="Pilates",  # Nome duplicado
             descricao="Segunda descrição"
         )
@@ -120,7 +120,7 @@ class TestAlterar:
 
         # Alterar
         categoria_alterada = Categoria(
-            id_categoria=id_inserido,
+            id=id_inserido,
             nome="Dança Moderna",
             descricao="Descrição atualizada"
         )
@@ -138,7 +138,7 @@ class TestAlterar:
         categoria_repo.criar_tabela()
 
         categoria = Categoria(
-            id_categoria=999,  # ID inexistente
+            id=999,  # ID inexistente
             nome="Teste",
             descricao="Teste"
         )
@@ -201,7 +201,7 @@ class TestObterPorId:
         categoria = categoria_repo.obter_por_id(id_inserido)
 
         assert categoria is not None
-        assert categoria.id_categoria == id_inserido
+        assert categoria.id == id_inserido
         assert categoria.nome == "Spinning"
         assert categoria.descricao == "Aulas de bike indoor"
         assert categoria.data_cadastro is not None
@@ -283,7 +283,7 @@ class TestObterTodas:
         categorias = categoria_repo.obter_todas()
 
         assert all(cat.data_cadastro is not None for cat in categorias)
-        assert all(isinstance(cat.data_cadastro, datetime) for cat in categorias)
+        assert all(isinstance(cat.data_cadastro, str) for cat in categorias)
 
 
 class TestObterQuantidade:
@@ -337,9 +337,9 @@ class TestConverterData:
 
         categoria = categoria_repo.obter_por_id(id_inserido)
 
-        # Data deve ser objeto datetime
-        assert isinstance(categoria.data_cadastro, datetime)
-        assert categoria.data_cadastro.year >= 2024
+        # Data deve ser string
+        assert isinstance(categoria.data_cadastro, str)
+        assert "2024" in categoria.data_cadastro or "2025" in categoria.data_cadastro
 
     def test_converter_data_none(self):
         """Deve retornar None para data None"""
@@ -359,7 +359,7 @@ class TestIntegridadeReferencial:
         categoria_repo.criar_tabela()
 
         categoria = Categoria(
-            id_categoria=0,
+            id=0,
             nome="Yoga & Meditação",
             descricao="Práticas de bem-estar: yoga, pilates & tai-chi"
         )
@@ -375,7 +375,7 @@ class TestIntegridadeReferencial:
         categoria_repo.criar_tabela()
 
         categoria = Categoria(
-            id_categoria=0,
+            id=0,
             nome="Educação Física",
             descricao="Atividades de educação física e recreação"
         )

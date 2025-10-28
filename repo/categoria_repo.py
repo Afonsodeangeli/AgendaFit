@@ -1,74 +1,115 @@
 from typing import Optional
-from datetime import datetime
 from model.categoria_model import Categoria
 from sql.categoria_sql import *
 from util.db_util import get_connection
 
 
-def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
-    """Converte string de data do banco em objeto datetime"""
-    if not data_str:
-        return None
-    try:
-        # SQLite retorna datas no formato 'YYYY-MM-DD HH:MM:SS'
-        return datetime.strptime(data_str, '%Y-%m-%d %H:%M:%S')
-    except ValueError:
-        return None
+def _row_to_categoria(row) -> Categoria:
+    """Converte uma linha do banco de dados em um objeto Categoria."""
+    return Categoria(
+        id=row["id"],
+        nome=row["nome"],
+        descricao=row["descricao"],
+        data_cadastro=row["data_cadastro"],
+        data_atualizacao=row["data_atualizacao"],
+    )
 
-def criar_tabela() -> bool:
+
+def criar_tabela():
+    """Cria a tabela de categorias no banco de dados."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
-        return True
+
 
 def inserir(categoria: Categoria) -> Optional[int]:
+    """
+    Insere uma nova categoria no banco de dados.
+
+    Args:
+        categoria: Objeto Categoria com os dados a serem inseridos
+
+    Returns:
+        ID da categoria inserida ou None em caso de erro
+    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (categoria.nome, categoria.descricao))
         return cursor.lastrowid
 
+
 def alterar(categoria: Categoria) -> bool:
+    """
+    Altera uma categoria existente no banco de dados.
+
+    Args:
+        categoria: Objeto Categoria com os dados atualizados
+
+    Returns:
+        True se a categoria foi alterada, False caso contrário
+    """
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(ALTERAR, (categoria.nome, categoria.descricao, categoria.id_categoria))
+        cursor.execute(ALTERAR, (categoria.nome, categoria.descricao, categoria.id))
         return cursor.rowcount > 0
 
+
 def excluir(id: int) -> bool:
+    """
+    Exclui uma categoria do banco de dados.
+
+    Args:
+        id: ID da categoria a ser excluída
+
+    Returns:
+        True se a categoria foi excluída, False caso contrário
+    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(EXCLUIR, (id,))
         return cursor.rowcount > 0
 
+
 def obter_por_id(id: int) -> Optional[Categoria]:
+    """
+    Obtém uma categoria pelo seu ID.
+
+    Args:
+        id: ID da categoria a ser buscada
+
+    Returns:
+        Objeto Categoria se encontrado, None caso contrário
+    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_ID, (id,))
         row = cursor.fetchone()
         if row:
-            return Categoria(
-                id_categoria=row["id_categoria"],
-                nome=row["nome"],
-                descricao=row["descricao"],
-                data_cadastro=_converter_data(row["data_cadastro"] if "data_cadastro" in row.keys() else None)
-            )
+            return _row_to_categoria(row)
         return None
 
-def obter_todas() -> list[Categoria]:
+
+def obter_todos() -> list[Categoria]:
+    """
+    Obtém todas as categorias cadastradas.
+
+    Returns:
+        Lista de objetos Categoria ordenados por nome
+    """
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(OBTER_TODAS)
+        cursor.execute(OBTER_TODOS)
         rows = cursor.fetchall()
-        return [
-            Categoria(
-                id_categoria=row["id_categoria"],
-                nome=row["nome"],
-                descricao=row["descricao"],
-                data_cadastro=_converter_data(row["data_cadastro"] if "data_cadastro" in row.keys() else None)
-            )
-            for row in rows
-        ]
+        return [_row_to_categoria(row) for row in rows]
+
 
 def obter_quantidade() -> int:
+    """
+    Obtém a quantidade total de categorias cadastradas.
+
+    Returns:
+        Número total de categorias
+    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE)
