@@ -9,13 +9,14 @@ CREATE TABLE IF NOT EXISTS turma (
     id_atividade INTEGER NOT NULL,
     id_professor INTEGER NOT NULL,
     data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade),
-    FOREIGN KEY (id_professor) REFERENCES usuario(id)
+    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade) ON DELETE RESTRICT,
+    FOREIGN KEY (id_professor) REFERENCES usuario(id) ON DELETE RESTRICT
 )
 """
 
 INSERIR = "INSERT INTO turma (id_atividade, id_professor) VALUES (?, ?)"
-ALTERAR = "UPDATE turma SET id_atividade = ?, id_professor = ? WHERE id_turma = ?"
+ALTERAR = "UPDATE turma SET id_atividade = ?, id_professor = ?, data_atualizacao = CURRENT_TIMESTAMP WHERE id_turma = ?"
 EXCLUIR = "DELETE FROM turma WHERE id_turma = ?"
 
 OBTER_POR_ID = """

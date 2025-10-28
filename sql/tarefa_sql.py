@@ -5,9 +5,10 @@ CREATE TABLE IF NOT EXISTS tarefa (
     descricao TEXT,
     concluida INTEGER DEFAULT 0,
     usuario_id INTEGER NOT NULL,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_conclusao TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
 )
 """
 
@@ -19,14 +20,14 @@ VALUES (?, ?, ?)
 OBTER_TODOS_POR_USUARIO = """
 SELECT * FROM tarefa
 WHERE usuario_id = ?
-ORDER BY concluida ASC, data_criacao DESC
+ORDER BY concluida ASC, data_cadastro DESC
 """
 
 OBTER_POR_ID = "SELECT * FROM tarefa WHERE id = ?"
 
 ATUALIZAR = """
 UPDATE tarefa
-SET titulo = ?, descricao = ?, concluida = ?
+SET titulo = ?, descricao = ?, concluida = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id = ?
 """
 

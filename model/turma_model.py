@@ -20,6 +20,7 @@ class Turma:
         id_atividade: ID da atividade desta turma
         id_professor: ID do professor responsável pela turma
         data_cadastro: Data de cadastro da turma
+        data_atualizacao: Data da última atualização da turma
         atividade: Objeto Atividade relacionado (opcional, carregado via JOIN)
         professor: Objeto Usuario do professor (opcional, carregado via JOIN)
     """
@@ -27,6 +28,7 @@ class Turma:
     id_atividade: int
     id_professor: int
     data_cadastro: datetime
+    data_atualizacao: Optional[datetime] = None
 
-    atividade: Optional[Atividade]
-    professor: Optional[Usuario] 
+    atividade: Optional[Atividade] = None
+    professor: Optional[Usuario] = None 

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS endereco (
     cidade TEXT NOT NULL,
     uf TEXT NOT NULL,
     cep TEXT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id) ON DELETE CASCADE
 )
 """
 

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     token_redefinicao TEXT,
     data_token TIMESTAMP,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    data_atualizacao TIMESTAMP
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 """
 

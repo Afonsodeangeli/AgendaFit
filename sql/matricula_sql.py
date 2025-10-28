@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS matricula (
     data_matricula DATETIME DEFAULT CURRENT_TIMESTAMP,
     valor_mensalidade REAL NOT NULL,
     data_vencimento DATETIME NOT NULL,
-    FOREIGN KEY (id_turma) REFERENCES turma(id_turma),
-    FOREIGN KEY (id_aluno) REFERENCES usuario(id),
+    FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE RESTRICT,
+    FOREIGN KEY (id_aluno) REFERENCES usuario(id) ON DELETE RESTRICT,
     UNIQUE(id_turma, id_aluno)
 )
 """

@@ -16,6 +16,7 @@ class Atividade:
         nome: Nome da atividade
         descricao: Descrição detalhada da atividade
         data_cadastro: Data de cadastro da atividade
+        data_atualizacao: Data da última atualização da atividade
         categoria: Objeto Categoria relacionado (opcional, carregado via JOIN)
     """
     id_atividade: int
@@ -23,5 +24,6 @@ class Atividade:
     nome: str
     descricao: str
     data_cadastro: datetime
+    data_atualizacao: Optional[datetime] = None
 
-    categoria: Optional[Categoria]
+    categoria: Optional[Categoria] = None

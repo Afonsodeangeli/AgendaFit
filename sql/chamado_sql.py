@@ -5,9 +5,10 @@ CREATE TABLE IF NOT EXISTS chamado (
     status TEXT NOT NULL DEFAULT 'Aberto',
     prioridade TEXT NOT NULL DEFAULT 'Média',
     usuario_id INTEGER NOT NULL,
-    data_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_fechamento TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
 )
 """
 
@@ -29,7 +30,7 @@ ORDER BY
         WHEN 'Média' THEN 3
         WHEN 'Baixa' THEN 4
     END,
-    c.data_abertura DESC
+    c.data_cadastro DESC
 """
 
 OBTER_POR_USUARIO = """
@@ -46,7 +47,7 @@ ORDER BY
         WHEN 'Resolvido' THEN 3
         WHEN 'Fechado' THEN 4
     END,
-    c.data_abertura DESC
+    c.data_cadastro DESC
 """
 
 OBTER_POR_ID = """
@@ -60,7 +61,7 @@ WHERE c.id = ?
 
 ATUALIZAR_STATUS = """
 UPDATE chamado
-SET status = ?, data_fechamento = ?
+SET status = ?, data_fechamento = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id = ?
 """
 

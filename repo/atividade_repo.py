@@ -75,6 +75,7 @@ def obter_por_id(id: int) -> Optional[Atividade]:
                 nome=row["nome"],
                 descricao=row["descricao"],
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
                 categoria=categoria
             )
         return None
@@ -91,6 +92,7 @@ def obter_todas() -> list[Atividade]:
                 nome=row["nome"],
                 descricao=row["descricao"],
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
                 categoria=Categoria(
                     id_categoria=row["id_categoria"],
                     nome=row["categoria_nome"],
@@ -113,6 +115,7 @@ def obter_por_categoria(id_categoria: int) -> list[Atividade]:
                 nome=row["nome"],
                 descricao=row["descricao"],
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
                 categoria=Categoria(
                     id_categoria=row["id_categoria"],
                     nome=row["categoria_nome"],

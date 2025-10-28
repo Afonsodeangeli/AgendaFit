@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS atividade (
     nome TEXT NOT NULL,
     descricao TEXT NOT NULL,
     data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_categoria) REFERENCES categoria(id)
+    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id) ON DELETE RESTRICT
 )
 """
 
@@ -19,7 +20,7 @@ VALUES (?, ?, ?)
 
 ALTERAR = """
 UPDATE atividade
-SET id_categoria = ?, nome = ?, descricao = ?
+SET id_categoria = ?, nome = ?, descricao = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id_atividade = ?
 """
 

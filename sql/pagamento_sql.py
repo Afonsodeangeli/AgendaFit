@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS pagamento (
     id_aluno INTEGER NOT NULL,
     data_pagamento DATETIME DEFAULT CURRENT_TIMESTAMP,
     valor_pago REAL NOT NULL,
-    FOREIGN KEY (id_matricula) REFERENCES matricula(id_matricula),
-    FOREIGN KEY (id_aluno) REFERENCES usuario(id)
+    FOREIGN KEY (id_matricula) REFERENCES matricula(id_matricula) ON DELETE RESTRICT,
+    FOREIGN KEY (id_aluno) REFERENCES usuario(id) ON DELETE RESTRICT
 )
 """
 
