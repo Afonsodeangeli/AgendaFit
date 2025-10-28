@@ -30,6 +30,9 @@ def setup_test_database():
     # Configurar nível de log para testes
     os.environ['LOG_LEVEL'] = 'ERROR'
 
+    # Configurar modo de execução como desenvolvimento para testes
+    os.environ['RUNNING_MODE'] = 'development'
+
     yield test_db_path
 
     # Limpar: remover arquivo de banco após todos os testes
