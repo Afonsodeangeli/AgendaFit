@@ -33,6 +33,10 @@ def setup_test_database():
     # Configurar modo de execução como desenvolvimento para testes
     os.environ['RUNNING_MODE'] = 'development'
 
+    # Executar migração de schema após criação do banco
+    from util.migrar_schema import migrar_schema
+    migrar_schema()
+
     yield test_db_path
 
     # Limpar: remover arquivo de banco após todos os testes
