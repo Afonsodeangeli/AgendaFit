@@ -134,6 +134,30 @@ def migrar_schema():
             if "no such table" not in str(e).lower():
                 logger.warning(f"Erro ao migrar tabela categoria: {e}")
 
+        # Verificar e adicionar colunas na tabela usuario
+        try:
+            cursor.execute("PRAGMA table_info(usuario)")
+            rows = cursor.fetchall()
+            if rows:  # Tabela existe
+                colunas_usuario = [col[1] for col in rows]
+
+                if 'data_cadastro' not in colunas_usuario:
+                    logger.info("Adicionando coluna data_cadastro na tabela usuario")
+                    cursor.execute("""
+                        ALTER TABLE usuario
+                        ADD COLUMN data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    """)
+
+                if 'data_atualizacao' not in colunas_usuario:
+                    logger.info("Adicionando coluna data_atualizacao na tabela usuario")
+                    cursor.execute("""
+                        ALTER TABLE usuario
+                        ADD COLUMN data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    """)
+        except sqlite3.OperationalError as e:
+            if "no such table" not in str(e).lower():
+                logger.warning(f"Erro ao migrar tabela usuario: {e}")
+
         conn.commit()
 
     logger.info("Migração de schema concluída!")
