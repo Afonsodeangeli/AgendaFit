@@ -245,13 +245,23 @@ As mudanças nas definições SQL serão aplicadas automaticamente quando o banc
 - ✅ `model/tarefa_model.py` - Rename data_criacao + data_atualizacao + docstring
 - ✅ `model/chamado_model.py` - Rename data_abertura + data_atualizacao + docstring
 
-### Arquivos de Repositório (1 modificado)
+### Arquivos de Repositório (4 modificados)
 - ✅ `repo/atividade_repo.py` - Mapeamento data_atualizacao
+- ✅ `repo/turma_repo.py` - Mapeamento data_atualizacao
+- ✅ `repo/tarefa_repo.py` - Rename data_criacao + data_atualizacao
+- ✅ `repo/chamado_repo.py` - Rename data_abertura + data_atualizacao + docstring
+
+### Arquivos com Documentação de Padrões (3 modificados)
+- ✅ `dtos/aluno_dto.py` - Documentação do padrão FACADE
+- ✅ `model/chamado_interacao_model.py` - Documentação do padrão CHILD ENTITY
+- ✅ `dtos/chat_dto.py` - Documentação do padrão SUBSISTEMA COESO
 
 ### Arquivos Novos
 - ✅ `dtos/configuracao_dto.py` - DTOs de validação para Configuracao
 - ✅ `docs/MUDANCAS_IMPLEMENTADAS.md` - Este documento
 - ✅ `docs/PARECER.md` - Parecer técnico original (já existia)
+- ✅ `docs/PADROES_ARQUITETURAIS.md` - Documentação consolidada de padrões
+- ✅ `docs/CHECKLIST_CONFORMIDADE.md` - Checklist para novos CRUDs
 
 ---
 
@@ -453,10 +463,12 @@ python -m pytest tests/
 
 ### ✅ Prioridade MÉDIA (100% CONCLUÍDO)
 - [x] Criar DTOs para Configuracao
-- [x] Documentar decisões de design em docstrings (3 padrões)
-- [ ] Completar atualização de todos os repositórios (parcial: atividade_repo concluído)
-- [ ] Executar testes de regressão (pendente)
-- [ ] Validar em ambiente de desenvolvimento (pendente)
+- [x] Documentar decisões de design em docstrings (3 padrões arquiteturais)
+- [x] Completar atualização de todos os repositórios (4 repositórios atualizados)
+- [x] Criar documentação consolidada de padrões arquiteturais
+- [x] Criar checklist de conformidade para novos CRUDs
+- [ ] Executar testes de regressão (pendente - requer execução manual)
+- [ ] Validar em ambiente de desenvolvimento (pendente - requer execução manual)
 
 ### 📅 Prioridade BAIXA (FUTURO)
 - [ ] Refatorar IDs prefixados para ID simples (requer migrations complexas)

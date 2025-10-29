@@ -1,3 +1,23 @@
+"""
+Repositório de acesso a dados para a entidade Categoria.
+
+Este módulo implementa o padrão Repository, fornecendo uma camada de abstração
+entre a lógica de negócio e o acesso aos dados da tabela 'categoria'.
+
+Padrão de Implementação:
+    - Usa queries parametrizadas de categoria_sql.py
+    - Context manager para gerenciar conexões
+    - Função privada _row_to_categoria() para conversão
+    - Type hints em todas as funções
+    - Docstrings completas
+
+Exemplo de uso:
+    >>> from repo import categoria_repo
+    >>> categoria = Categoria(id=0, nome="Musculação", descricao="...")
+    >>> id_inserido = categoria_repo.inserir(categoria)
+    >>> categoria_obtida = categoria_repo.obter_por_id(id_inserido)
+"""
+
 from typing import Optional
 from model.categoria_model import Categoria
 from sql.categoria_sql import *

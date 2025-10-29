@@ -1,3 +1,20 @@
+"""
+Repositório de acesso a dados para a entidade Turma.
+
+Turmas representam classes de atividades ministradas por professores.
+Possui relacionamentos com Atividade e Usuario (professor).
+
+Padrão de Implementação:
+    - Queries com JOIN para buscar atividade e professor relacionados
+    - Constrói objetos Turma, Atividade e Usuario (professor)
+    - Tratamento robusto de campos opcionais com _row_get()
+    - Query especializada: obter_por_professor()
+
+Exemplo de uso:
+    >>> turma = obter_por_id(1)
+    >>> print(f"{turma.atividade.nome} - Prof. {turma.professor.nome}")
+"""
+
 from typing import Optional
 from datetime import datetime
 
@@ -75,6 +92,7 @@ def obter_por_id(id: int) -> Optional[Turma]:
                 nome=_row_get(row,"atividade_nome") or _row_get(row,"nome"),
                 descricao=_row_get(row,"atividade_descricao") or _row_get(row,"descricao"),
                 data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
+                data_atualizacao=None,
                 categoria=None
             )
 
@@ -95,6 +113,7 @@ def obter_por_id(id: int) -> Optional[Turma]:
                 id_atividade=row["id_atividade"],
                 id_professor=row["id_professor"],
                 data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row,"data_atualizacao")),
                 atividade=atividade,
                 professor=professor
             )
@@ -114,6 +133,7 @@ def obter_todas() -> list[Turma]:
                 nome=_row_get(row,"atividade_nome") or _row_get(row,"nome"),
                 descricao=_row_get(row,"atividade_descricao") or _row_get(row,"descricao"),
                 data_cadastro=None,
+                data_atualizacao=None,
                 categoria=None
             )
 
@@ -133,6 +153,7 @@ def obter_todas() -> list[Turma]:
                 id_atividade=row["id_atividade"],
                 id_professor=row["id_professor"],
                 data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row,"data_atualizacao")),
                 atividade=atividade,
                 professor=professor
             )
@@ -151,6 +172,7 @@ def obter_por_professor(id_professor: int) -> list[Turma]:
                 id_atividade=row["id_atividade"],
                 id_professor=row["id_professor"],
                 data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row,"data_atualizacao")),
                 atividade=None,
                 professor=None
             )

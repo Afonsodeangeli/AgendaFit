@@ -1,3 +1,25 @@
+"""
+Repositório de acesso a dados para a entidade Tarefa.
+
+Tarefas são to-dos vinculadas a usuários. Suportam marcação de conclusão.
+
+Padrão de Implementação:
+    - Função _row_to_tarefa() para conversão
+    - Query especializada: obter_todos_por_usuario()
+    - Operação especial: marcar_concluida() atualiza data_conclusao
+    - Função utilitária: contar_pendentes_por_usuario()
+
+Características:
+    - Sempre filtradas por usuario_id
+    - Campo 'concluida' (boolean)
+    - Timestamps: data_cadastro, data_atualizacao, data_conclusao
+
+Exemplo de uso:
+    >>> tarefas = obter_todos_por_usuario(usuario_id=1)
+    >>> marcar_concluida(tarefa_id=5)
+    >>> pendentes = contar_pendentes_por_usuario(usuario_id=1)
+"""
+
 from datetime import datetime
 from typing import Optional
 from model.tarefa_model import Tarefa
@@ -25,7 +47,8 @@ def _row_to_tarefa(row) -> Tarefa:
         descricao=row["descricao"],
         concluida=bool(row["concluida"]),
         usuario_id=row["usuario_id"],
-        data_criacao=row["data_criacao"],
+        data_cadastro=row["data_cadastro"],
+        data_atualizacao=row.get("data_atualizacao"),
         data_conclusao=row["data_conclusao"],
         usuario_nome=usuario_nome,
         usuario_email=usuario_email

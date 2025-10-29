@@ -1,3 +1,33 @@
+"""
+Repositório de acesso a dados para a entidade Chamado.
+
+Chamados são tickets de suporte com workflow de status e prioridades.
+
+Padrão de Implementação:
+    - Usa enums StatusChamado e PrioridadeChamado
+    - Queries ordenadas por prioridade (Alta → Baixa)
+    - Integração com chamado_interacao_repo para contadores
+    - Campos calculados: mensagens_nao_lidas, tem_resposta_admin
+
+Workflow de Status:
+    Aberto → Em Análise → Resolvido → Fechado
+
+Prioridades:
+    Urgente > Alta > Média > Baixa
+
+Características:
+    - Operação especial: atualizar_status() (sem UPDATE completo)
+    - Queries filtradas: obter_por_usuario()
+    - Contadores: contar_abertos_por_usuario(), contar_pendentes()
+    - Enriquecimento: adiciona dados de interações
+
+Exemplo de uso:
+    >>> chamados = obter_por_usuario(usuario_id=1)
+    >>> for c in chamados:
+    ...     print(f"{c.titulo} - {c.mensagens_nao_lidas} não lidas")
+    >>> atualizar_status(chamado_id=5, status=StatusChamado.RESOLVIDO)
+"""
+
 from typing import Optional
 from model.chamado_model import Chamado, StatusChamado, PrioridadeChamado
 from sql.chamado_sql import *
@@ -6,6 +36,15 @@ from util.datetime_util import agora
 
 
 def _row_to_chamado(row) -> Chamado:
+    """
+    Converte uma linha do banco de dados em objeto Chamado.
+
+    Args:
+        row: Linha do cursor SQLite (sqlite3.Row)
+
+    Returns:
+        Objeto Chamado populado
+    """
     usuario_nome = row["usuario_nome"] if "usuario_nome" in row.keys() else None
     usuario_email = row["usuario_email"] if "usuario_email" in row.keys() else None
 
@@ -15,7 +54,8 @@ def _row_to_chamado(row) -> Chamado:
         status=StatusChamado(row["status"]),
         prioridade=PrioridadeChamado(row["prioridade"]),
         usuario_id=row["usuario_id"],
-        data_abertura=row["data_abertura"],
+        data_cadastro=row["data_cadastro"],
+        data_atualizacao=row.get("data_atualizacao"),
         data_fechamento=row["data_fechamento"],
         usuario_nome=usuario_nome,
         usuario_email=usuario_email

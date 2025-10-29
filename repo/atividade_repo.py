@@ -1,3 +1,20 @@
+"""
+Repositório de acesso a dados para a entidade Atividade.
+
+Atividades são vinculadas a Categorias através de Foreign Key.
+As queries JOIN retornam dados da categoria relacionada.
+
+Padrão de Implementação:
+    - Queries com JOIN para buscar categoria relacionada
+    - Funções helper _converter_data() e _row_get() para robustez
+    - Tratamento de campos opcionais do JOIN
+    - Constrói objetos Categoria e Atividade relacionados
+
+Exemplo de uso:
+    >>> atividade = obter_por_id(1)
+    >>> print(f"{atividade.nome} - {atividade.categoria.nome}")
+"""
+
 from typing import Optional
 from datetime import datetime
 from model.atividade_model import Atividade
