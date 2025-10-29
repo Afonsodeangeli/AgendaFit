@@ -47,6 +47,7 @@ def _row_to_chamado(row) -> Chamado:
     """
     usuario_nome = row["usuario_nome"] if "usuario_nome" in row.keys() else None
     usuario_email = row["usuario_email"] if "usuario_email" in row.keys() else None
+    data_atualizacao = row["data_atualizacao"] if "data_atualizacao" in row.keys() else None
 
     return Chamado(
         id=row["id"],
@@ -55,7 +56,7 @@ def _row_to_chamado(row) -> Chamado:
         prioridade=PrioridadeChamado(row["prioridade"]),
         usuario_id=row["usuario_id"],
         data_cadastro=row["data_cadastro"],
-        data_atualizacao=row.get("data_atualizacao"),
+        data_atualizacao=data_atualizacao,
         data_fechamento=row["data_fechamento"],
         usuario_nome=usuario_nome,
         usuario_email=usuario_email

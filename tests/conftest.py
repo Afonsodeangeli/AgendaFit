@@ -54,6 +54,8 @@ def limpar_rate_limiter():
     from routes.admin_usuarios_routes import admin_usuarios_limiter
     from routes.admin_backups_routes import admin_backups_limiter
     from routes.admin_configuracoes_routes import admin_config_limiter
+    from routes.chamados_routes import chamado_criar_limiter, chamado_responder_limiter
+    from routes.admin_chamados_routes import admin_chamado_responder_limiter
 
     # Lista de todos os limiters
     limiters = [
@@ -63,6 +65,9 @@ def limpar_rate_limiter():
         admin_usuarios_limiter,
         admin_backups_limiter,
         admin_config_limiter,
+        chamado_criar_limiter,
+        chamado_responder_limiter,
+        admin_chamado_responder_limiter,
     ]
 
     # Limpar antes do teste

@@ -391,4 +391,4 @@ class TestValidacoesTarefa:
         usuario = usuario_repo.obter_por_email(usuario_teste["email"])
         assert usuario is not None
         tarefas = tarefa_repo.obter_todos_por_usuario(usuario.id)
-        assert tarefas[0].data_criacao is not None
+        assert tarefas[0].data_cadastro is not None

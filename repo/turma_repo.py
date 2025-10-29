@@ -29,10 +29,13 @@ def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
     """Converte string de data do banco em objeto datetime"""
     if not data_str:
         return None
+    # Se já é datetime, retorna direto
+    if isinstance(data_str, datetime):
+        return data_str
     try:
         # SQLite retorna datas no formato 'YYYY-MM-DD HH:MM:SS'
         return datetime.strptime(data_str, '%Y-%m-%d %H:%M:%S')
-    except ValueError:
+    except (ValueError, TypeError):
         return None
 
 
@@ -48,7 +51,7 @@ def criar_tabela() -> bool:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
-        return True
+    return True
 
 
 def inserir(turma: Turma) -> Optional[int]:

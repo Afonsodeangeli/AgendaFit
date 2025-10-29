@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS atividade (
     descricao TEXT NOT NULL,
     data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_categoria) REFERENCES categoria(id) ON DELETE RESTRICT
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria) ON DELETE RESTRICT
 )
 """
 
@@ -29,21 +29,21 @@ EXCLUIR = "DELETE FROM atividade WHERE id_atividade = ?"
 OBTER_POR_ID = """
 SELECT a.*, c.nome as categoria_nome, c.descricao as categoria_descricao
 FROM atividade a
-JOIN categoria c ON a.id_categoria = c.id
+JOIN categoria c ON a.id_categoria = c.id_categoria
 WHERE a.id_atividade = ?
 """
 
 OBTER_TODAS = """
 SELECT a.*, c.nome as categoria_nome, c.descricao as categoria_descricao
 FROM atividade a
-JOIN categoria c ON a.id_categoria = c.id
+JOIN categoria c ON a.id_categoria = c.id_categoria
 ORDER BY c.nome, a.nome
 """
 
 OBTER_POR_CATEGORIA = """
 SELECT a.*, c.nome as categoria_nome, c.descricao as categoria_descricao
 FROM atividade a
-JOIN categoria c ON a.id_categoria = c.id
+JOIN categoria c ON a.id_categoria = c.id_categoria
 WHERE a.id_categoria = ?
 ORDER BY a.nome
 """

@@ -2,7 +2,7 @@
 # data_cadastro e data_atualizacao são preenchidos automaticamente pelo banco
 CRIAR_TABELA = """
 CREATE TABLE IF NOT EXISTS categoria (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL UNIQUE,
     descricao TEXT,
     data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -20,12 +20,12 @@ UPDATE categoria
 SET nome = ?,
     descricao = ?,
     data_atualizacao = CURRENT_TIMESTAMP
-WHERE id = ?
+WHERE id_categoria = ?
 """
 
-EXCLUIR = "DELETE FROM categoria WHERE id = ?"
+EXCLUIR = "DELETE FROM categoria WHERE id_categoria = ?"
 
-OBTER_POR_ID = "SELECT * FROM categoria WHERE id = ?"
+OBTER_POR_ID = "SELECT * FROM categoria WHERE id_categoria = ?"
 
 OBTER_TODOS = "SELECT * FROM categoria ORDER BY nome"
 

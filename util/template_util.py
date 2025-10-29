@@ -201,6 +201,22 @@ def csrf_input(request: Optional[Request] = None) -> str:
     return f'<input type="hidden" name="{CSRF_FORM_FIELD}" value="{token}">'
 
 
+def _obter_toast_delay() -> int:
+    """
+    Obtém o delay do toast de forma lazy (apenas quando necessário).
+
+    Esta função é chamada pelos templates em runtime, não durante import.
+    Isso evita erros se a tabela configuracao ainda não foi criada.
+
+    Returns:
+        Delay em milissegundos para auto-hide do toast
+    """
+    try:
+        return config.obter_int('toast_auto_hide_delay_ms', TOAST_AUTO_HIDE_DELAY_MS)
+    except Exception:
+        # Se falhar, retorna o valor padrão do .env
+        return TOAST_AUTO_HIDE_DELAY_MS
+
 def criar_templates(pasta: str) -> Jinja2Templates:
     """
     Cria instância de Jinja2Templates com configurações customizadas.
@@ -230,11 +246,9 @@ def criar_templates(pasta: str) -> Jinja2Templates:
     env.globals['APP_NAME'] = APP_NAME
     env.globals['VERSION'] = VERSION
 
-    # Adicionar configuração dinâmica de toast delay (lê do banco → .env)
-    env.globals['TOAST_AUTO_HIDE_DELAY_MS'] = config.obter_int(
-        'toast_auto_hide_delay_ms',
-        TOAST_AUTO_HIDE_DELAY_MS
-    )
+    # Adicionar configuração dinâmica de toast delay (lazy load via função)
+    # Isso evita erro se a tabela configuracao ainda não foi criada
+    env.globals['TOAST_AUTO_HIDE_DELAY_MS'] = _obter_toast_delay()
 
     # CSRF Protection: Adicionar função global para gerar input CSRF
     # IMPORTANTE: Esta função precisa receber 'request' do contexto

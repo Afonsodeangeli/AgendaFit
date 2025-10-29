@@ -24,6 +24,7 @@ from util.exceptions import FormValidationError
 # Repositórios
 from repo import usuario_repo, configuracao_repo, tarefa_repo, chamado_repo, chamado_interacao_repo, indices_repo
 from repo import chat_sala_repo, chat_participante_repo, chat_mensagem_repo
+from repo import categoria_repo, atividade_repo, turma_repo, matricula_repo
 
 # Rotas
 from routes.auth_routes import router as auth_router
@@ -91,6 +92,18 @@ try:
 
     chat_mensagem_repo.criar_tabela()
     logger.info("Tabela 'chat_mensagem' criada/verificada")
+
+    categoria_repo.criar_tabela()
+    logger.info("Tabela 'categoria' criada/verificada")
+
+    atividade_repo.criar_tabela()
+    logger.info("Tabela 'atividade' criada/verificada")
+
+    turma_repo.criar_tabela()
+    logger.info("Tabela 'turma' criada/verificada")
+
+    matricula_repo.criar_tabela()
+    logger.info("Tabela 'matricula' criada/verificada")
 
     # Criar índices para otimização de performance
     indices_repo.criar_indices()

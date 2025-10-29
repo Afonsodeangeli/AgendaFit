@@ -40,6 +40,7 @@ def _row_to_tarefa(row) -> Tarefa:
     # Campos do JOIN (opcionais)
     usuario_nome = row["usuario_nome"] if "usuario_nome" in row.keys() else None
     usuario_email = row["usuario_email"] if "usuario_email" in row.keys() else None
+    data_atualizacao = row["data_atualizacao"] if "data_atualizacao" in row.keys() else None
 
     return Tarefa(
         id=row["id"],
@@ -48,7 +49,7 @@ def _row_to_tarefa(row) -> Tarefa:
         concluida=bool(row["concluida"]),
         usuario_id=row["usuario_id"],
         data_cadastro=row["data_cadastro"],
-        data_atualizacao=row.get("data_atualizacao"),
+        data_atualizacao=data_atualizacao,
         data_conclusao=row["data_conclusao"],
         usuario_nome=usuario_nome,
         usuario_email=usuario_email

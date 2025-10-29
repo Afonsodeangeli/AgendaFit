@@ -27,10 +27,13 @@ def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
     """Converte string de data do banco em objeto datetime"""
     if not data_str:
         return None
+    # Se já é datetime, retorna direto
+    if isinstance(data_str, datetime):
+        return data_str
     try:
         # SQLite retorna datas no formato 'YYYY-MM-DD HH:MM:SS'
         return datetime.strptime(data_str, '%Y-%m-%d %H:%M:%S')
-    except ValueError:
+    except (ValueError, TypeError):
         return None
 
 
@@ -81,7 +84,7 @@ def obter_por_id(id: int) -> Optional[Atividade]:
         row = cursor.fetchone()
         if row:
             categoria = Categoria(
-                id_categoria=row["id_categoria"],
+                id=row["id_categoria"],
                 nome=row["categoria_nome"],
                 descricao=row["categoria_descricao"],
                 data_cadastro=None
@@ -111,7 +114,7 @@ def obter_todas() -> list[Atividade]:
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
                 data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
                 categoria=Categoria(
-                    id_categoria=row["id_categoria"],
+                    id=row["id_categoria"],
                     nome=row["categoria_nome"],
                     descricao=row["categoria_descricao"],
                     data_cadastro=None
@@ -134,7 +137,7 @@ def obter_por_categoria(id_categoria: int) -> list[Atividade]:
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
                 data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
                 categoria=Categoria(
-                    id_categoria=row["id_categoria"],
+                    id=row["id_categoria"],
                     nome=row["categoria_nome"],
                     descricao=row["categoria_descricao"],
                     data_cadastro=None

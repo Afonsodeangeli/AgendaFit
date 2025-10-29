@@ -100,6 +100,40 @@ def migrar_schema():
             if "no such table" not in str(e).lower():
                 logger.warning(f"Erro ao migrar tabela turma: {e}")
 
+        # Verificar e adicionar colunas na tabela atividade
+        try:
+            cursor.execute("PRAGMA table_info(atividade)")
+            rows = cursor.fetchall()
+            if rows:  # Tabela existe
+                colunas_atividade = [col[1] for col in rows]
+
+                if 'data_atualizacao' not in colunas_atividade:
+                    logger.info("Adicionando coluna data_atualizacao na tabela atividade")
+                    cursor.execute("""
+                        ALTER TABLE atividade
+                        ADD COLUMN data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
+                    """)
+        except sqlite3.OperationalError as e:
+            if "no such table" not in str(e).lower():
+                logger.warning(f"Erro ao migrar tabela atividade: {e}")
+
+        # Verificar e adicionar colunas na tabela categoria
+        try:
+            cursor.execute("PRAGMA table_info(categoria)")
+            rows = cursor.fetchall()
+            if rows:  # Tabela existe
+                colunas_categoria = [col[1] for col in rows]
+
+                if 'data_atualizacao' not in colunas_categoria:
+                    logger.info("Adicionando coluna data_atualizacao na tabela categoria")
+                    cursor.execute("""
+                        ALTER TABLE categoria
+                        ADD COLUMN data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
+                    """)
+        except sqlite3.OperationalError as e:
+            if "no such table" not in str(e).lower():
+                logger.warning(f"Erro ao migrar tabela categoria: {e}")
+
         conn.commit()
 
     logger.info("Migração de schema concluída!")

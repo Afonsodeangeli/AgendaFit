@@ -27,7 +27,7 @@ from util.db_util import get_connection
 def _row_to_categoria(row) -> Categoria:
     """Converte uma linha do banco de dados em um objeto Categoria."""
     return Categoria(
-        id=row["id"],
+        id=row["id_categoria"],
         nome=row["nome"],
         descricao=row["descricao"],
         data_cadastro=row["data_cadastro"],
@@ -40,6 +40,7 @@ def criar_tabela():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
+    return True
 
 
 def inserir(categoria: Categoria) -> Optional[int]:
@@ -109,7 +110,7 @@ def obter_por_id(id: int) -> Optional[Categoria]:
         return None
 
 
-def obter_todos() -> list[Categoria]:
+def obter_todas() -> list[Categoria]:
     """
     Obtém todas as categorias cadastradas.
 
@@ -121,6 +122,9 @@ def obter_todos() -> list[Categoria]:
         cursor.execute(OBTER_TODOS)
         rows = cursor.fetchall()
         return [_row_to_categoria(row) for row in rows]
+
+# Alias para compatibilidade
+obter_todos = obter_todas
 
 
 def obter_quantidade() -> int:
