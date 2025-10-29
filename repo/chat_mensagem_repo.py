@@ -23,10 +23,13 @@ def _row_to_mensagem(row: Row) -> ChatMensagem:
     """Converte uma row do banco em objeto ChatMensagem."""
     # Acessar campos com verificação de chave
     data_envio = None
+    data_atualizacao = None
     lida_em = None
 
     if "data_envio" in row.keys():
         data_envio = row["data_envio"]
+    if "data_atualizacao" in row.keys():
+        data_atualizacao = row["data_atualizacao"]
     if "lida_em" in row.keys():
         lida_em = row["lida_em"]
 
@@ -36,6 +39,7 @@ def _row_to_mensagem(row: Row) -> ChatMensagem:
         usuario_id=row["usuario_id"],
         mensagem=row["mensagem"],
         data_envio=data_envio,
+        data_atualizacao=data_atualizacao,
         lida_em=lida_em
     )
 
@@ -72,6 +76,7 @@ def inserir(sala_id: str, usuario_id: int, mensagem: str) -> ChatMensagem:
         usuario_id=usuario_id,
         mensagem=mensagem,
         data_envio=data_envio,
+        data_atualizacao=data_envio,
         lida_em=None
     )
 

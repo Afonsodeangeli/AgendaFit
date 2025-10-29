@@ -1,3 +1,40 @@
+"""
+Repositório de acesso a dados para a entidade Configuracao.
+
+Configuracoes seguem o padrão Key-Value Store para armazenar configurações dinâmicas do sistema.
+
+Padrão de Implementação:
+    - Key-Value Store Pattern: tabela com (chave, valor, descricao)
+    - Constraint UNIQUE em 'chave' previne duplicação
+    - Query principal: obter_por_chave() (não obter_por_id)
+    - Operação especial: inserir_ou_atualizar() (upsert pattern)
+    - Seed automático: inserir_padrao() para valores iniciais
+
+Características:
+    - Chaves imutáveis após inserção (identificador único)
+    - Valores mutáveis via atualizar() ou inserir_ou_atualizar()
+    - Descrições opcionais explicam uso de cada configuração
+    - Sem timestamps (configurações não precisam auditoria temporal)
+    - Sem ON DELETE (tabela independente)
+
+Operações Principais:
+    - obter_por_chave(chave): Busca por chave (mais comum)
+    - obter_todos(): Lista todas configurações
+    - atualizar(chave, valor): Update simples
+    - inserir_ou_atualizar(chave, valor, desc): Upsert pattern
+
+Exemplo de uso:
+    >>> # Buscar por chave
+    >>> config = obter_por_chave("theme")
+    >>> print(config.valor)  # "original"
+    >>>
+    >>> # Atualizar existente ou criar novo
+    >>> inserir_ou_atualizar("theme", "darkly", "Tema visual")
+    >>>
+    >>> # Seed inicial
+    >>> inserir_padrao()  # Cria configs padrão se não existirem
+"""
+
 from typing import Optional
 import sqlite3
 from model.configuracao_model import Configuracao
@@ -20,7 +57,8 @@ def _row_to_configuracao(row) -> Configuracao:
         id=row["id"],
         chave=row["chave"],
         valor=row["valor"],
-        descricao=row["descricao"] if "descricao" in row.keys() else None
+        descricao=row["descricao"] if "descricao" in row.keys() else None,
+        data_atualizacao=row.get("data_atualizacao")
     )
 
 

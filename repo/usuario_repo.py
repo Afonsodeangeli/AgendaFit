@@ -1,3 +1,55 @@
+"""
+Repositório de acesso a dados para a entidade Usuario.
+
+Usuarios representam todos os usuários do sistema, com diferentes perfis (admin, professor, aluno).
+
+Padrão de Implementação:
+    - CRUD completo seguindo padrão Categoria
+    - Queries especializadas por contexto de uso
+    - Função _row_to_usuario() para conversão
+    - Side effect: inserir() cria foto padrão automaticamente
+    - Operações especiais de autenticação e redefinição de senha
+
+Características:
+    - Campo 'perfil' define permissões (admin, professor, aluno)
+    - Senha hasheada (nunca armazenar plaintext)
+    - Email UNIQUE para login
+    - Timestamps: data_cadastro, data_atualizacao (auditoria)
+    - Campos de reset: token_redefinicao, data_token (redefinição de senha)
+    - ON DELETE CASCADE em entidades dependentes (tarefa, chamado, endereco)
+    - ON DELETE RESTRICT em relacionamentos críticos (turma, matricula)
+
+Operações de Autenticação:
+    - obter_por_email(): Login e validação
+    - atualizar_senha(): Mudança de senha
+    - atualizar_token(): Gera token de reset
+    - obter_por_token(): Valida token de reset
+    - limpar_token(): Remove token após uso
+
+Queries Especializadas:
+    - obter_todos_por_perfil(): Filtra por tipo de usuário
+    - buscar_por_termo(): Busca por nome ou email (autocomplete)
+    - obter_quantidade(): Contador total
+
+Side Effects:
+    - inserir() → Cria foto padrão via criar_foto_padrao_usuario()
+    - excluir() → Cascade deletes em tarefa, chamado, endereco
+    - excluir() → Bloqueado se houver turmas ou matriculas (RESTRICT)
+
+Exemplo de uso:
+    >>> # Login
+    >>> usuario = obter_por_email("admin@sistema.com")
+    >>> if usuario and verificar_senha(senha_digitada, usuario.senha):
+    ...     # Autenticado
+    >>>
+    >>> # Reset de senha
+    >>> atualizar_token(email, token, data_expiracao)
+    >>> usuario = obter_por_token(token)
+    >>> if usuario and token_valido:
+    ...     atualizar_senha(usuario.id, nova_senha)
+    ...     limpar_token(usuario.id)
+"""
+
 from datetime import datetime
 from typing import Optional
 from model.usuario_model import Usuario

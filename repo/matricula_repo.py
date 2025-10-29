@@ -1,3 +1,35 @@
+"""
+Repositório de acesso a dados para a entidade Matricula.
+
+Matriculas representam o vínculo entre alunos (usuarios) e turmas, com informações financeiras.
+
+Padrão de Implementação:
+    - Queries com JOIN para buscar turma e aluno relacionados
+    - Verificação de duplicidade: verificar_matricula_existente()
+    - Queries especializadas por contexto: obter_por_aluno(), obter_por_turma()
+    - Campos financeiros: valor_mensalidade, data_vencimento
+    - Helpers robustos: _row_get() e _converter_data()
+
+Características:
+    - Constraint UNIQUE (id_turma, id_aluno) previne duplicação no banco
+    - inserir() verifica duplicidade antes de inserir (retorna None se duplicada)
+    - Timestamps automáticos: data_matricula via DEFAULT CURRENT_TIMESTAMP
+    - ON DELETE RESTRICT em ambos FKs (não pode excluir turma/aluno com matriculas)
+
+Relacionamentos:
+    - turma: Turma completa (em obter_por_aluno) ou None (em obter_por_turma)
+    - aluno: Usuario com campos mínimos (nome, email)
+
+Exemplo de uso:
+    >>> # Verificar antes de inserir
+    >>> if not verificar_matricula_existente(turma_id=1, aluno_id=5):
+    ...     id = inserir(matricula)
+    >>>
+    >>> # Listar por contexto
+    >>> matriculas_aluno = obter_por_aluno(aluno_id=5)
+    >>> matriculas_turma = obter_por_turma(turma_id=1)
+"""
+
 from typing import Optional, List
 from datetime import datetime
 

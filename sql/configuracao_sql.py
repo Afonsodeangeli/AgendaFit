@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS configuracao (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     chave TEXT UNIQUE NOT NULL,
     valor TEXT NOT NULL,
-    descricao TEXT
+    descricao TEXT,
+    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 """
 
@@ -13,4 +14,9 @@ OBTER_POR_CHAVE = "SELECT * FROM configuracao WHERE chave = ?"
 
 OBTER_TODOS = "SELECT * FROM configuracao ORDER BY chave"
 
-ATUALIZAR = "UPDATE configuracao SET valor = ? WHERE chave = ?"
+ATUALIZAR = """
+UPDATE configuracao
+SET valor = ?,
+    data_atualizacao = CURRENT_TIMESTAMP
+WHERE chave = ?
+"""

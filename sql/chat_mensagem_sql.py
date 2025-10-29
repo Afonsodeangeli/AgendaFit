@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS chat_mensagem (
     usuario_id INTEGER NOT NULL,
     mensagem TEXT NOT NULL,
     data_envio TIMESTAMP NOT NULL,
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     lida_em TIMESTAMP,
     FOREIGN KEY (sala_id) REFERENCES chat_sala(id) ON DELETE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
@@ -22,13 +23,13 @@ VALUES (?, ?, ?, ?, ?)
 """
 
 OBTER_POR_ID = """
-SELECT id, sala_id, usuario_id, mensagem, data_envio[timestamp], lida_em[timestamp]
+SELECT id, sala_id, usuario_id, mensagem, data_envio[timestamp], data_atualizacao[timestamp], lida_em[timestamp]
 FROM chat_mensagem
 WHERE id = ?
 """
 
 LISTAR_POR_SALA = """
-SELECT id, sala_id, usuario_id, mensagem, data_envio[timestamp], lida_em[timestamp]
+SELECT id, sala_id, usuario_id, mensagem, data_envio[timestamp], data_atualizacao[timestamp], lida_em[timestamp]
 FROM chat_mensagem
 WHERE sala_id = ?
 ORDER BY id ASC
@@ -50,7 +51,7 @@ WHERE sala_id = ?
 """
 
 OBTER_ULTIMA_MENSAGEM_SALA = """
-SELECT id, sala_id, usuario_id, mensagem, data_envio[timestamp], lida_em[timestamp]
+SELECT id, sala_id, usuario_id, mensagem, data_envio[timestamp], data_atualizacao[timestamp], lida_em[timestamp]
 FROM chat_mensagem
 WHERE sala_id = ?
 ORDER BY id DESC
