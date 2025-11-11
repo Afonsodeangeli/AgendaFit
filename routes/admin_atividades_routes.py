@@ -4,6 +4,7 @@ Rotas administrativas para gerenciamento de atividades.
 Fornece CRUD completo de atividades para administradores.
 """
 from typing import Optional
+from datetime import datetime
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
@@ -17,7 +18,7 @@ from util.rate_limiter import RateLimiter
 from util.exceptions import FormValidationError
 from util.rate_limiter import obter_identificador_cliente
 
-from repo import atividade_repo, categoria_repo
+from repo import atividade_repo
 from model.atividade_model import Atividade
 from dtos.atividade_dto import CriarAtividadeDTO, AlterarAtividadeDTO
 
@@ -34,18 +35,12 @@ templates = criar_templates("templates/admin/atividades")
 async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todas as atividades cadastradas"""
     atividades = atividade_repo.obter_todas()
-    categorias = categoria_repo.obter_todas()
-
-    # Criar dicionário de categorias para lookup rápido
-    # mapear nomes - alguns models usam id_categoria / id, ajustar defensivamente
-    categorias_dict = {getattr(cat, 'id_categoria', getattr(cat, 'id', None)): getattr(cat, 'nome', '') for cat in categorias}
 
     return templates.TemplateResponse(
         "admin/atividades/listar.html",
         {
             "request": request,
-            "atividades": atividades,
-            "categorias_dict": categorias_dict
+            "atividades": atividades
         }
     )
 
@@ -54,17 +49,10 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
 @requer_autenticacao([Perfil.ADMIN.value])
 async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário de cadastro de atividade"""
-    categorias = categoria_repo.obter_todas()
-
-    if not categorias:
-        informar_erro(request, "É necessário cadastrar pelo menos uma categoria antes de criar atividades.")
-        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
-
     return templates.TemplateResponse(
         "admin/atividades/cadastrar.html",
         {
-            "request": request,
-            "categorias": categorias
+            "request": request
         }
     )
 
@@ -75,7 +63,6 @@ async def post_cadastrar(
     request: Request,
     nome: str = Form(...),
     descricao: str = Form(""),
-    id_categoria: int = Form(...),
     usuario_logado: Optional[dict] = None
 ):
     """Cadastra uma nova atividade"""
@@ -90,34 +77,19 @@ async def post_cadastrar(
     # Armazena dados do formulário
     dados_formulario: dict = {
         "nome": nome,
-        "descricao": descricao,
-        "id_categoria": id_categoria
+        "descricao": descricao
     }
 
     try:
         # Validar com DTO
-        dto = CriarAtividadeDTO(nome=nome, descricao=descricao, id_categoria=id_categoria)
-
-        # Verificar se categoria existe
-        categoria = categoria_repo.obter_por_id(dto.id_categoria)
-        if not categoria:
-            informar_erro(request, "Categoria selecionada não existe.")
-            categorias = categoria_repo.obter_todas()
-            return templates.TemplateResponse(
-                "admin/atividades/cadastrar.html",
-                {
-                    "request": request,
-                    "categorias": categorias,
-                    "dados": dados_formulario
-                }
-            )
+        dto = CriarAtividadeDTO(nome=nome, descricao=descricao)
 
         # Criar atividade
         atividade = Atividade(
-            id=0,
+            id_atividade=0,
             nome=dto.nome,
             descricao=dto.descricao,
-            id_categoria=dto.id_categoria
+            data_cadastro=datetime.now()
         )
 
         atividade_repo.inserir(atividade)
@@ -127,13 +99,36 @@ async def post_cadastrar(
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        dados_formulario["categorias"] = categoria_repo.obter_todas()
         raise FormValidationError(
             validation_error=e,
             template_path="admin/atividades/cadastrar.html",
             dados_formulario=dados_formulario,
             campo_padrao="nome",
         )
+
+
+@router.get("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de edição de atividade"""
+    atividade = atividade_repo.obter_por_id(id)
+
+    if not atividade:
+        informar_erro(request, "Atividade não encontrada")
+        return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse(
+        "admin/atividades/editar.html",
+        {
+            "request": request,
+            "atividade": atividade,
+            "dados": {
+                "id": atividade.id_atividade,
+                "nome": atividade.nome,
+                "descricao": atividade.descricao
+            }
+        }
+    )
 
 
 @router.post("/editar/{id}")
@@ -143,7 +138,6 @@ async def post_editar(
     id: int,
     nome: str = Form(...),
     descricao: str = Form(""),
-    id_categoria: int = Form(...),
     usuario_logado: Optional[dict] = None
 ):
     """Edita uma atividade existente"""
@@ -165,8 +159,7 @@ async def post_editar(
     dados_formulario: dict = {
         "id": id,
         "nome": nome,
-        "descricao": descricao,
-        "id_categoria": id_categoria
+        "descricao": descricao
     }
 
     try:
@@ -174,31 +167,15 @@ async def post_editar(
         dto = AlterarAtividadeDTO(
             id=id,
             nome=nome,
-            descricao=descricao,
-            id_categoria=id_categoria
+            descricao=descricao
         )
-
-        # Verificar se categoria existe
-        categoria = categoria_repo.obter_por_id(dto.id_categoria)
-        if not categoria:
-            informar_erro(request, "Categoria selecionada não existe.")
-            categorias = categoria_repo.obter_todas()
-            return templates.TemplateResponse(
-                "admin/atividades/editar.html",
-                {
-                    "request": request,
-                    "atividade": atividade_atual,
-                    "categorias": categorias,
-                    "dados": dados_formulario
-                }
-            )
 
         # Atualizar atividade
         atividade_atualizada = Atividade(
-            id=id,
+            id_atividade=id,
             nome=dto.nome,
             descricao=dto.descricao,
-            id_categoria=dto.id_categoria
+            data_cadastro=atividade_atual.data_cadastro
         )
 
         atividade_repo.alterar(atividade_atualizada)
@@ -208,8 +185,7 @@ async def post_editar(
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        dados_formulario["atividade"] = atividade_repo.obter_por_id(id)
-        dados_formulario["categorias"] = categoria_repo.obter_todas()
+        dados_formulario["atividade"] = atividade_atual
         raise FormValidationError(
             validation_error=e,
             template_path="admin/atividades/editar.html",

@@ -1,24 +1,19 @@
 """
 Repositório de acesso a dados para a entidade Atividade.
 
-Atividades são vinculadas a Categorias através de Foreign Key.
-As queries JOIN retornam dados da categoria relacionada.
-
 Padrão de Implementação:
-    - Queries com JOIN para buscar categoria relacionada
     - Funções helper _converter_data() e _row_get() para robustez
-    - Tratamento de campos opcionais do JOIN
-    - Constrói objetos Categoria e Atividade relacionados
+    - Tratamento de campos opcionais
+    - Constrói objetos Atividade
 
 Exemplo de uso:
     >>> atividade = obter_por_id(1)
-    >>> print(f"{atividade.nome} - {atividade.categoria.nome}")
+    >>> print(f"{atividade.nome} - {atividade.descricao}")
 """
 
 from typing import Optional
 from datetime import datetime
 from model.atividade_model import Atividade
-from model.categoria_model import Categoria
 from sql.atividade_sql import *
 from util.db_util import get_connection
 
@@ -54,7 +49,6 @@ def inserir(atividade: Atividade) -> Optional[int]:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
-            atividade.id_categoria,
             atividade.nome,
             atividade.descricao
         ))
@@ -64,7 +58,6 @@ def alterar(atividade: Atividade) -> bool:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR, (
-            atividade.id_categoria,
             atividade.nome,
             atividade.descricao,
             atividade.id_atividade
@@ -83,20 +76,12 @@ def obter_por_id(id: int) -> Optional[Atividade]:
         cursor.execute(OBTER_POR_ID, (id,))
         row = cursor.fetchone()
         if row:
-            categoria = Categoria(
-                id=row["id_categoria"],
-                nome=row["categoria_nome"],
-                descricao=row["categoria_descricao"],
-                data_cadastro=None
-            )
             return Atividade(
                 id_atividade=row["id_atividade"],
-                id_categoria=row["id_categoria"],
                 nome=row["nome"],
                 descricao=row["descricao"],
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
-                categoria=categoria
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao"))
             )
         return None
 
@@ -108,40 +93,10 @@ def obter_todas() -> list[Atividade]:
         return [
             Atividade(
                 id_atividade=row["id_atividade"],
-                id_categoria=row["id_categoria"],
                 nome=row["nome"],
                 descricao=row["descricao"],
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
-                categoria=Categoria(
-                    id=row["id_categoria"],
-                    nome=row["categoria_nome"],
-                    descricao=row["categoria_descricao"],
-                    data_cadastro=None
-                )
-            )
-            for row in rows
-        ]
-
-def obter_por_categoria(id_categoria: int) -> list[Atividade]:
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(OBTER_POR_CATEGORIA, (id_categoria,))
-        rows = cursor.fetchall()
-        return [
-            Atividade(
-                id_atividade=row["id_atividade"],
-                id_categoria=row["id_categoria"],
-                nome=row["nome"],
-                descricao=row["descricao"],
-                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
-                categoria=Categoria(
-                    id=row["id_categoria"],
-                    nome=row["categoria_nome"],
-                    descricao=row["categoria_descricao"],
-                    data_cadastro=None
-                )
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao"))
             )
             for row in rows
         ]

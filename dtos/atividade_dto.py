@@ -16,15 +16,13 @@ class CriarAtividadeDTO(BaseModel):
 
     nome: str
     descricao: str = ""
-    id_categoria: int
 
-    _validar_nome = field_validator("nome")( 
+    _validar_nome = field_validator("nome")(
         validar_string_obrigatoria("Nome", tamanho_minimo=3, tamanho_maximo=100)
     )
-    _validar_descricao = field_validator("descricao")( 
+    _validar_descricao = field_validator("descricao")(
         validar_comprimento(tamanho_maximo=1000)
     )
-    _validar_id_categoria = field_validator("id_categoria")(validar_id_positivo())
 
 
 class AlterarAtividadeDTO(BaseModel):
@@ -33,13 +31,11 @@ class AlterarAtividadeDTO(BaseModel):
     id: int
     nome: str
     descricao: str = ""
-    id_categoria: int
 
     _validar_id = field_validator("id")(validar_id_positivo())
-    _validar_nome = field_validator("nome")( 
+    _validar_nome = field_validator("nome")(
         validar_string_obrigatoria("Nome", tamanho_minimo=3, tamanho_maximo=100)
     )
-    _validar_descricao = field_validator("descricao")( 
+    _validar_descricao = field_validator("descricao")(
         validar_comprimento(tamanho_maximo=1000)
     )
-    _validar_id_categoria = field_validator("id_categoria")(validar_id_positivo())

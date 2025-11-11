@@ -19,9 +19,8 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 25%">Nome</th>
-                                <th style="width: 15%">Categoria</th>
-                                <th style="width: 40%">Descrição</th>
+                                <th style="width: 30%">Nome</th>
+                                <th style="width: 50%">Descrição</th>
                                 <th class="text-end" style="width: 20%">Ações</th>
                             </tr>
                         </thead>
@@ -30,11 +29,6 @@
                             <tr>
                                 <td>
                                     <strong>{{ atividade.nome }}</strong>
-                                </td>
-                                <td>
-                                    <span class="badge bg-primary">
-                                        {{ categorias_dict.get(atividade.id_categoria, 'Sem categoria') }}
-                                    </span>
                                 </td>
                                 <td>
                                     {% if atividade.descricao %}

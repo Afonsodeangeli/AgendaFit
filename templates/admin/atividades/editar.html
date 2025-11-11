@@ -23,15 +23,6 @@
                                    value=dados.nome, attributes={'maxlength': 100}) }}
                         </div>
 
-                        <div class="col-12 mb-3">
-                            {% set categorias_dict = {} %}
-                            {% for cat in categorias %}
-                            {% set _ = categorias_dict.update({cat.id|string: cat.nome}) %}
-                            {% endfor %}
-                            {{ field(name='id_categoria', label='Categoria', type='select', required=true,
-                                   options=categorias_dict, value=dados.id_categoria) }}
-                        </div>
-
                         <div class="col-12">
                             {{ field(name='descricao', label='Descrição', type='textarea', rows=4,
                                    value=dados.descricao, attributes={'maxlength': 1000}, wrapper_class='mb-0') }}
