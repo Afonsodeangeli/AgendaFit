@@ -15,7 +15,7 @@ from typing import Optional
 from datetime import datetime
 from model.atividade_model import Atividade
 from sql.atividade_sql import *
-from util.db_util import get_connection
+from util.db_util import obter_conexao as get_connection
 
 
 def _converter_data(data_str: Optional[str]) -> Optional[datetime]:

@@ -1,49 +1,18 @@
 """
 Script para migrar schema do banco de dados para adicionar colunas de auditoria.
-Adiciona data_cadastro e data_atualizacao nas tabelas tarefa, chamado e turma.
+Adiciona data_cadastro e data_atualizacao nas tabelas chamado, turma e outras.
 """
-from util.db_util import get_connection
+from util.db_util import obter_conexao as get_connection
 from util.logger_config import logger
 import sqlite3
 
 
 def migrar_schema():
-    """Aplica migrações de schema necessárias"""
-    logger.info("Iniciando migração de schema...")
+    """Aplica migracoes de schema necessarias"""
+    logger.info("Iniciando migracao de schema...")
 
     with get_connection() as conn:
         cursor = conn.cursor()
-
-        # Verificar e adicionar colunas na tabela tarefa
-        try:
-            cursor.execute("PRAGMA table_info(tarefa)")
-            rows = cursor.fetchall()
-            if rows:  # Tabela existe
-                colunas_tarefa = [col[1] for col in rows]
-
-                if 'data_cadastro' not in colunas_tarefa:
-                    logger.info("Adicionando coluna data_cadastro na tabela tarefa")
-                    cursor.execute("""
-                        ALTER TABLE tarefa
-                        ADD COLUMN data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    """)
-
-                if 'data_atualizacao' not in colunas_tarefa:
-                    logger.info("Adicionando coluna data_atualizacao na tabela tarefa")
-                    cursor.execute("""
-                        ALTER TABLE tarefa
-                        ADD COLUMN data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    """)
-
-                if 'data_conclusao' not in colunas_tarefa:
-                    logger.info("Adicionando coluna data_conclusao na tabela tarefa")
-                    cursor.execute("""
-                        ALTER TABLE tarefa
-                        ADD COLUMN data_conclusao TIMESTAMP
-                    """)
-        except sqlite3.OperationalError as e:
-            if "no such table" not in str(e).lower():
-                logger.warning(f"Erro ao migrar tabela tarefa: {e}")
 
         # Verificar e adicionar colunas na tabela chamado
         try:
@@ -160,7 +129,7 @@ def migrar_schema():
 
         conn.commit()
 
-    logger.info("Migração de schema concluída!")
+    logger.info("Migracao de schema concluida!")
 
 
 if __name__ == "__main__":

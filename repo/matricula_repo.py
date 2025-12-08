@@ -37,7 +37,7 @@ from model.matricula_model import Matricula
 from model.turma_model import Turma
 from model.usuario_model import Usuario
 from sql.matricula_sql import *
-from util.db_util import get_connection
+from util.db_util import obter_conexao as get_connection
 
 
 def _converter_data(data_str: Optional[str]) -> Optional[datetime]:

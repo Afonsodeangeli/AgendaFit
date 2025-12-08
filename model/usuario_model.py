@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
-from util.perfis import Perfil
+
 
 @dataclass
 class Usuario:
@@ -25,7 +25,6 @@ class Usuario:
     Relacionamentos:
         - Turma (professor): ON DELETE RESTRICT
         - Matricula (aluno): ON DELETE RESTRICT
-        - Tarefa: ON DELETE CASCADE
         - Chamado: ON DELETE CASCADE
         - Endereco: ON DELETE CASCADE
     """

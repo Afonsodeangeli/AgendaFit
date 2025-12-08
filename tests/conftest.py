@@ -3,46 +3,47 @@ Configurações e fixtures para testes pytest.
 
 Fornece fixtures reutilizáveis e helpers para testes da aplicação.
 """
+# ============================================================
+# CRÍTICO: Configurar banco de dados ANTES de qualquer import
+# que possa carregar db_util.py (via repos ou outros módulos)
+# ============================================================
+import os
+import tempfile
+
+# Criar arquivo temporário para o banco de testes
+_test_db = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.db')
+_TEST_DB_PATH = _test_db.name
+_test_db.close()
+
+# Configurar variáveis de ambiente ANTES de importar qualquer módulo da aplicação
+os.environ['DATABASE_PATH'] = _TEST_DB_PATH
+os.environ['RESEND_API_KEY'] = ''
+os.environ['LOG_LEVEL'] = 'ERROR'
+
+# ============================================================
+# Agora sim, importar o resto (db_util já lerá o valor correto)
+# ============================================================
 import pytest
 from fastapi.testclient import TestClient
 from fastapi import status
-import os
-import tempfile
-from pathlib import Path
 from typing import Optional
 from util.perfis import Perfil
 
-# Configurar banco de dados de teste ANTES de importar a aplicação
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_database():
-    """Configura banco de dados de teste em memória para toda a sessão"""
-    # Criar arquivo temporário para o banco de testes
-    test_db = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.db')
-    test_db_path = test_db.name
-    test_db.close()
+    """
+    Garante que o banco de teste está configurado e limpa ao final.
 
-    # Configurar variável de ambiente para usar DB de teste
-    os.environ['DATABASE_PATH'] = test_db_path
-
-    # Desabilitar envio de e-mails durante testes
-    os.environ['RESEND_API_KEY'] = ''
-
-    # Configurar nível de log para testes
-    os.environ['LOG_LEVEL'] = 'ERROR'
-
-    # Configurar modo de execução como desenvolvimento para testes
-    os.environ['RUNNING_MODE'] = 'development'
-
-    # Executar migração de schema após criação do banco
-    from util.migrar_schema import migrar_schema
-    migrar_schema()
-
-    yield test_db_path
+    O banco já foi configurado no nível de módulo (acima), esta fixture
+    apenas gerencia o cleanup ao final da sessão.
+    """
+    yield _TEST_DB_PATH
 
     # Limpar: remover arquivo de banco após todos os testes
     try:
-        os.unlink(test_db_path)
-    except:
+        os.unlink(_TEST_DB_PATH)
+    except Exception:
         pass
 
 
@@ -56,9 +57,13 @@ def limpar_rate_limiter():
     from routes.admin_configuracoes_routes import admin_config_limiter
     from routes.chamados_routes import chamado_criar_limiter, chamado_responder_limiter
     from routes.admin_chamados_routes import admin_chamado_responder_limiter
-    from routes.tarefas_routes import tarefa_criar_limiter, tarefa_operacao_limiter
-    from routes.usuario_routes import upload_foto_limiter, alterar_senha_limiter, form_get_limiter
-    from routes.chat_routes import chat_mensagem_limiter, chat_sala_limiter, busca_usuarios_limiter, chat_listagem_limiter
+    from routes.usuario_routes import (
+        upload_foto_limiter, alterar_senha_limiter, form_get_limiter
+    )
+    from routes.chat_routes import (
+        chat_mensagem_limiter, chat_sala_limiter,
+        busca_usuarios_limiter, chat_listagem_limiter
+    )
     from routes.public_routes import public_limiter
     from routes.examples_routes import examples_limiter
 
@@ -74,8 +79,6 @@ def limpar_rate_limiter():
         chamado_criar_limiter,
         chamado_responder_limiter,
         admin_chamado_responder_limiter,
-        tarefa_criar_limiter,
-        tarefa_operacao_limiter,
         upload_foto_limiter,
         alterar_senha_limiter,
         form_get_limiter,
@@ -99,42 +102,62 @@ def limpar_rate_limiter():
 
 
 @pytest.fixture(scope="function", autouse=True)
+def limpar_config_cache():
+    """Limpa o cache de configurações antes de cada teste para evitar interferência"""
+    from util.config_cache import config
+
+    # Limpar antes do teste
+    config.limpar()
+
+    yield
+
+    # Limpar depois do teste também
+    config.limpar()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def limpar_chat_manager():
+    """Limpa o gerenciador de chat antes de cada teste para evitar interferência"""
+    from util.chat_manager import gerenciador_chat
+
+    # Limpar antes do teste
+    gerenciador_chat._connections.clear()
+    gerenciador_chat._active_connections.clear()
+
+    yield
+
+    # Limpar depois do teste também
+    gerenciador_chat._connections.clear()
+    gerenciador_chat._active_connections.clear()
+
+
+@pytest.fixture(scope="function", autouse=True)
 def limpar_banco_dados():
     """Limpa todas as tabelas do banco antes de cada teste para evitar interferência"""
     # Importar após configuração do banco de dados
-    from util.db_util import get_connection
+    from util.db_util import obter_conexao
 
     def _limpar_tabelas():
         """Limpa tabelas se elas existirem e reseta autoincrement"""
-        with get_connection() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             # Verificar se tabelas existem antes de limpar
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+                "SELECT name FROM sqlite_master WHERE type='table' "
+                "AND name IN ('chamado', 'chamado_interacao', 'usuario', 'configuracao')"
             )
             tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
-            # Ordem de limpeza respeitando foreign keys:
-            # 1. Tabelas que dependem de múltiplas outras
-            ordem_limpeza = [
-                'matricula',           # depende de turma e usuario
-                'chat_mensagem',       # depende de chat_sala e usuario
-                'chat_participante',   # depende de chat_sala e usuario
-                'chamado_interacao',   # depende de chamado e usuario
-                'turma',               # depende de atividade e usuario
-                'chamado',             # depende de usuario
-                'tarefa',              # depende de usuario
-                'chat_sala',           # sem dependências
-                'atividade',           # depende de categoria
-                'categoria',           # sem dependências
-                'usuario',             # base de muitas FKs
-                'configuracao'         # sem dependências
-            ]
-
-            # Limpar apenas tabelas que existem na ordem correta
-            for tabela in ordem_limpeza:
-                if tabela in tabelas_existentes:
-                    cursor.execute(f"DELETE FROM {tabela}")
+            # Limpar apenas tabelas que existem (respeitando foreign keys)
+            # Limpar chamado_interacao antes de chamado (devido à FK)
+            if 'chamado_interacao' in tabelas_existentes:
+                cursor.execute("DELETE FROM chamado_interacao")
+            if 'chamado' in tabelas_existentes:
+                cursor.execute("DELETE FROM chamado")
+            if 'usuario' in tabelas_existentes:
+                cursor.execute("DELETE FROM usuario")
+            if 'configuracao' in tabelas_existentes:
+                cursor.execute("DELETE FROM configuracao")
 
             # Resetar autoincrement (limpar sqlite_sequence se existir)
             cursor.execute(
@@ -275,33 +298,7 @@ def admin_autenticado(client, criar_usuario, fazer_login, admin_teste):
 
 
 @pytest.fixture
-def tarefa_teste():
-    """Dados de uma tarefa de teste"""
-    return {
-        "titulo": "Tarefa de Teste",
-        "descricao": "Descrição da tarefa de teste"
-    }
-
-
-@pytest.fixture
-def criar_tarefa(cliente_autenticado):
-    """
-    Fixture que retorna uma função para criar tarefas
-    Requer cliente autenticado
-    """
-    def _criar_tarefa(titulo: str, descricao: str = ""):
-        """Cria uma tarefa via endpoint"""
-        response = cliente_autenticado.post("/tarefas/cadastrar", data={
-            "titulo": titulo,
-            "descricao": descricao
-        }, follow_redirects=False)
-        return response
-
-    return _criar_tarefa
-
-
-@pytest.fixture
-def vendedor_teste():
+def professor_teste():
     """Dados de um professor de teste"""
     return {
         "nome": "Professor Teste",
@@ -312,7 +309,7 @@ def vendedor_teste():
 
 
 @pytest.fixture
-def vendedor_autenticado(client, criar_usuario, fazer_login, vendedor_teste):
+def professor_autenticado(client, criar_usuario, fazer_login, professor_teste):
     """
     Fixture que retorna um cliente autenticado como professor
     """
@@ -324,15 +321,15 @@ def vendedor_autenticado(client, criar_usuario, fazer_login, vendedor_teste):
     # Criar professor diretamente no banco
     professor = Usuario(
         id=0,
-        nome=vendedor_teste["nome"],
-        email=vendedor_teste["email"],
-        senha=criar_hash_senha(vendedor_teste["senha"]),
+        nome=professor_teste["nome"],
+        email=professor_teste["email"],
+        senha=criar_hash_senha(professor_teste["senha"]),
         perfil=Perfil.PROFESSOR.value
     )
     usuario_repo.inserir(professor)
 
     # Fazer login
-    fazer_login(vendedor_teste["email"], vendedor_teste["senha"])
+    fazer_login(professor_teste["email"], professor_teste["senha"])
 
     # Retornar cliente autenticado
     return client
@@ -345,7 +342,10 @@ def foto_teste_base64():
     Útil para testes de upload de foto
     """
     # PNG 1x1 pixel transparente em base64
-    return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    return (
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ"
+        "AAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    )
 
 
 @pytest.fixture
@@ -360,63 +360,6 @@ def criar_backup():
         return sucesso, mensagem
 
     return _criar_backup
-
-
-# ===== TEST HELPERS - Funções auxiliares para assertions =====
-
-def assert_permission_denied(response, expected_redirect: str = "/login"):
-    """
-    Helper para verificar se permissão foi negada.
-
-    Verifica se resposta é 303 e redireciona para login ou página esperada.
-
-    Args:
-        response: Response object do TestClient
-        expected_redirect: URL esperada de redirecionamento (padrão: /login)
-
-    Example:
-        >>> response = client.get("/admin/usuarios")
-        >>> assert_permission_denied(response)
-    """
-    assert response.status_code == status.HTTP_303_SEE_OTHER
-    assert response.headers["location"] == expected_redirect
-
-
-def assert_redirects_to(response, expected_url: str, expected_status: int = status.HTTP_303_SEE_OTHER):
-    """
-    Helper para verificar redirecionamento.
-
-    Args:
-        response: Response object do TestClient
-        expected_url: URL esperada de redirecionamento
-        expected_status: Status code esperado (padrão: 303)
-
-    Example:
-        >>> response = client.post("/login", data={...})
-        >>> assert_redirects_to(response, "/usuario")
-    """
-    assert response.status_code == expected_status
-    assert response.headers.get("location") == expected_url
-
-
-def assert_contains_text(response, text: str, case_sensitive: bool = False):
-    """
-    Helper para verificar se response contém texto.
-
-    Args:
-        response: Response object do TestClient
-        text: Texto esperado no conteúdo
-        case_sensitive: Se deve ser case-sensitive (padrão: False)
-
-    Example:
-        >>> response = client.get("/")
-        >>> assert_contains_text(response, "bem-vindo")
-    """
-    content = response.text
-    if not case_sensitive:
-        assert text.lower() in content.lower()
-    else:
-        assert text in content
 
 
 # ===== FIXTURES AVANÇADAS =====
@@ -492,3 +435,76 @@ def obter_ultimo_backup():
         return backups[0]
 
     return _obter_ultimo_backup
+
+
+@pytest.fixture
+def criar_usuario_direto():
+    """
+    Fixture que retorna função para criar usuário diretamente no banco.
+
+    Útil para testes que precisam criar usuários sem passar pelo endpoint
+    de cadastro (ex: testes de chat, admin, etc).
+
+    Returns:
+        Função que cria usuário e retorna o ID
+    """
+    from repo import usuario_repo
+    from model.usuario_model import Usuario
+    from util.security import criar_hash_senha
+
+    def _criar_usuario_direto(
+        nome: str,
+        email: str,
+        senha: str,
+        perfil: str = Perfil.ALUNO.value
+    ) -> int:
+        """
+        Cria usuário diretamente no banco.
+
+        Args:
+            nome: Nome do usuário
+            email: Email do usuário
+            senha: Senha (será hasheada)
+            perfil: Perfil do usuário (padrão: Aluno)
+
+        Returns:
+            ID do usuário criado
+        """
+        usuario = Usuario(
+            id=0,
+            nome=nome,
+            email=email,
+            senha=criar_hash_senha(senha),
+            perfil=perfil
+        )
+        return usuario_repo.inserir(usuario)
+
+    return _criar_usuario_direto
+
+
+@pytest.fixture
+def bloquear_rate_limiter():
+    """
+    Fixture que retorna função para mockar rate limiter como bloqueado.
+
+    Útil para testes de rate limiting onde se quer simular
+    que o limite foi excedido.
+
+    Returns:
+        Context manager que mocka o limiter especificado
+    """
+    from unittest.mock import patch
+
+    def _bloquear_limiter(limiter_path: str):
+        """
+        Retorna context manager que bloqueia o limiter.
+
+        Args:
+            limiter_path: Caminho do limiter (ex: 'routes.auth_routes.login_limiter')
+
+        Returns:
+            Context manager do patch
+        """
+        return patch(f'{limiter_path}.verificar', return_value=False)
+
+    return _bloquear_limiter

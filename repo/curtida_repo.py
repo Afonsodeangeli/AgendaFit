@@ -1,7 +1,7 @@
 from typing import Optional
 from model.curtida_model import Curtida
 from sql.curtida_sql import *
-from util.db_util import get_connection
+from util.db_util import obter_conexao as get_connection
 
 def criar_tabela() -> bool:
     with get_connection() as conn:
