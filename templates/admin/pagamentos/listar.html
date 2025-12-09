@@ -24,7 +24,7 @@
                                 <th style="width: 15%">Mensalidade</th>
                                 <th style="width: 15%">Valor Pago</th>
                                 <th style="width: 15%">Data</th>
-                                <th class="text-end" style="width: 10%">Ações</th>
+                                <th class="text-center" style="width: 10%">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,7 +52,7 @@
                                 <td>
                                     <small>{{ pagamento.data_pagamento.strftime('%d/%m/%Y %H:%M') if pagamento.data_pagamento else '-' }}</small>
                                 </td>
-                                <td class="text-end">
+                                <td class="text-center">
                                     <div class="btn-group btn-group-sm">
                                         <a href="/admin/pagamentos/editar/{{ pagamento.id_pagamento }}"
                                            class="btn btn-outline-primary"

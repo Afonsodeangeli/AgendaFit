@@ -24,7 +24,7 @@
                                 <th style="width: 15%">Mensalidade</th>
                                 <th style="width: 10%">Vencimento</th>
                                 <th style="width: 15%">Data Matrícula</th>
-                                <th class="text-end" style="width: 15%">Ações</th>
+                                <th class="text-center" style="width: 10%">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,7 +52,7 @@
                                 <td>
                                     <small>{{ matricula.data_matricula.strftime('%d/%m/%Y') if matricula.data_matricula else '-' }}</small>
                                 </td>
-                                <td class="text-end">
+                                <td class="text-center">
                                     <div class="btn-group btn-group-sm">
                                         <a href="/admin/matriculas/editar/{{ matricula.id_matricula }}"
                                            class="btn btn-outline-primary"
