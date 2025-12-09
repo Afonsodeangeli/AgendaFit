@@ -34,7 +34,7 @@
                         {% if matricula.turma %}
                         <p class="mb-2">
                             <strong><i class="bi bi-clock"></i> Horário:</strong><br>
-                            {{ matricula.turma.horario_inicio }} - {{ matricula.turma.horario_fim }}
+                            {{ matricula.turma.horario_inicio.strftime('%H:%M') if matricula.turma.horario_inicio else '-' }} - {{ matricula.turma.horario_fim.strftime('%H:%M') if matricula.turma.horario_fim else '-' }}
                         </p>
                         <p class="mb-2">
                             <strong><i class="bi bi-calendar3"></i> Dias:</strong><br>
@@ -58,7 +58,7 @@
                             <div class="col-6">
                                 <p class="mb-1"><strong><i class="bi bi-calendar-x"></i> Vencimento:</strong></p>
                                 <small class="text-muted">
-                                    Dia {{ matricula.dia_vencimento if matricula.dia_vencimento else '-' }}
+                                    Dia {{ matricula.data_vencimento.day if matricula.data_vencimento else '-' }}
                                 </small>
                             </div>
                         </div>

@@ -21,11 +21,13 @@ OBTER_POR_ALUNO = """
 SELECT m.*,
        t.nome as turma_nome, t.id_atividade, t.id_professor, t.horario_inicio, t.horario_fim, t.dias_semana, t.vagas,
        a.nome as atividade_nome,
-       u.nome as aluno_nome, u.email as aluno_email
+       u.nome as aluno_nome, u.email as aluno_email,
+       p.nome as professor_nome, p.email as professor_email
 FROM matricula m
 JOIN turma t ON m.id_turma = t.id_turma
 JOIN atividade a ON t.id_atividade = a.id_atividade
 JOIN usuario u ON m.id_aluno = u.id
+LEFT JOIN usuario p ON t.id_professor = p.id
 WHERE m.id_aluno = ?
 ORDER BY m.data_matricula DESC
 """

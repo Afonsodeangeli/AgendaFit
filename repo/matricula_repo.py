@@ -36,9 +36,12 @@ from datetime import datetime
 from model.matricula_model import Matricula
 from model.turma_model import Turma
 from model.usuario_model import Usuario
+from model.atividade_model import Atividade
 from sql.matricula_sql import *
 from util.db_util import obter_conexao as get_connection
 
+
+from datetime import time
 
 def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
     if not data_str:
@@ -50,6 +53,21 @@ def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
             return datetime.strptime(data_str, '%Y-%m-%d %H:%M:%S')
         except Exception:
             return None
+
+
+def _converter_horario(horario_str: Optional[str]) -> Optional[time]:
+    """Converte string de horário do banco em objeto time"""
+    if not horario_str:
+        return None
+    if isinstance(horario_str, time):
+        return horario_str
+    try:
+        partes = horario_str.split(':')
+        hora = int(partes[0])
+        minuto = int(partes[1]) if len(partes) > 1 else 0
+        return time(hour=hora, minute=minuto)
+    except (ValueError, TypeError, IndexError):
+        return None
 
 
 def _row_get(row, key: str, default=None):
@@ -99,19 +117,44 @@ def obter_por_aluno(id_aluno: int) -> List[Matricula]:
         rows = cursor.fetchall()
         result: List[Matricula] = []
         for row in rows:
+            # Construir objeto Atividade
+            atividade = Atividade(
+                id_atividade=_row_get(row, "id_atividade", 0),
+                id_categoria=0,
+                nome=_row_get(row, "atividade_nome") or "",
+                descricao="",
+                data_cadastro=None,
+                data_atualizacao=None,
+                categoria_nome=None
+            )
+
+            # Construir objeto Professor
+            professor = None
+            if _row_get(row, "id_professor"):
+                professor = Usuario(
+                    id=_row_get(row, "id_professor"),
+                    nome=_row_get(row, "professor_nome") or "",
+                    email=_row_get(row, "professor_email") or "",
+                    senha="",
+                    perfil="professor",
+                    token_redefinicao=None,
+                    data_token=None,
+                    data_cadastro=None
+                )
+
             turma = Turma(
                 id_turma=row["id_turma"],
                 nome=_row_get(row, "turma_nome") or "",
                 id_atividade=_row_get(row, "id_atividade", 0),
                 id_professor=_row_get(row, "id_professor", 0),
-                horario_inicio=None,
-                horario_fim=None,
+                horario_inicio=_converter_horario(_row_get(row, "horario_inicio")),
+                horario_fim=_converter_horario(_row_get(row, "horario_fim")),
                 dias_semana=_row_get(row, "dias_semana") or "",
                 vagas=_row_get(row, "vagas", 0),
                 data_cadastro=None,
                 data_atualizacao=None,
-                atividade=None,
-                professor=None
+                atividade=atividade,
+                professor=professor
             )
 
             aluno = Usuario(
