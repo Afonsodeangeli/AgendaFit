@@ -116,7 +116,7 @@ async def post_cadastrar(
         )
 
         pagamento_repo.inserir(pagamento)
-        logger.info(f"Pagamento criado: matrícula {dto.id_matricula}, valor R$ {dto.valor_pago} por admin {usuario_logado['id']}")
+        logger.info(f"Pagamento criado: matrícula {dto.id_matricula}, valor R$ {dto.valor_pago} por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Pagamento registrado com sucesso!")
         return RedirectResponse("/admin/pagamentos/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -208,7 +208,7 @@ async def post_editar(
         )
 
         pagamento_repo.alterar(pagamento_atualizado)
-        logger.info(f"Pagamento {id} alterado por admin {usuario_logado['id']}")
+        logger.info(f"Pagamento {id} alterado por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Pagamento alterado com sucesso!")
         return RedirectResponse("/admin/pagamentos/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -242,7 +242,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         return RedirectResponse("/admin/pagamentos/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     pagamento_repo.excluir(id)
-    logger.info(f"Pagamento {id} excluído por admin {usuario_logado['id']}")
+    logger.info(f"Pagamento {id} excluído por admin {usuario_logado.id}")
 
     informar_sucesso(request, "Pagamento excluído com sucesso!")
     return RedirectResponse("/admin/pagamentos/listar", status_code=status.HTTP_303_SEE_OTHER)

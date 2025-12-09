@@ -92,7 +92,7 @@ async def post_cadastrar(
         )
 
         categoria_repo.inserir(categoria)
-        logger.info(f"Categoria '{dto.nome}' cadastrada por admin {usuario_logado['id']}")
+        logger.info(f"Categoria '{dto.nome}' cadastrada por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Categoria cadastrada com sucesso!")
         return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -177,7 +177,7 @@ async def post_editar(
         )
 
         categoria_repo.alterar(categoria_atualizada)
-        logger.info(f"Categoria {id} alterada por admin {usuario_logado['id']}")
+        logger.info(f"Categoria {id} alterada por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Categoria alterada com sucesso!")
         return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -221,7 +221,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     categoria_repo.excluir(id)
-    logger.info(f"Categoria {id} excluída por admin {usuario_logado['id']}")
+    logger.info(f"Categoria {id} excluída por admin {usuario_logado.id}")
 
     informar_sucesso(request, "Categoria excluída com sucesso!")
     return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)

@@ -125,7 +125,7 @@ async def post_cadastrar(
         )
 
         turma_repo.inserir(turma)
-        logger.info(f"Turma '{dto.nome}' cadastrada por admin {usuario_logado['id']}")
+        logger.info(f"Turma '{dto.nome}' cadastrada por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Turma cadastrada com sucesso!")
         return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -290,7 +290,7 @@ async def post_editar(
         )
 
         turma_repo.alterar(turma_atualizada)
-        logger.info(f"Turma {id} alterada por admin {usuario_logado['id']}")
+        logger.info(f"Turma {id} alterada por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Turma alterada com sucesso!")
         return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -336,7 +336,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     turma_repo.excluir(id)
-    logger.info(f"Turma {id} excluída por admin {usuario_logado['id']}")
+    logger.info(f"Turma {id} excluída por admin {usuario_logado.id}")
 
     informar_sucesso(request, "Turma excluída com sucesso!")
     return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)

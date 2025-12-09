@@ -98,7 +98,7 @@ async def post_cadastrar(
         )
 
         atividade_repo.inserir(atividade)
-        logger.info(f"Atividade '{dto.nome}' cadastrada por admin {usuario_logado['id']}")
+        logger.info(f"Atividade '{dto.nome}' cadastrada por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Atividade cadastrada com sucesso!")
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -193,7 +193,7 @@ async def post_editar(
         )
 
         atividade_repo.alterar(atividade_atualizada)
-        logger.info(f"Atividade {id} alterada por admin {usuario_logado['id']}")
+        logger.info(f"Atividade {id} alterada por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Atividade alterada com sucesso!")
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -238,7 +238,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     atividade_repo.excluir(id)
-    logger.info(f"Atividade {id} excluída por admin {usuario_logado['id']}")
+    logger.info(f"Atividade {id} excluída por admin {usuario_logado.id}")
 
     informar_sucesso(request, "Atividade excluída com sucesso!")
     return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)

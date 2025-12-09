@@ -120,7 +120,7 @@ async def post_cadastrar(
         )
 
         usuario_repo.inserir(aluno)
-        logger.info(f"Aluno '{dto.email}' cadastrado por admin {usuario_logado['id']}")
+        logger.info(f"Aluno '{dto.email}' cadastrado por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Aluno cadastrado com sucesso!")
         return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -212,7 +212,7 @@ async def post_editar(
         )
 
         usuario_repo.alterar(aluno_atualizado)
-        logger.info(f"Aluno {id} alterado por admin {usuario_logado['id']}")
+        logger.info(f"Aluno {id} alterado por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Aluno alterado com sucesso!")
         return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -256,7 +256,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     usuario_repo.excluir(id)
-    logger.info(f"Aluno {id} excluído por admin {usuario_logado['id']}")
+    logger.info(f"Aluno {id} excluído por admin {usuario_logado.id}")
 
     informar_sucesso(request, "Aluno excluído com sucesso!")
     return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)

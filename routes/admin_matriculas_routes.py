@@ -167,7 +167,7 @@ async def post_cadastrar(
         )
 
         matricula_repo.inserir(matricula)
-        logger.info(f"Matrícula criada: aluno {dto.id_aluno} na turma {dto.id_turma} por admin {usuario_logado['id']}")
+        logger.info(f"Matrícula criada: aluno {dto.id_aluno} na turma {dto.id_turma} por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Matrícula cadastrada com sucesso!")
         return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -303,7 +303,7 @@ async def post_editar(
         )
 
         matricula_repo.alterar(matricula_atualizada)
-        logger.info(f"Matrícula {id} alterada por admin {usuario_logado['id']}")
+        logger.info(f"Matrícula {id} alterada por admin {usuario_logado.id}")
 
         informar_sucesso(request, "Matrícula alterada com sucesso!")
         return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
@@ -349,7 +349,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     matricula_repo.excluir(id)
-    logger.info(f"Matrícula {id} excluída por admin {usuario_logado['id']}")
+    logger.info(f"Matrícula {id} excluída por admin {usuario_logado.id}")
 
     informar_sucesso(request, "Matrícula cancelada com sucesso!")
     return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
