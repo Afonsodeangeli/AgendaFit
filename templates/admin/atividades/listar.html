@@ -19,8 +19,9 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 30%">Nome</th>
-                                <th style="width: 50%">Descrição</th>
+                                <th style="width: 25%">Nome</th>
+                                <th style="width: 20%">Categoria</th>
+                                <th style="width: 35%">Descrição</th>
                                 <th class="text-end" style="width: 20%">Ações</th>
                             </tr>
                         </thead>
@@ -29,6 +30,13 @@
                             <tr>
                                 <td>
                                     <strong>{{ atividade.nome }}</strong>
+                                </td>
+                                <td>
+                                    {% if atividade.categoria_nome %}
+                                    <span class="badge bg-secondary">{{ atividade.categoria_nome }}</span>
+                                    {% else %}
+                                    <em class="text-muted">Sem categoria</em>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if atividade.descricao %}

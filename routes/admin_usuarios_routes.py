@@ -3,6 +3,7 @@
 # =============================================================================
 
 # Standard library
+from datetime import date
 from typing import Optional
 
 # Third-party
@@ -95,6 +96,9 @@ async def post_cadastrar(
     email: str = Form(...),
     senha: str = Form(...),
     perfil: str = Form(...),
+    data_nascimento: Optional[str] = Form(None),
+    numero_documento: str = Form(""),
+    telefone: str = Form(""),
     usuario_logado: Optional[UsuarioLogado] = None
 ):
     """Cadastra um novo usuário"""
@@ -107,8 +111,23 @@ async def post_cadastrar(
         informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
         return RedirectResponse("/admin/usuarios/listar", status_code=status.HTTP_303_SEE_OTHER)
 
+    # Converter data de nascimento
+    data_nasc_convertida: Optional[date] = None
+    if data_nascimento:
+        try:
+            data_nasc_convertida = date.fromisoformat(data_nascimento)
+        except ValueError:
+            pass
+
     # Armazena os dados do formulário para reexibição em caso de erro
-    dados_formulario: dict = {"nome": nome, "email": email, "perfil": perfil}
+    dados_formulario: dict = {
+        "nome": nome,
+        "email": email,
+        "perfil": perfil,
+        "data_nascimento": data_nascimento,
+        "numero_documento": numero_documento,
+        "telefone": telefone
+    }
 
     try:
         # Validar com DTO
@@ -116,7 +135,10 @@ async def post_cadastrar(
             nome=nome,
             email=email,
             senha=senha,
-            perfil=perfil
+            perfil=perfil,
+            data_nascimento=data_nasc_convertida,
+            numero_documento=numero_documento,
+            telefone=telefone
         )
 
         # Verificar se e-mail já existe
@@ -129,7 +151,7 @@ async def post_cadastrar(
                 {
                     "request": request,
                     "perfis": perfis,
-                    "dados": {"nome": nome, "email": email, "perfil": perfil},
+                    "dados": dados_formulario,
                     "usuario_logado": usuario_logado,
                 }
             )
@@ -143,7 +165,11 @@ async def post_cadastrar(
             nome=dto.nome,
             email=dto.email,
             senha=senha_hash,
-            perfil=dto.perfil
+            perfil=dto.perfil,
+            data_nascimento=dto.data_nascimento,
+            numero_documento=dto.numero_documento,
+            telefone=dto.telefone,
+            confirmado=True
         )
 
         usuario_repo.inserir(usuario)
@@ -204,6 +230,9 @@ async def post_editar(
     nome: str = Form(...),
     email: str = Form(...),
     perfil: str = Form(...),
+    data_nascimento: Optional[str] = Form(None),
+    numero_documento: str = Form(""),
+    telefone: str = Form(""),
     usuario_logado: Optional[UsuarioLogado] = None
 ):
     """Altera dados de um usuário"""
@@ -226,8 +255,24 @@ async def post_editar(
     if isinstance(usuario_atual, RedirectResponse):
         return usuario_atual
 
+    # Converter data de nascimento
+    data_nasc_convertida: Optional[date] = None
+    if data_nascimento:
+        try:
+            data_nasc_convertida = date.fromisoformat(data_nascimento)
+        except ValueError:
+            pass
+
     # Armazena os dados do formulário para reexibição em caso de erro
-    dados_formulario: dict = {"id": id, "nome": nome, "email": email, "perfil": perfil}
+    dados_formulario: dict = {
+        "id": id,
+        "nome": nome,
+        "email": email,
+        "perfil": perfil,
+        "data_nascimento": data_nascimento,
+        "numero_documento": numero_documento,
+        "telefone": telefone
+    }
 
     try:
         # Validar com DTO
@@ -235,7 +280,10 @@ async def post_editar(
             id=id,
             nome=nome,
             email=email,
-            perfil=perfil
+            perfil=perfil,
+            data_nascimento=data_nasc_convertida,
+            numero_documento=numero_documento,
+            telefone=telefone
         )
 
         # Verificar se e-mail já existe em outro usuário
@@ -249,7 +297,7 @@ async def post_editar(
                     "request": request,
                     "usuario": usuario_atual,
                     "perfis": perfis,
-                    "dados": {"id": id, "nome": nome, "email": email, "perfil": perfil},
+                    "dados": dados_formulario,
                     "usuario_logado": usuario_logado,
                 }
             )
@@ -260,7 +308,11 @@ async def post_editar(
             nome=dto.nome,
             email=dto.email,
             senha=usuario_atual.senha,  # Mantém senha existente
-            perfil=dto.perfil
+            perfil=dto.perfil,
+            data_nascimento=dto.data_nascimento,
+            numero_documento=dto.numero_documento,
+            telefone=dto.telefone,
+            confirmado=usuario_atual.confirmado  # Mantém status de confirmação
         )
 
         usuario_repo.alterar(usuario_atualizado)

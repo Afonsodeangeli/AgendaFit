@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 
 
@@ -17,6 +17,10 @@ class Usuario:
         email: Email único (usado para login)
         senha: Senha hasheada (nunca plaintext)
         perfil: Tipo de usuário ('admin', 'professor', 'aluno')
+        data_nascimento: Data de nascimento do usuário
+        numero_documento: Número do documento (CPF, RG, etc)
+        telefone: Telefone de contato
+        confirmado: Se o usuário confirmou a conta (campo interno)
         token_redefinicao: Token para redefinição de senha (temporário)
         data_token: Data de expiração do token de redefinição
         data_cadastro: Data de criação do registro
@@ -33,6 +37,10 @@ class Usuario:
     email: str
     senha: str
     perfil: str
+    data_nascimento: Optional[date] = None
+    numero_documento: str = ""
+    telefone: str = ""
+    confirmado: bool = True
     token_redefinicao: Optional[str] = None
     data_token: Optional[datetime] = None
     data_cadastro: Optional[datetime] = None

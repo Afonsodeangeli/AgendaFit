@@ -1,9 +1,8 @@
 """
-DTOs para validação de dados de Atividade.
+DTOs para validação de dados de Categoria.
 
-Fornece validação de campos para operações CRUD de atividades.
+Fornece validação de campos para operações CRUD de categorias.
 """
-from typing import Optional
 from pydantic import BaseModel, field_validator
 from dtos.validators import (
     validar_string_obrigatoria,
@@ -12,10 +11,9 @@ from dtos.validators import (
 )
 
 
-class CriarAtividadeDTO(BaseModel):
-    """DTO para criação de atividade"""
+class CriarCategoriaDTO(BaseModel):
+    """DTO para criação de categoria"""
 
-    id_categoria: Optional[int] = None
     nome: str
     descricao: str = ""
 
@@ -23,15 +21,14 @@ class CriarAtividadeDTO(BaseModel):
         validar_string_obrigatoria("Nome", tamanho_minimo=3, tamanho_maximo=100)
     )
     _validar_descricao = field_validator("descricao")(
-        validar_comprimento(tamanho_maximo=1000)
+        validar_comprimento(tamanho_maximo=500)
     )
 
 
-class AlterarAtividadeDTO(BaseModel):
-    """DTO para alteração de atividade"""
+class AlterarCategoriaDTO(BaseModel):
+    """DTO para alteração de categoria"""
 
     id: int
-    id_categoria: Optional[int] = None
     nome: str
     descricao: str = ""
 
@@ -40,5 +37,5 @@ class AlterarAtividadeDTO(BaseModel):
         validar_string_obrigatoria("Nome", tamanho_minimo=3, tamanho_maximo=100)
     )
     _validar_descricao = field_validator("descricao")(
-        validar_comprimento(tamanho_maximo=1000)
+        validar_comprimento(tamanho_maximo=500)
     )

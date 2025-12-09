@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 from model.usuario_model import Usuario
 from sql.usuario_sql import (
@@ -22,6 +22,18 @@ from util.db_util import obter_conexao
 from util.foto_util import criar_foto_padrao_usuario
 
 
+def _converter_data_nascimento(data_str: Optional[str]) -> Optional[date]:
+    """Converte string de data do banco em objeto date"""
+    if not data_str:
+        return None
+    if isinstance(data_str, date):
+        return data_str
+    try:
+        return datetime.strptime(data_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        return None
+
+
 def _row_to_usuario(row: sqlite3.Row) -> Usuario:
     """
     Converte uma linha do banco de dados em objeto Usuario.
@@ -38,6 +50,10 @@ def _row_to_usuario(row: sqlite3.Row) -> Usuario:
         email=row["email"],
         senha=row["senha"],
         perfil=row["perfil"],
+        data_nascimento=_converter_data_nascimento(row["data_nascimento"]) if "data_nascimento" in row.keys() else None,
+        numero_documento=row["numero_documento"] if "numero_documento" in row.keys() else "",
+        telefone=row["telefone"] if "telefone" in row.keys() else "",
+        confirmado=bool(row["confirmado"]) if "confirmado" in row.keys() else True,
         token_redefinicao=row["token_redefinicao"] if "token_redefinicao" in row.keys() else None,
         data_token=row["data_token"] if "data_token" in row.keys() else None,
         data_cadastro=row["data_cadastro"] if "data_cadastro" in row.keys() else None,
@@ -59,7 +75,11 @@ def inserir(usuario: Usuario) -> Optional[int]:
             usuario.nome,
             usuario.email,
             usuario.senha,
-            usuario.perfil
+            usuario.perfil,
+            usuario.data_nascimento.isoformat() if usuario.data_nascimento else None,
+            usuario.numero_documento,
+            usuario.telefone,
+            1 if usuario.confirmado else 0
         ))
         usuario_id = cursor.lastrowid
 
@@ -77,6 +97,9 @@ def alterar(usuario: Usuario) -> bool:
             usuario.nome,
             usuario.email,
             usuario.perfil,
+            usuario.data_nascimento.isoformat() if usuario.data_nascimento else None,
+            usuario.numero_documento,
+            usuario.telefone,
             usuario.id
         ))
         return cursor.rowcount > 0

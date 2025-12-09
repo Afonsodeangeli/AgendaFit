@@ -15,6 +15,7 @@ from typing import Optional
 from datetime import datetime
 from model.atividade_model import Atividade
 from sql.atividade_sql import *
+from sql.atividade_sql import OBTER_POR_CATEGORIA
 from util.db_util import obter_conexao as get_connection
 
 
@@ -49,6 +50,7 @@ def inserir(atividade: Atividade) -> Optional[int]:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
+            atividade.id_categoria,
             atividade.nome,
             atividade.descricao
         ))
@@ -58,6 +60,7 @@ def alterar(atividade: Atividade) -> bool:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR, (
+            atividade.id_categoria,
             atividade.nome,
             atividade.descricao,
             atividade.id_atividade
@@ -78,10 +81,12 @@ def obter_por_id(id: int) -> Optional[Atividade]:
         if row:
             return Atividade(
                 id_atividade=row["id_atividade"],
+                id_categoria=_row_get(row, "id_categoria"),
                 nome=row["nome"],
                 descricao=row["descricao"],
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao"))
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
+                categoria_nome=_row_get(row, "categoria_nome")
             )
         return None
 
@@ -93,10 +98,12 @@ def obter_todas() -> list[Atividade]:
         return [
             Atividade(
                 id_atividade=row["id_atividade"],
+                id_categoria=_row_get(row, "id_categoria"),
                 nome=row["nome"],
                 descricao=row["descricao"],
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao"))
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
+                categoria_nome=_row_get(row, "categoria_nome")
             )
             for row in rows
         ]
@@ -107,3 +114,23 @@ def obter_quantidade() -> int:
         cursor.execute(OBTER_QUANTIDADE)
         row = cursor.fetchone()
         return row["quantidade"] if row else 0
+
+
+def obter_por_categoria(id_categoria: int) -> list[Atividade]:
+    """Obtém todas as atividades de uma categoria específica"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_POR_CATEGORIA, (id_categoria,))
+        rows = cursor.fetchall()
+        return [
+            Atividade(
+                id_atividade=row["id_atividade"],
+                id_categoria=_row_get(row, "id_categoria"),
+                nome=row["nome"],
+                descricao=row["descricao"],
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
+                categoria_nome=_row_get(row, "categoria_nome")
+            )
+            for row in rows
+        ]

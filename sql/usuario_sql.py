@@ -5,6 +5,10 @@ CREATE TABLE IF NOT EXISTS usuario (
     email TEXT UNIQUE NOT NULL,
     senha TEXT NOT NULL,
     perfil TEXT NOT NULL,
+    data_nascimento DATE,
+    numero_documento TEXT DEFAULT '',
+    telefone TEXT DEFAULT '',
+    confirmado INTEGER DEFAULT 1,
     token_redefinicao TEXT,
     data_token TIMESTAMP,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -13,13 +17,13 @@ CREATE TABLE IF NOT EXISTS usuario (
 """
 
 INSERIR = """
-INSERT INTO usuario (nome, email, senha, perfil)
-VALUES (?, ?, ?, ?)
+INSERT INTO usuario (nome, email, senha, perfil, data_nascimento, numero_documento, telefone, confirmado)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 ALTERAR = """
 UPDATE usuario
-SET nome = ?, email = ?, perfil = ?, data_atualizacao = CURRENT_TIMESTAMP
+SET nome = ?, email = ?, perfil = ?, data_nascimento = ?, numero_documento = ?, telefone = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id = ?
 """
 

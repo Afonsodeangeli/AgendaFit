@@ -15,10 +15,10 @@ from util.flash_messages import informar_sucesso, informar_erro
 from util.template_util import criar_templates
 from util.logger_config import logger
 from util.rate_limiter import RateLimiter
-from util.exceptions import FormValidationError
+from util.exceptions import ErroValidacaoFormulario
 from util.rate_limiter import obter_identificador_cliente
 
-from repo import atividade_repo
+from repo import atividade_repo, categoria_repo
 from model.atividade_model import Atividade
 from dtos.atividade_dto import CriarAtividadeDTO, AlterarAtividadeDTO
 
@@ -28,7 +28,7 @@ router = APIRouter(prefix="/admin/atividades")
 admin_atividades_limiter = RateLimiter(max_tentativas=10, janela_minutos=1)
 
 # Instância global de templates para este conjunto de rotas
-templates = criar_templates("templates/admin/atividades")
+templates = criar_templates()
 
 @router.get("/listar")
 @requer_autenticacao([Perfil.ADMIN.value])
@@ -49,10 +49,12 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
 @requer_autenticacao([Perfil.ADMIN.value])
 async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário de cadastro de atividade"""
+    categorias = categoria_repo.obter_todas()
     return templates.TemplateResponse(
         "admin/atividades/cadastrar.html",
         {
-            "request": request
+            "request": request,
+            "categorias": categorias
         }
     )
 
@@ -63,6 +65,7 @@ async def post_cadastrar(
     request: Request,
     nome: str = Form(...),
     descricao: str = Form(""),
+    id_categoria: Optional[int] = Form(None),
     usuario_logado: Optional[dict] = None
 ):
     """Cadastra uma nova atividade"""
@@ -77,16 +80,18 @@ async def post_cadastrar(
     # Armazena dados do formulário
     dados_formulario: dict = {
         "nome": nome,
-        "descricao": descricao
+        "descricao": descricao,
+        "id_categoria": id_categoria
     }
 
     try:
         # Validar com DTO
-        dto = CriarAtividadeDTO(nome=nome, descricao=descricao)
+        dto = CriarAtividadeDTO(nome=nome, descricao=descricao, id_categoria=id_categoria)
 
         # Criar atividade
         atividade = Atividade(
             id_atividade=0,
+            id_categoria=dto.id_categoria,
             nome=dto.nome,
             descricao=dto.descricao,
             data_cadastro=datetime.now()
@@ -99,7 +104,8 @@ async def post_cadastrar(
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        raise FormValidationError(
+        dados_formulario["categorias"] = categoria_repo.obter_todas()
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/atividades/cadastrar.html",
             dados_formulario=dados_formulario,
@@ -117,13 +123,17 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
         informar_erro(request, "Atividade não encontrada")
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
 
+    categorias = categoria_repo.obter_todas()
+
     return templates.TemplateResponse(
         "admin/atividades/editar.html",
         {
             "request": request,
             "atividade": atividade,
+            "categorias": categorias,
             "dados": {
                 "id": atividade.id_atividade,
+                "id_categoria": atividade.id_categoria,
                 "nome": atividade.nome,
                 "descricao": atividade.descricao
             }
@@ -138,6 +148,7 @@ async def post_editar(
     id: int,
     nome: str = Form(...),
     descricao: str = Form(""),
+    id_categoria: Optional[int] = Form(None),
     usuario_logado: Optional[dict] = None
 ):
     """Edita uma atividade existente"""
@@ -158,6 +169,7 @@ async def post_editar(
     # Armazena dados do formulário
     dados_formulario: dict = {
         "id": id,
+        "id_categoria": id_categoria,
         "nome": nome,
         "descricao": descricao
     }
@@ -166,6 +178,7 @@ async def post_editar(
         # Validar com DTO
         dto = AlterarAtividadeDTO(
             id=id,
+            id_categoria=id_categoria,
             nome=nome,
             descricao=descricao
         )
@@ -173,6 +186,7 @@ async def post_editar(
         # Atualizar atividade
         atividade_atualizada = Atividade(
             id_atividade=id,
+            id_categoria=dto.id_categoria,
             nome=dto.nome,
             descricao=dto.descricao,
             data_cadastro=atividade_atual.data_cadastro
@@ -186,7 +200,8 @@ async def post_editar(
 
     except ValidationError as e:
         dados_formulario["atividade"] = atividade_atual
-        raise FormValidationError(
+        dados_formulario["categorias"] = categoria_repo.obter_todas()
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/atividades/editar.html",
             dados_formulario=dados_formulario,

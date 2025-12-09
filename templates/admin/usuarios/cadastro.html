@@ -34,7 +34,21 @@
 
                         <div class="col-12 mb-3">
                             {{ field(name='email', label='Email', type='email', required=true) }}
-                        </div>                        
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='data_nascimento', label='Data de Nascimento', type='date') }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='numero_documento', label='Documento (CPF/RG)', type='text',
+                                   attributes={'maxlength': 20, 'placeholder': 'Ex: 123.456.789-00'}) }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='telefone', label='Telefone', type='tel',
+                                   attributes={'maxlength': 15, 'placeholder': '(99) 99999-9999'}) }}
+                        </div>
 
                         <div class="col-md-6 mb-3 mb-md-0">
                             {{ field(name='senha', label='Senha', type='password', required=true,

@@ -1,7 +1,8 @@
 import sqlite3
 
-from repo import usuario_repo
+from repo import usuario_repo, categoria_repo
 from model.usuario_model import Usuario
+from model.categoria_model import Categoria
 from util.security import criar_hash_senha
 from util.logger_config import logger
 from util.perfis import Perfil
@@ -66,6 +67,59 @@ def carregar_usuarios_seed():
     logger.info(f"Resumo do seed de usuarios: {usuarios_criados} criados, {usuarios_com_erro} com erro")
 
 
+def carregar_categorias_seed():
+    """
+    Carrega categorias padrão de atividades físicas.
+
+    Só insere categorias se não houver nenhuma categoria cadastrada no banco.
+    """
+    # Verificar se já existem categorias cadastradas
+    quantidade_categorias = categoria_repo.obter_quantidade()
+    if quantidade_categorias > 0:
+        logger.info(f"Já existem {quantidade_categorias} categorias cadastradas. Seed não será executado.")
+        return
+
+    categorias_criadas = 0
+    categorias_com_erro = 0
+
+    logger.info("Nenhuma categoria encontrada. Iniciando seed de categorias padrão...")
+
+    # Categorias padrão para academia/atividades físicas
+    categorias_padrao = [
+        ("Musculação", "Exercícios de força e hipertrofia muscular"),
+        ("Cardio", "Atividades cardiovasculares e aeróbicas"),
+        ("Funcional", "Treinos funcionais e cross training"),
+        ("Lutas", "Artes marciais e esportes de combate"),
+        ("Dança", "Aulas de dança e ritmos"),
+        ("Aquático", "Atividades em piscina como natação e hidroginástica"),
+        ("Yoga/Pilates", "Práticas de alongamento, equilíbrio e consciência corporal"),
+        ("Esportes", "Práticas esportivas coletivas e individuais"),
+    ]
+
+    for nome, descricao in categorias_padrao:
+        try:
+            categoria = Categoria(
+                id_categoria=0,
+                nome=nome,
+                descricao=descricao
+            )
+
+            categoria_id = categoria_repo.inserir(categoria)
+            if categoria_id:
+                logger.info(f"Categoria '{nome}' criada com sucesso (ID: {categoria_id})")
+                categorias_criadas += 1
+            else:
+                logger.error(f"Falha ao inserir categoria '{nome}' no banco")
+                categorias_com_erro += 1
+
+        except sqlite3.Error as e:
+            logger.error(f"Erro ao processar categoria '{nome}': {e}")
+            categorias_com_erro += 1
+
+    # Resumo
+    logger.info(f"Resumo do seed de categorias: {categorias_criadas} criadas, {categorias_com_erro} com erro")
+
+
 def inicializar_dados():
     """Inicializa todos os dados seed"""
     logger.info("=" * 50)
@@ -74,6 +128,7 @@ def inicializar_dados():
 
     try:
         carregar_usuarios_seed()
+        carregar_categorias_seed()
         logger.info("=" * 50)
         logger.info("Dados seed carregados!")
         logger.info("=" * 50)

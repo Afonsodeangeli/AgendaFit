@@ -23,6 +23,19 @@
                                    value=dados.nome, attributes={'maxlength': 100}) }}
                         </div>
 
+                        <div class="col-12 mb-3">
+                            <label for="id_categoria" class="form-label">Categoria</label>
+                            <select name="id_categoria" id="id_categoria" class="form-select">
+                                <option value="">-- Selecione uma categoria --</option>
+                                {% for categoria in categorias %}
+                                <option value="{{ categoria.id_categoria }}"
+                                    {% if dados.id_categoria == categoria.id_categoria %}selected{% endif %}>
+                                    {{ categoria.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
                         <div class="col-12">
                             {{ field(name='descricao', label='Descrição', type='textarea', rows=4,
                                    value=dados.descricao, attributes={'maxlength': 1000}, wrapper_class='mb-0') }}

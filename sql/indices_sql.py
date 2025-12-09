@@ -41,6 +41,12 @@ CREATE INDEX IF NOT EXISTS idx_chat_participante_usuario_id
 ON chat_participante(usuario_id)
 """
 
+# Índices da tabela atividade
+CRIAR_INDICE_ATIVIDADE_CATEGORIA = """
+CREATE INDEX IF NOT EXISTS idx_atividade_categoria
+ON atividade(id_categoria)
+"""
+
 # Lista de todos os índices para criação
 TODOS_INDICES = [
     # Usuario
@@ -54,4 +60,6 @@ TODOS_INDICES = [
     # Chat
     CRIAR_INDICE_CHAT_MENSAGEM_SALA,
     CRIAR_INDICE_CHAT_PARTICIPANTE_USUARIO,
+    # Atividade
+    CRIAR_INDICE_ATIVIDADE_CATEGORIA,
 ]

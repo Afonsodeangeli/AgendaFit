@@ -8,6 +8,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2><i class="bi bi-database"></i> Gerenciar Backups</h2>
             <form method="post" action="/admin/backups/criar">
+                {{ csrf_input(request) }}
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-plus-circle"></i> Criar Backup
                 </button>
@@ -22,6 +23,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th scope="col">Nome do Arquivo</th>
+                                <th scope="col">Tipo</th>
                                 <th scope="col">Data/Hora</th>
                                 <th scope="col">Tamanho</th>
                                 <th scope="col" class="text-center">Ações</th>
@@ -30,25 +32,33 @@
                         <tbody>
                             {% for backup in backups %}
                             <tr>
-                                <td>{{ backup.nome }}</td>
-                                <td>{{ backup.data_hora|data_br if backup.data_hora else '-' }}</td>
-                                <td>{{ backup.tamanho_mb }} MB</td>
+                                <td>{{ backup.nome_arquivo }}</td>
+                                <td>
+                                    {% if backup.tipo == 'automático' %}
+                                    <span class="badge bg-secondary">Automático</span>
+                                    {% else %}
+                                    <span class="badge bg-primary">Manual</span>
+                                    {% endif %}
+                                </td>
+                                <td>{% if backup.data_criacao %}{{ backup.data_criacao|formatar_data_hora }}{% else %}-{% endif %}</td>
+                                <td>{{ backup.tamanho_formatado }}</td>
                                 <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <form method="post" action="/admin/backups/restaurar" class="d-inline">
-                                            <input type="hidden" name="nome_arquivo" value="{{ backup.nome }}">
-                                            <button type="submit" class="btn btn-outline-warning" title="Restaurar">
+                                    <div class="d-inline-flex gap-1">
+                                        <form method="post" action="/admin/backups/restaurar/{{ backup.nome_arquivo }}">
+                                            {{ csrf_input(request) }}
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Restaurar" aria-label="Restaurar backup">
                                                 <i class="bi bi-arrow-counterclockwise"></i>
                                             </button>
                                         </form>
-                                        <a href="/admin/backups/download/{{ backup.nome }}"
-                                           class="btn btn-outline-info"
-                                           title="Download">
+                                        <a href="/admin/backups/download/{{ backup.nome_arquivo }}"
+                                           class="btn btn-sm btn-outline-info"
+                                           title="Download"
+                                           aria-label="Download backup">
                                             <i class="bi bi-download"></i>
                                         </a>
-                                        <form method="post" action="/admin/backups/excluir" class="d-inline">
-                                            <input type="hidden" name="nome_arquivo" value="{{ backup.nome }}">
-                                            <button type="submit" class="btn btn-outline-danger" title="Excluir">
+                                        <form method="post" action="/admin/backups/excluir/{{ backup.nome_arquivo }}">
+                                            {{ csrf_input(request) }}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir" aria-label="Excluir backup">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>

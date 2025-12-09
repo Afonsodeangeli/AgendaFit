@@ -38,6 +38,23 @@
                             value=dados.email) }}
                         </div>
 
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='data_nascimento', label='Data de Nascimento', type='date',
+                            value=dados.data_nascimento.isoformat() if dados.data_nascimento else '') }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='numero_documento', label='Documento (CPF/RG)', type='text',
+                                   value=dados.numero_documento,
+                                   attributes={'maxlength': 20, 'placeholder': 'Ex: 123.456.789-00'}) }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='telefone', label='Telefone', type='tel',
+                                   value=dados.telefone,
+                                   attributes={'maxlength': 15, 'placeholder': '(99) 99999-9999'}) }}
+                        </div>
+
                         <div class="col-12">
                             <div class="alert alert-info">
                                 <i class="bi bi-info-circle"></i>
