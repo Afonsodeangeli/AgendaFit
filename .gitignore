@@ -42,8 +42,7 @@ env/
 *~
 .DS_Store
 
-# Database
-*.db
+# Databases
 *.sqlite
 *.sqlite3
 *.db-journal
