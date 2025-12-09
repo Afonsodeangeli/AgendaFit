@@ -19,9 +19,9 @@ VALUES (?, ?, ?, ?)
 
 OBTER_POR_ALUNO = """
 SELECT m.*,
-       t.id_atividade, t.id_professor,
+       t.nome as turma_nome, t.id_atividade, t.id_professor, t.horario_inicio, t.horario_fim, t.dias_semana, t.vagas,
        a.nome as atividade_nome,
-       u.nome as aluno_nome
+       u.nome as aluno_nome, u.email as aluno_email
 FROM matricula m
 JOIN turma t ON m.id_turma = t.id_turma
 JOIN atividade a ON t.id_atividade = a.id_atividade

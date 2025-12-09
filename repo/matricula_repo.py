@@ -101,17 +101,23 @@ def obter_por_aluno(id_aluno: int) -> List[Matricula]:
         for row in rows:
             turma = Turma(
                 id_turma=row["id_turma"],
-                id_atividade=_row_get(row,"id_atividade", 0),
-                id_professor=_row_get(row,"id_professor", 0),
+                nome=_row_get(row, "turma_nome") or "",
+                id_atividade=_row_get(row, "id_atividade", 0),
+                id_professor=_row_get(row, "id_professor", 0),
+                horario_inicio=None,
+                horario_fim=None,
+                dias_semana=_row_get(row, "dias_semana") or "",
+                vagas=_row_get(row, "vagas", 0),
                 data_cadastro=None,
+                data_atualizacao=None,
                 atividade=None,
                 professor=None
             )
 
             aluno = Usuario(
-                id=_row_get(row,"id_aluno"),
-                nome=_row_get(row,"aluno_nome") or "",
-                email=_row_get(row,"aluno_email") or "",
+                id=_row_get(row, "id_aluno"),
+                nome=_row_get(row, "aluno_nome") or "",
+                email=_row_get(row, "aluno_email") or "",
                 senha="",
                 perfil="",
                 token_redefinicao=None,
@@ -123,9 +129,9 @@ def obter_por_aluno(id_aluno: int) -> List[Matricula]:
                 id_matricula=row["id_matricula"],
                 id_turma=row["id_turma"],
                 id_aluno=row["id_aluno"],
-                data_matricula=_converter_data(_row_get(row,"data_matricula")),
-                valor_mensalidade=_row_get(row,"valor_mensalidade"),
-                data_vencimento=_converter_data(_row_get(row,"data_vencimento")),
+                data_matricula=_converter_data(_row_get(row, "data_matricula")),
+                valor_mensalidade=_row_get(row, "valor_mensalidade"),
+                data_vencimento=_converter_data(_row_get(row, "data_vencimento")),
                 turma=turma,
                 aluno=aluno
             )
