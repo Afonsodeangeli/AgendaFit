@@ -1,0 +1,100 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Meus Pagamentos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-cash-coin"></i> Meus Pagamentos</h2>
+            <a href="/usuario" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+            </a>
+        </div>
+
+        {% if pagamentos %}
+        <!-- Resumo -->
+        {% set total_pago = pagamentos|map(attribute='valor_pago')|select('number')|sum %}
+        <div class="card mb-4 shadow-sm bg-light">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="mb-0">
+                            <i class="bi bi-graph-up-arrow text-success"></i>
+                            Total de Pagamentos: {{ pagamentos|length }}
+                        </h5>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h5 class="mb-0">
+                            <span class="badge bg-success fs-5">
+                                Total Pago: R$ {{ "%.2f"|format(total_pago) }}
+                            </span>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%">Turma</th>
+                                <th style="width: 20%">Atividade</th>
+                                <th style="width: 15%">Mensalidade</th>
+                                <th style="width: 20%">Valor Pago</th>
+                                <th style="width: 20%">Data do Pagamento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pagamento in pagamentos %}
+                            <tr>
+                                <td>
+                                    <strong>
+                                        {{ pagamento.matricula.turma.nome if pagamento.matricula and pagamento.matricula.turma else 'N/A' }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        {{ pagamento.matricula.turma.atividade.nome if pagamento.matricula and pagamento.matricula.turma and pagamento.matricula.turma.atividade else 'N/A' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        R$ {{ "%.2f"|format(pagamento.matricula.valor_mensalidade) if pagamento.matricula and pagamento.matricula.valor_mensalidade else '0.00' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <strong class="text-success">
+                                        R$ {{ "%.2f"|format(pagamento.valor_pago) if pagamento.valor_pago else '0.00' }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <small>
+                                        <i class="bi bi-calendar-check"></i>
+                                        {{ pagamento.data_pagamento.strftime('%d/%m/%Y %H:%M') if pagamento.data_pagamento else '-' }}
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <small><i class="bi bi-info-circle"></i> Histórico completo de pagamentos</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhum pagamento encontrado</h4>
+            <p>Você ainda não possui pagamentos registrados.</p>
+            <hr>
+            <p class="mb-0">Os pagamentos aparecerão aqui após serem registrados pela administração.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

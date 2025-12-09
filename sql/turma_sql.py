@@ -6,8 +6,13 @@
 CRIAR_TABELA = """
 CREATE TABLE IF NOT EXISTS turma (
     id_turma INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
     id_atividade INTEGER NOT NULL,
     id_professor INTEGER NOT NULL,
+    horario_inicio TEXT NOT NULL,
+    horario_fim TEXT NOT NULL,
+    dias_semana TEXT NOT NULL,
+    vagas INTEGER NOT NULL DEFAULT 20,
     data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade) ON DELETE RESTRICT,
@@ -15,8 +20,24 @@ CREATE TABLE IF NOT EXISTS turma (
 )
 """
 
-INSERIR = "INSERT INTO turma (id_atividade, id_professor) VALUES (?, ?)"
-ALTERAR = "UPDATE turma SET id_atividade = ?, id_professor = ?, data_atualizacao = CURRENT_TIMESTAMP WHERE id_turma = ?"
+INSERIR = """
+INSERT INTO turma (nome, id_atividade, id_professor, horario_inicio, horario_fim, dias_semana, vagas)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+"""
+
+ALTERAR = """
+UPDATE turma SET
+    nome = ?,
+    id_atividade = ?,
+    id_professor = ?,
+    horario_inicio = ?,
+    horario_fim = ?,
+    dias_semana = ?,
+    vagas = ?,
+    data_atualizacao = CURRENT_TIMESTAMP
+WHERE id_turma = ?
+"""
+
 EXCLUIR = "DELETE FROM turma WHERE id_turma = ?"
 
 OBTER_POR_ID = """
@@ -36,7 +57,16 @@ SELECT t.*,
 FROM turma t
 JOIN atividade a ON t.id_atividade = a.id_atividade
 JOIN usuario u ON t.id_professor = u.id
-ORDER BY a.nome
+ORDER BY t.nome
 """
 
-OBTER_POR_PROFESSOR = "SELECT * FROM turma WHERE id_professor = ?"
+OBTER_POR_PROFESSOR = """
+SELECT t.*,
+       a.nome as atividade_nome, a.descricao as atividade_descricao
+FROM turma t
+JOIN atividade a ON t.id_atividade = a.id_atividade
+WHERE t.id_professor = ?
+ORDER BY t.nome
+"""
+
+OBTER_QUANTIDADE = "SELECT COUNT(*) as total FROM turma"

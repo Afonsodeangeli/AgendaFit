@@ -12,11 +12,11 @@ Padrão de Implementação:
 
 Exemplo de uso:
     >>> turma = obter_por_id(1)
-    >>> print(f"{turma.atividade.nome} - Prof. {turma.professor.nome}")
+    >>> print(f"{turma.nome} - {turma.atividade.nome} - Prof. {turma.professor.nome}")
 """
 
-from typing import Optional
-from datetime import datetime
+from typing import Optional, List
+from datetime import datetime, time
 
 from model.turma_model import Turma
 from model.atividade_model import Atividade
@@ -39,6 +39,23 @@ def _converter_data(data_str: Optional[str]) -> Optional[datetime]:
         return None
 
 
+def _converter_horario(horario_str: Optional[str]) -> Optional[time]:
+    """Converte string de horário do banco em objeto time"""
+    if not horario_str:
+        return None
+    # Se já é time, retorna direto
+    if isinstance(horario_str, time):
+        return horario_str
+    try:
+        # Formato esperado: 'HH:MM' ou 'HH:MM:SS'
+        partes = horario_str.split(':')
+        hora = int(partes[0])
+        minuto = int(partes[1]) if len(partes) > 1 else 0
+        return time(hour=hora, minute=minuto)
+    except (ValueError, TypeError, IndexError):
+        return None
+
+
 def _row_get(row, key: str, default=None):
     """Helper para acessar valores de sqlite3.Row com fallback"""
     try:
@@ -57,9 +74,17 @@ def criar_tabela() -> bool:
 def inserir(turma: Turma) -> Optional[int]:
     with get_connection() as conn:
         cursor = conn.cursor()
+        # Converter horários para string no formato HH:MM
+        horario_inicio_str = turma.horario_inicio.strftime('%H:%M') if isinstance(turma.horario_inicio, time) else str(turma.horario_inicio)
+        horario_fim_str = turma.horario_fim.strftime('%H:%M') if isinstance(turma.horario_fim, time) else str(turma.horario_fim)
         cursor.execute(INSERIR, (
+            turma.nome,
             turma.id_atividade,
-            turma.id_professor
+            turma.id_professor,
+            horario_inicio_str,
+            horario_fim_str,
+            turma.dias_semana,
+            turma.vagas
         ))
         return cursor.lastrowid
 
@@ -67,9 +92,17 @@ def inserir(turma: Turma) -> Optional[int]:
 def alterar(turma: Turma) -> bool:
     with get_connection() as conn:
         cursor = conn.cursor()
+        # Converter horários para string no formato HH:MM
+        horario_inicio_str = turma.horario_inicio.strftime('%H:%M') if isinstance(turma.horario_inicio, time) else str(turma.horario_inicio)
+        horario_fim_str = turma.horario_fim.strftime('%H:%M') if isinstance(turma.horario_fim, time) else str(turma.horario_fim)
         cursor.execute(ALTERAR, (
+            turma.nome,
             turma.id_atividade,
             turma.id_professor,
+            horario_inicio_str,
+            horario_fim_str,
+            turma.dias_semana,
+            turma.vagas,
             turma.id_turma
         ))
         return cursor.rowcount > 0
@@ -90,20 +123,20 @@ def obter_por_id(id: int) -> Optional[Turma]:
         if row:
             # Montar objeto Atividade mínimo com os campos disponíveis
             atividade = Atividade(
-                id_atividade=_row_get(row,"id_atividade"),
-                id_categoria=_row_get(row,"id_categoria", 0),
-                nome=_row_get(row,"atividade_nome") or _row_get(row,"nome"),
-                descricao=_row_get(row,"atividade_descricao") or _row_get(row,"descricao"),
-                data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
+                id_atividade=_row_get(row, "id_atividade"),
+                id_categoria=_row_get(row, "id_categoria", 0),
+                nome=_row_get(row, "atividade_nome") or "",
+                descricao=_row_get(row, "atividade_descricao") or "",
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
                 data_atualizacao=None,
                 categoria=None
             )
 
             # Montar objeto Usuario (professor) com campos mínimos
             professor = Usuario(
-                id=_row_get(row,"id_professor") or _row_get(row,"professor_id") or 0,
-                nome=_row_get(row,"professor_nome") or "",
-                email=_row_get(row,"professor_email") or "",
+                id=_row_get(row, "id_professor") or 0,
+                nome=_row_get(row, "professor_nome") or "",
+                email=_row_get(row, "professor_email") or "",
                 senha="",
                 perfil="",
                 token_redefinicao=None,
@@ -113,37 +146,42 @@ def obter_por_id(id: int) -> Optional[Turma]:
 
             return Turma(
                 id_turma=row["id_turma"],
+                nome=_row_get(row, "nome") or "",
                 id_atividade=row["id_atividade"],
                 id_professor=row["id_professor"],
-                data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row,"data_atualizacao")),
+                horario_inicio=_converter_horario(_row_get(row, "horario_inicio")),
+                horario_fim=_converter_horario(_row_get(row, "horario_fim")),
+                dias_semana=_row_get(row, "dias_semana") or "",
+                vagas=_row_get(row, "vagas") or 0,
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
                 atividade=atividade,
                 professor=professor
             )
         return None
 
 
-def obter_todas() -> list[Turma]:
+def obter_todas() -> List[Turma]:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_TODAS)
         rows = cursor.fetchall()
-        result: list[Turma] = []
+        result: List[Turma] = []
         for row in rows:
             atividade = Atividade(
-                id_atividade=_row_get(row,"id_atividade"),
-                id_categoria=_row_get(row,"id_categoria", 0),
-                nome=_row_get(row,"atividade_nome") or _row_get(row,"nome"),
-                descricao=_row_get(row,"atividade_descricao") or _row_get(row,"descricao"),
+                id_atividade=_row_get(row, "id_atividade"),
+                id_categoria=_row_get(row, "id_categoria", 0),
+                nome=_row_get(row, "atividade_nome") or "",
+                descricao=_row_get(row, "atividade_descricao") or "",
                 data_cadastro=None,
                 data_atualizacao=None,
                 categoria=None
             )
 
             professor = Usuario(
-                id=_row_get(row,"id_professor") or _row_get(row,"professor_id") or 0,
-                nome=_row_get(row,"professor_nome") or "",
-                email=_row_get(row,"professor_email") or "",
+                id=_row_get(row, "id_professor") or 0,
+                nome=_row_get(row, "professor_nome") or "",
+                email=_row_get(row, "professor_email") or "",
                 senha="",
                 perfil="",
                 token_redefinicao=None,
@@ -153,10 +191,15 @@ def obter_todas() -> list[Turma]:
 
             turma = Turma(
                 id_turma=row["id_turma"],
+                nome=_row_get(row, "nome") or "",
                 id_atividade=row["id_atividade"],
                 id_professor=row["id_professor"],
-                data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row,"data_atualizacao")),
+                horario_inicio=_converter_horario(_row_get(row, "horario_inicio")),
+                horario_fim=_converter_horario(_row_get(row, "horario_fim")),
+                dias_semana=_row_get(row, "dias_semana") or "",
+                vagas=_row_get(row, "vagas") or 0,
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
                 atividade=atividade,
                 professor=professor
             )
@@ -164,20 +207,49 @@ def obter_todas() -> list[Turma]:
         return result
 
 
-def obter_por_professor(id_professor: int) -> list[Turma]:
+def obter_todos() -> List[Turma]:
+    """Alias para obter_todas() - mantém consistência de nomenclatura"""
+    return obter_todas()
+
+
+def obter_por_professor(id_professor: int) -> List[Turma]:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_PROFESSOR, (id_professor,))
         rows = cursor.fetchall()
-        return [
-            Turma(
+        result: List[Turma] = []
+        for row in rows:
+            atividade = Atividade(
+                id_atividade=_row_get(row, "id_atividade"),
+                id_categoria=_row_get(row, "id_categoria", 0),
+                nome=_row_get(row, "atividade_nome") or "",
+                descricao=_row_get(row, "atividade_descricao") or "",
+                data_cadastro=None,
+                data_atualizacao=None,
+                categoria=None
+            )
+            turma = Turma(
                 id_turma=row["id_turma"],
+                nome=_row_get(row, "nome") or "",
                 id_atividade=row["id_atividade"],
                 id_professor=row["id_professor"],
-                data_cadastro=_converter_data(_row_get(row,"data_cadastro")),
-                data_atualizacao=_converter_data(_row_get(row,"data_atualizacao")),
-                atividade=None,
+                horario_inicio=_converter_horario(_row_get(row, "horario_inicio")),
+                horario_fim=_converter_horario(_row_get(row, "horario_fim")),
+                dias_semana=_row_get(row, "dias_semana") or "",
+                vagas=_row_get(row, "vagas") or 0,
+                data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
+                data_atualizacao=_converter_data(_row_get(row, "data_atualizacao")),
+                atividade=atividade,
                 professor=None
             )
-            for row in rows
-        ]
+            result.append(turma)
+        return result
+
+
+def obter_quantidade() -> int:
+    """Retorna a quantidade total de turmas"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_QUANTIDADE)
+        row = cursor.fetchone()
+        return row["total"] if row else 0

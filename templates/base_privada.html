@@ -49,7 +49,33 @@
                             href="/usuario/perfil/visualizar"
                             {{ 'aria-current=page' if '/usuario/perfil/' in request.path else '' }}>Perfil</a>
                     </li>
+
                     {% if usuario_logado and usuario_logado.perfil == 'Administrador' %}
+                    <!-- Menu Administrador -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ 'active' if '/admin/categorias/' in request.path or '/admin/atividades/' in request.path or '/admin/turmas/' in request.path or '/admin/matriculas/' in request.path or '/admin/pagamentos/' in request.path else '' }}"
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Academia
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {{ 'active' if '/admin/categorias/' in request.path else '' }}" href="/admin/categorias/listar">
+                                <i class="bi bi-tags"></i> Categorias
+                            </a></li>
+                            <li><a class="dropdown-item {{ 'active' if '/admin/atividades/' in request.path else '' }}" href="/admin/atividades/listar">
+                                <i class="bi bi-activity"></i> Atividades
+                            </a></li>
+                            <li><a class="dropdown-item {{ 'active' if '/admin/turmas/' in request.path else '' }}" href="/admin/turmas/listar">
+                                <i class="bi bi-calendar2-week"></i> Turmas
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item {{ 'active' if '/admin/matriculas/' in request.path else '' }}" href="/admin/matriculas/listar">
+                                <i class="bi bi-card-checklist"></i> Matrículas
+                            </a></li>
+                            <li><a class="dropdown-item {{ 'active' if '/admin/pagamentos/' in request.path else '' }}" href="/admin/pagamentos/listar">
+                                <i class="bi bi-cash-coin"></i> Pagamentos
+                            </a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link {{ 'active' if '/admin/chamados/' in request.path else '' }}"
                             href="/admin/chamados/listar"
@@ -60,27 +86,60 @@
                             href="/admin/usuarios/listar"
                             {{ 'aria-current=page' if '/admin/usuarios/' in request.path else '' }}>Usuários</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ 'active' if '/admin/configuracoes' in request.path or '/admin/tema' in request.path or '/admin/auditoria' in request.path or '/admin/backups/' in request.path else '' }}"
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sistema
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {{ 'active' if '/admin/configuracoes' in request.path else '' }}" href="/admin/configuracoes">
+                                <i class="bi bi-gear"></i> Configurações
+                            </a></li>
+                            <li><a class="dropdown-item {{ 'active' if '/admin/tema' in request.path else '' }}" href="/admin/tema">
+                                <i class="bi bi-palette"></i> Tema
+                            </a></li>
+                            <li><a class="dropdown-item {{ 'active' if '/admin/auditoria' in request.path else '' }}" href="/admin/auditoria">
+                                <i class="bi bi-journal-text"></i> Auditoria
+                            </a></li>
+                            <li><a class="dropdown-item {{ 'active' if '/admin/backups/' in request.path else '' }}" href="/admin/backups/listar">
+                                <i class="bi bi-database"></i> Backup
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    {% elif usuario_logado and usuario_logado.perfil == 'Professor' %}
+                    <!-- Menu Professor -->
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if '/admin/configuracoes' in request.path else '' }}"
-                            href="/admin/configuracoes"
-                            {{ 'aria-current=page' if '/admin/configuracoes' in request.path else '' }}>Configurações</a>
+                        <a class="nav-link {{ 'active' if '/usuario/minhas-turmas' in request.path or '/usuario/turma/' in request.path else '' }}"
+                            href="/usuario/minhas-turmas"
+                            {{ 'aria-current=page' if '/usuario/minhas-turmas' in request.path else '' }}>Minhas Turmas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if '/admin/tema' in request.path else '' }}"
-                            href="/admin/tema"
-                            {{ 'aria-current=page' if '/admin/tema' in request.path else '' }}>Tema</a>
+                        <a class="nav-link {{ 'active' if '/chamados/' in request.path else '' }}"
+                            href="/chamados/listar"
+                            {{ 'aria-current=page' if '/chamados/' in request.path else '' }}>Chamados</a>
+                    </li>
+
+                    {% elif usuario_logado and usuario_logado.perfil == 'Aluno' %}
+                    <!-- Menu Aluno -->
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if '/usuario/minhas-matriculas' in request.path else '' }}"
+                            href="/usuario/minhas-matriculas"
+                            {{ 'aria-current=page' if '/usuario/minhas-matriculas' in request.path else '' }}>Minhas Matrículas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if '/admin/auditoria' in request.path else '' }}"
-                            href="/admin/auditoria"
-                            {{ 'aria-current=page' if '/admin/auditoria' in request.path else '' }}>Auditoria</a>
+                        <a class="nav-link {{ 'active' if '/usuario/meus-pagamentos' in request.path else '' }}"
+                            href="/usuario/meus-pagamentos"
+                            {{ 'aria-current=page' if '/usuario/meus-pagamentos' in request.path else '' }}>Meus Pagamentos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if '/admin/backups/' in request.path else '' }}"
-                            href="/admin/backups/listar"
-                            {{ 'aria-current=page' if '/admin/backups/' in request.path else '' }}>Backup</a>
+                        <a class="nav-link {{ 'active' if '/chamados/' in request.path else '' }}"
+                            href="/chamados/listar"
+                            {{ 'aria-current=page' if '/chamados/' in request.path else '' }}>Chamados</a>
                     </li>
+
                     {% else %}
+                    <!-- Menu Usuário Comum -->
                     <li class="nav-item">
                         <a class="nav-link {{ 'active' if '/chamados/' in request.path else '' }}"
                             href="/chamados/listar"

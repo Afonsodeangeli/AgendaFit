@@ -1,0 +1,92 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Minhas Matrículas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-card-checklist"></i> Minhas Matrículas</h2>
+            <a href="/usuario" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+            </a>
+        </div>
+
+        {% if matriculas %}
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for matricula in matriculas %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-calendar-check"></i>
+                            {{ matricula.turma.nome if matricula.turma else 'Turma N/A' }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <strong><i class="bi bi-activity"></i> Atividade:</strong><br>
+                            <span class="badge bg-info">
+                                {{ matricula.turma.atividade.nome if matricula.turma and matricula.turma.atividade else 'N/A' }}
+                            </span>
+                        </p>
+
+                        {% if matricula.turma %}
+                        <p class="mb-2">
+                            <strong><i class="bi bi-clock"></i> Horário:</strong><br>
+                            {{ matricula.turma.horario_inicio }} - {{ matricula.turma.horario_fim }}
+                        </p>
+                        <p class="mb-2">
+                            <strong><i class="bi bi-calendar3"></i> Dias:</strong><br>
+                            {{ matricula.turma.dias_semana }}
+                        </p>
+                        <p class="mb-2">
+                            <strong><i class="bi bi-person-badge"></i> Professor:</strong><br>
+                            {{ matricula.turma.professor.nome if matricula.turma.professor else 'N/A' }}
+                        </p>
+                        {% endif %}
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="mb-1"><strong><i class="bi bi-calendar-event"></i> Matrícula:</strong></p>
+                                <small class="text-muted">
+                                    {{ matricula.data_matricula.strftime('%d/%m/%Y') if matricula.data_matricula else '-' }}
+                                </small>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><strong><i class="bi bi-calendar-x"></i> Vencimento:</strong></p>
+                                <small class="text-muted">
+                                    Dia {{ matricula.dia_vencimento if matricula.dia_vencimento else '-' }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Mensalidade:</span>
+                            <span class="badge bg-success fs-6">
+                                R$ {{ "%.2f"|format(matricula.valor_mensalidade) if matricula.valor_mensalidade else '0.00' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4 text-muted">
+            <small><i class="bi bi-info-circle"></i> Total: {{ matriculas|length }} matrícula(s)</small>
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhuma matrícula encontrada</h4>
+            <p>Você ainda não possui matrículas ativas.</p>
+            <hr>
+            <p class="mb-0">Entre em contato com a administração para realizar sua matrícula em uma turma.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

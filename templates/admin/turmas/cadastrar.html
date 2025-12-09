@@ -26,7 +26,7 @@
                         <div class="col-md-6 mb-3">
                             {% set atividades_dict = {} %}
                             {% for ativ in atividades %}
-                            {% set _ = atividades_dict.update({ativ.id|string: ativ.nome}) %}
+                            {% set _ = atividades_dict.update({ativ.id_atividade|string: ativ.nome}) %}
                             {% endfor %}
                             {{ field(name='id_atividade', label='Atividade', type='select', required=true,
                                    options=atividades_dict) }}

@@ -1,0 +1,127 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Pagamentos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-cash-coin"></i> Pagamentos</h2>
+            <a href="/admin/pagamentos/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Novo Pagamento
+            </a>
+        </div>
+
+        {% if pagamentos %}
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%">Aluno</th>
+                                <th style="width: 20%">Turma</th>
+                                <th style="width: 15%">Mensalidade</th>
+                                <th style="width: 15%">Valor Pago</th>
+                                <th style="width: 15%">Data</th>
+                                <th class="text-end" style="width: 10%">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pagamento in pagamentos %}
+                            <tr>
+                                <td>
+                                    <strong>{{ pagamento.aluno.nome if pagamento.aluno else 'N/A' }}</strong>
+                                    {% if pagamento.aluno and pagamento.aluno.email %}
+                                    <br><small class="text-muted">{{ pagamento.aluno.email }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">
+                                        {{ pagamento.matricula.turma.nome if pagamento.matricula and pagamento.matricula.turma else 'N/A' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        R$ {{ "%.2f"|format(pagamento.matricula.valor_mensalidade) if pagamento.matricula and pagamento.matricula.valor_mensalidade else '0.00' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <strong class="text-success">R$ {{ "%.2f"|format(pagamento.valor_pago) if pagamento.valor_pago else '0.00' }}</strong>
+                                </td>
+                                <td>
+                                    <small>{{ pagamento.data_pagamento.strftime('%d/%m/%Y %H:%M') if pagamento.data_pagamento else '-' }}</small>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/admin/pagamentos/editar/{{ pagamento.id_pagamento }}"
+                                           class="btn btn-outline-primary"
+                                           title="Editar pagamento">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-outline-danger"
+                                                title="Excluir pagamento"
+                                                onclick="excluirPagamento({{ pagamento.id_pagamento }}, '{{ pagamento.aluno.nome|replace("'", "\\'") if pagamento.aluno else "" }}', {{ pagamento.valor_pago }})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <small><i class="bi bi-info-circle"></i> Total: {{ pagamentos|length }} pagamento(s)</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhum pagamento cadastrado</h4>
+            <p>Não há pagamentos cadastrados no sistema. Clique em "Novo Pagamento" para começar.</p>
+            <hr>
+            <a href="/admin/pagamentos/cadastrar" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Registrar Primeiro Pagamento
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/**
+ * Abre modal de confirmação para excluir pagamento
+ */
+function excluirPagamento(pagamentoId, alunoNome, valorPago) {
+    const valorFormatado = valorPago.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const detalhes = `
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title mb-2">
+                    <i class="bi bi-person-circle"></i> Aluno:
+                </h6>
+                <p class="mb-2"><strong>${alunoNome}</strong></p>
+                <h6 class="card-title mb-2">
+                    <i class="bi bi-cash-coin"></i> Valor:
+                </h6>
+                <p class="mb-0"><strong>${valorFormatado}</strong></p>
+            </div>
+        </div>
+        <div class="alert alert-warning mt-3 mb-0">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Atenção:</strong> Esta ação removerá permanentemente o registro deste pagamento.
+        </div>
+    `;
+
+    abrirModalConfirmacao({
+        url: `/admin/pagamentos/excluir/${pagamentoId}`,
+        mensagem: 'Tem certeza que deseja excluir este pagamento?',
+        detalhes: detalhes
+    });
+}
+</script>
+{% endblock %}

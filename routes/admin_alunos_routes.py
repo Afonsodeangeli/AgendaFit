@@ -14,7 +14,7 @@ from util.flash_messages import informar_sucesso, informar_erro
 from util.template_util import criar_templates
 from util.logger_config import logger
 from util.rate_limiter import RateLimiter, obter_identificador_cliente
-from util.exceptions import FormValidationError
+from util.exceptions import ErroValidacaoFormulario
 from util.security import criar_hash_senha
 
 from repo import usuario_repo
@@ -126,7 +126,7 @@ async def post_cadastrar(
         return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/alunos/cadastrar.html",
             dados_formulario=dados_formulario,
@@ -219,7 +219,7 @@ async def post_editar(
 
     except ValidationError as e:
         dados_formulario["aluno"] = usuario_repo.obter_por_id(id)
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/alunos/editar.html",
             dados_formulario=dados_formulario,

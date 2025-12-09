@@ -12,12 +12,60 @@ CREATE TABLE IF NOT EXISTS pagamento (
 
 INSERIR = "INSERT INTO pagamento (id_matricula, id_aluno, valor_pago) VALUES (?, ?, ?)"
 
-OBTER_POR_ALUNO = """
-SELECT p.*, m.valor_mensalidade, u.nome as aluno_nome
+OBTER_TODOS = """
+SELECT p.*,
+       m.id_turma, m.valor_mensalidade,
+       t.nome as turma_nome,
+       u.nome as aluno_nome, u.email as aluno_email
 FROM pagamento p
 JOIN matricula m ON p.id_matricula = m.id_matricula
+JOIN turma t ON m.id_turma = t.id_turma
+JOIN usuario u ON p.id_aluno = u.id
+ORDER BY p.data_pagamento DESC
+"""
+
+OBTER_POR_ID = """
+SELECT p.*,
+       m.id_turma, m.valor_mensalidade,
+       t.nome as turma_nome,
+       u.nome as aluno_nome, u.email as aluno_email
+FROM pagamento p
+JOIN matricula m ON p.id_matricula = m.id_matricula
+JOIN turma t ON m.id_turma = t.id_turma
+JOIN usuario u ON p.id_aluno = u.id
+WHERE p.id_pagamento = ?
+"""
+
+OBTER_POR_ALUNO = """
+SELECT p.*,
+       m.id_turma, m.valor_mensalidade,
+       t.nome as turma_nome,
+       u.nome as aluno_nome, u.email as aluno_email
+FROM pagamento p
+JOIN matricula m ON p.id_matricula = m.id_matricula
+JOIN turma t ON m.id_turma = t.id_turma
 JOIN usuario u ON p.id_aluno = u.id
 WHERE p.id_aluno = ?
 ORDER BY p.data_pagamento DESC
 """
-OBTER_POR_MATRICULA = "SELECT * FROM pagamento WHERE id_matricula = ?"
+
+OBTER_POR_MATRICULA = """
+SELECT p.*,
+       m.id_turma, m.valor_mensalidade,
+       t.nome as turma_nome,
+       u.nome as aluno_nome, u.email as aluno_email
+FROM pagamento p
+JOIN matricula m ON p.id_matricula = m.id_matricula
+JOIN turma t ON m.id_turma = t.id_turma
+JOIN usuario u ON p.id_aluno = u.id
+WHERE p.id_matricula = ?
+ORDER BY p.data_pagamento DESC
+"""
+
+ALTERAR = """
+UPDATE pagamento SET valor_pago = ? WHERE id_pagamento = ?
+"""
+
+EXCLUIR = "DELETE FROM pagamento WHERE id_pagamento = ?"
+
+OBTER_QUANTIDADE = "SELECT COUNT(*) as total FROM pagamento"

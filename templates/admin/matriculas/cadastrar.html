@@ -18,22 +18,37 @@
                             {% include "components/alerta_erro.html" %}
                         </div>
 
-                        <div class="col-12 mb-3">
+                        <div class="col-md-6 mb-3">
                             {% set alunos_dict = {} %}
                             {% for aluno in alunos %}
                             {% set _ = alunos_dict.update({aluno.id|string: aluno.nome ~ ' (' ~ aluno.email ~ ')'}) %}
                             {% endfor %}
                             {{ field(name='id_aluno', label='Aluno', type='select', required=true,
-                                   options=alunos_dict) }}
+                                   options=alunos_dict, value=id_aluno) }}
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-md-6 mb-3">
                             {% set turmas_dict = {} %}
                             {% for turma in turmas %}
-                            {% set _ = turmas_dict.update({turma.id|string: turma.nome}) %}
+                            {% set _ = turmas_dict.update({turma.id_turma|string: turma.nome}) %}
                             {% endfor %}
                             {{ field(name='id_turma', label='Turma', type='select', required=true,
-                                   options=turmas_dict, wrapper_class='mb-0') }}
+                                   options=turmas_dict, value=id_turma) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='valor_mensalidade', label='Valor da Mensalidade (R$)', type='number',
+                                   required=true, value=valor_mensalidade,
+                                   attributes={'min': '0.01', 'step': '0.01', 'placeholder': 'Ex: 150.00'}) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {% set dias_vencimento = {} %}
+                            {% for dia in range(1, 32) %}
+                            {% set _ = dias_vencimento.update({dia|string: 'Dia ' ~ dia}) %}
+                            {% endfor %}
+                            {{ field(name='dia_vencimento', label='Dia de Vencimento', type='select',
+                                   required=true, options=dias_vencimento, value=dia_vencimento|default(5)) }}
                         </div>
                     </div>
                 </div>

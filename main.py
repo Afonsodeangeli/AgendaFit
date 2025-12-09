@@ -31,7 +31,7 @@ from repo import (
     indices_repo,
 )
 from repo import chat_sala_repo, chat_participante_repo, chat_mensagem_repo
-from repo import atividade_repo, turma_repo, matricula_repo, categoria_repo
+from repo import atividade_repo, turma_repo, matricula_repo, categoria_repo, pagamento_repo
 
 # Rotas
 from routes.auth_routes import router as auth_router
@@ -46,6 +46,9 @@ from routes.public_routes import router as public_router
 from routes.examples_routes import router as examples_router
 from routes.admin_atividades_routes import router as admin_atividades_router
 from routes.admin_categorias_routes import router as admin_categorias_router
+from routes.admin_turmas_routes import router as admin_turmas_router
+from routes.admin_matriculas_routes import router as admin_matriculas_router
+from routes.admin_pagamentos_routes import router as admin_pagamentos_router
 
 # Seeds
 from util.seed_data import inicializar_dados
@@ -106,6 +109,9 @@ try:
     matricula_repo.criar_tabela()
     logger.info("Tabela 'matricula' criada/verificada")
 
+    pagamento_repo.criar_tabela()
+    logger.info("Tabela 'pagamento' criada/verificada")
+
     # Criar índices para otimização de performance
     indices_repo.criar_indices()
 
@@ -138,6 +144,9 @@ ROUTERS = [
     (admin_chamados_router, ["Admin - Chamados"], "admin de chamados"),
     (admin_categorias_router, ["Admin - Categorias"], "admin de categorias"),
     (admin_atividades_router, ["Admin - Atividades"], "admin de atividades"),
+    (admin_turmas_router, ["Admin - Turmas"], "admin de turmas"),
+    (admin_matriculas_router, ["Admin - Matrículas"], "admin de matrículas"),
+    (admin_pagamentos_router, ["Admin - Pagamentos"], "admin de pagamentos"),
     (usuario_router, ["Usuário"], "usuário"),
     (chat_router, ["Chat"], "chat"),
     (public_router, ["Público"], "público"),

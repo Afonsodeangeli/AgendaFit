@@ -163,3 +163,151 @@ def obter_por_turma(id_turma: int) -> List[Matricula]:
             )
             result.append(matricula)
         return result
+
+
+def obter_todas() -> List[Matricula]:
+    """Retorna todas as matrículas com turma e aluno carregados"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_TODAS)
+        rows = cursor.fetchall()
+        result: List[Matricula] = []
+        for row in rows:
+            turma = Turma(
+                id_turma=row["id_turma"],
+                nome=_row_get(row, "turma_nome") or "",
+                id_atividade=_row_get(row, "id_atividade", 0),
+                id_professor=_row_get(row, "id_professor", 0),
+                horario_inicio=None,
+                horario_fim=None,
+                dias_semana=_row_get(row, "dias_semana") or "",
+                vagas=_row_get(row, "vagas", 0),
+                data_cadastro=None,
+                atividade=None,
+                professor=None
+            )
+
+            aluno = Usuario(
+                id=_row_get(row, "id_aluno"),
+                nome=_row_get(row, "aluno_nome") or "",
+                email=_row_get(row, "aluno_email") or "",
+                senha="",
+                perfil="",
+                token_redefinicao=None,
+                data_token=None,
+                data_cadastro=None
+            )
+
+            matricula = Matricula(
+                id_matricula=row["id_matricula"],
+                id_turma=row["id_turma"],
+                id_aluno=row["id_aluno"],
+                data_matricula=_converter_data(_row_get(row, "data_matricula")),
+                valor_mensalidade=_row_get(row, "valor_mensalidade"),
+                data_vencimento=_converter_data(_row_get(row, "data_vencimento")),
+                turma=turma,
+                aluno=aluno
+            )
+            result.append(matricula)
+        return result
+
+
+def obter_todos() -> List[Matricula]:
+    """Alias para obter_todas() - mantém consistência de nomenclatura"""
+    return obter_todas()
+
+
+def obter_por_id(id_matricula: int) -> Optional[Matricula]:
+    """Retorna uma matrícula específica com turma e aluno carregados"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_POR_ID, (id_matricula,))
+        row = cursor.fetchone()
+        if row:
+            turma = Turma(
+                id_turma=row["id_turma"],
+                nome=_row_get(row, "turma_nome") or "",
+                id_atividade=_row_get(row, "id_atividade", 0),
+                id_professor=_row_get(row, "id_professor", 0),
+                horario_inicio=None,
+                horario_fim=None,
+                dias_semana=_row_get(row, "dias_semana") or "",
+                vagas=_row_get(row, "vagas", 0),
+                data_cadastro=None,
+                atividade=None,
+                professor=None
+            )
+
+            aluno = Usuario(
+                id=_row_get(row, "id_aluno"),
+                nome=_row_get(row, "aluno_nome") or "",
+                email=_row_get(row, "aluno_email") or "",
+                senha="",
+                perfil="",
+                token_redefinicao=None,
+                data_token=None,
+                data_cadastro=None
+            )
+
+            return Matricula(
+                id_matricula=row["id_matricula"],
+                id_turma=row["id_turma"],
+                id_aluno=row["id_aluno"],
+                data_matricula=_converter_data(_row_get(row, "data_matricula")),
+                valor_mensalidade=_row_get(row, "valor_mensalidade"),
+                data_vencimento=_converter_data(_row_get(row, "data_vencimento")),
+                turma=turma,
+                aluno=aluno
+            )
+        return None
+
+
+def obter_por_aluno_e_turma(id_aluno: int, id_turma: int) -> Optional[Matricula]:
+    """Verifica e retorna matrícula existente para aluno/turma"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_POR_ALUNO_E_TURMA, (id_aluno, id_turma))
+        row = cursor.fetchone()
+        if row:
+            return Matricula(
+                id_matricula=row["id_matricula"],
+                id_turma=row["id_turma"],
+                id_aluno=row["id_aluno"],
+                data_matricula=_converter_data(_row_get(row, "data_matricula")),
+                valor_mensalidade=_row_get(row, "valor_mensalidade"),
+                data_vencimento=_converter_data(_row_get(row, "data_vencimento")),
+                turma=None,
+                aluno=None
+            )
+        return None
+
+
+def alterar(matricula: Matricula) -> bool:
+    """Atualiza uma matrícula existente"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(ALTERAR, (
+            matricula.id_turma,
+            matricula.id_aluno,
+            matricula.valor_mensalidade,
+            matricula.data_vencimento,
+            matricula.id_matricula
+        ))
+        return cursor.rowcount > 0
+
+
+def excluir(id_matricula: int) -> bool:
+    """Remove uma matrícula"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(EXCLUIR, (id_matricula,))
+        return cursor.rowcount > 0
+
+
+def obter_quantidade() -> int:
+    """Retorna a quantidade total de matrículas"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_QUANTIDADE)
+        row = cursor.fetchone()
+        return row["total"] if row else 0

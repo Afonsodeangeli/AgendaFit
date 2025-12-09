@@ -17,10 +17,11 @@ from dtos.perfil_dto import EditarPerfilDTO, AlterarSenhaDTO
 from model.usuario_logado_model import UsuarioLogado
 
 # Repositories
-from repo import usuario_repo, chamado_repo
+from repo import usuario_repo, chamado_repo, turma_repo, matricula_repo, pagamento_repo
 
 # Utilities
 from util.auth_decorator import requer_autenticacao
+from util.perfis import Perfil
 from util.exceptions import ErroValidacaoFormulario
 from util.flash_messages import informar_sucesso, informar_erro
 from util.foto_util import salvar_foto_cropada_usuario
@@ -424,3 +425,95 @@ async def post_atualizar_foto(
         return RedirectResponse(
             "/usuario/perfil/visualizar", status_code=status.HTTP_303_SEE_OTHER
         )
+
+
+# =============================================================================
+# Rotas de Visualização para Professor
+# =============================================================================
+
+@router.get("/usuario/minhas-turmas")
+@requer_autenticacao([Perfil.PROFESSOR.value])
+async def get_minhas_turmas(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+    """Lista as turmas do professor logado (readonly)"""
+    if not usuario_logado:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+
+    turmas = turma_repo.obter_por_professor(usuario_logado.id)
+
+    return templates_usuario.TemplateResponse(
+        "usuario/minhas_turmas.html",
+        {
+            "request": request,
+            "turmas": turmas,
+            "usuario_logado": usuario_logado
+        }
+    )
+
+
+@router.get("/usuario/turma/{id_turma}/alunos")
+@requer_autenticacao([Perfil.PROFESSOR.value])
+async def get_alunos_turma(request: Request, id_turma: int, usuario_logado: Optional[UsuarioLogado] = None):
+    """Lista os alunos de uma turma específica do professor (readonly)"""
+    if not usuario_logado:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+
+    # Verificar se a turma pertence ao professor
+    turma = turma_repo.obter_por_id(id_turma)
+    if not turma or turma.id_professor != usuario_logado.id:
+        informar_erro(request, "Turma não encontrada ou você não tem permissão para visualizá-la.")
+        return RedirectResponse("/usuario/minhas-turmas", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Obter matrículas (alunos) da turma
+    matriculas = matricula_repo.obter_por_turma(id_turma)
+
+    return templates_usuario.TemplateResponse(
+        "usuario/alunos_turma.html",
+        {
+            "request": request,
+            "turma": turma,
+            "matriculas": matriculas,
+            "usuario_logado": usuario_logado
+        }
+    )
+
+
+# =============================================================================
+# Rotas de Visualização para Aluno
+# =============================================================================
+
+@router.get("/usuario/minhas-matriculas")
+@requer_autenticacao([Perfil.ALUNO.value])
+async def get_minhas_matriculas(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+    """Lista as matrículas do aluno logado (readonly)"""
+    if not usuario_logado:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+
+    matriculas = matricula_repo.obter_por_aluno(usuario_logado.id)
+
+    return templates_usuario.TemplateResponse(
+        "usuario/minhas_matriculas.html",
+        {
+            "request": request,
+            "matriculas": matriculas,
+            "usuario_logado": usuario_logado
+        }
+    )
+
+
+@router.get("/usuario/meus-pagamentos")
+@requer_autenticacao([Perfil.ALUNO.value])
+async def get_meus_pagamentos(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+    """Lista os pagamentos do aluno logado (readonly)"""
+    if not usuario_logado:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+
+    pagamentos = pagamento_repo.obter_por_aluno(usuario_logado.id)
+
+    return templates_usuario.TemplateResponse(
+        "usuario/meus_pagamentos.html",
+        {
+            "request": request,
+            "pagamentos": pagamentos,
+            "usuario_logado": usuario_logado
+        }
+    )

@@ -36,16 +36,16 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-primary">
-                                        {{ atividades_dict.get(turma.id_atividade, 'N/A') }}
+                                        {{ turma.atividade.nome if turma.atividade else 'N/A' }}
                                     </span>
                                 </td>
                                 <td>
-                                    {{ professores_dict.get(turma.id_professor, 'N/A') }}
+                                    {{ turma.professor.nome if turma.professor else 'N/A' }}
                                 </td>
                                 <td>
                                     <small>
-                                        {{ turma.horario_inicio.strftime('%H:%M') }} -
-                                        {{ turma.horario_fim.strftime('%H:%M') }}
+                                        {{ turma.horario_inicio.strftime('%H:%M') if turma.horario_inicio else '' }} -
+                                        {{ turma.horario_fim.strftime('%H:%M') if turma.horario_fim else '' }}
                                     </small>
                                 </td>
                                 <td>
@@ -56,7 +56,7 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="/admin/turmas/editar/{{ turma.id }}"
+                                        <a href="/admin/turmas/editar/{{ turma.id_turma }}"
                                            class="btn btn-outline-primary"
                                            title="Editar turma">
                                             <i class="bi bi-pencil"></i>
@@ -64,7 +64,7 @@
                                         <button type="button"
                                                 class="btn btn-outline-danger"
                                                 title="Excluir turma"
-                                                onclick="excluirTurma({{ turma.id }}, '{{ turma.nome|replace("'", "\\'") }}')">
+                                                onclick="excluirTurma({{ turma.id_turma }}, '{{ turma.nome|replace("'", "\\'") }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -116,7 +116,7 @@ function excluirTurma(turmaId, turmaNome) {
     `;
 
     abrirModalConfirmacao({
-        url: `/admin/turmas/${turmaId}/excluir`,
+        url: `/admin/turmas/excluir/${turmaId}`,
         mensagem: 'Tem certeza que deseja excluir esta turma?',
         detalhes: detalhes
     });

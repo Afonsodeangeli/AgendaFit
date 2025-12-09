@@ -37,8 +37,99 @@
         </div>
     </div>
 
-    <!-- Configurações (apenas para admin) -->
     {% if usuario_logado and usuario_logado.perfil == 'Administrador' %}
+    <!-- ===== CARDS ADMINISTRADOR ===== -->
+
+    <!-- Categorias -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-tags text-secondary display-3"></i>
+                </div>
+                <h5 class="card-title">Categorias</h5>
+                <p class="card-text text-muted">
+                    Gerencie as categorias de atividades
+                </p>
+                <a href="/admin/categorias/listar" class="btn btn-secondary">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Atividades -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-activity text-info display-3"></i>
+                </div>
+                <h5 class="card-title">Atividades</h5>
+                <p class="card-text text-muted">
+                    Gerencie as atividades da academia
+                </p>
+                <a href="/admin/atividades/listar" class="btn btn-info">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Turmas -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-calendar2-week text-primary display-3"></i>
+                </div>
+                <h5 class="card-title">Turmas</h5>
+                <p class="card-text text-muted">
+                    Gerencie as turmas e horários
+                </p>
+                <a href="/admin/turmas/listar" class="btn btn-primary">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Matrículas -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-card-checklist text-warning display-3"></i>
+                </div>
+                <h5 class="card-title">Matrículas</h5>
+                <p class="card-text text-muted">
+                    Gerencie as matrículas dos alunos
+                </p>
+                <a href="/admin/matriculas/listar" class="btn btn-warning">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagamentos -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-cash-coin text-success display-3"></i>
+                </div>
+                <h5 class="card-title">Pagamentos</h5>
+                <p class="card-text text-muted">
+                    Gerencie os pagamentos dos alunos
+                </p>
+                <a href="/admin/pagamentos/listar" class="btn btn-success">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Usuários -->
     <div class="col">
         <div class="card h-100 shadow-sm shadow-hover">
@@ -57,57 +148,7 @@
         </div>
     </div>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-palette text-danger display-3"></i>
-                </div>
-                <h5 class="card-title">Personalizar Tema</h5>
-                <p class="card-text text-muted">
-                    Escolha entre diversos temas visuais para personalizar a aplicação
-                </p>
-                <a href="/admin/tema" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-journal-text text-warning display-3"></i>
-                </div>
-                <h5 class="card-title">Auditoria de Logs</h5>
-                <p class="card-text text-muted">
-                    Visualize e filtre logs do sistema por data e severidade
-                </p>
-                <a href="/admin/auditoria" class="btn btn-warning">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-database text-info display-3"></i>
-                </div>
-                <h5 class="card-title">Backup do Banco</h5>
-                <p class="card-text text-muted">
-                    Crie, gerencie e restaure backups do banco de dados
-                </p>
-                <a href="/admin/backups/listar" class="btn btn-info">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
-            </div>
-        </div>
-    </div>
-
+    <!-- Chamados Admin -->
     <div class="col">
         <div class="card h-100 shadow-sm shadow-hover">
             <div class="card-body text-center">
@@ -130,7 +171,168 @@
         </div>
     </div>
 
+    <!-- Personalizar Tema -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-palette text-danger display-3"></i>
+                </div>
+                <h5 class="card-title">Personalizar Tema</h5>
+                <p class="card-text text-muted">
+                    Escolha entre diversos temas visuais
+                </p>
+                <a href="/admin/tema" class="btn btn-danger">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auditoria -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-journal-text text-warning display-3"></i>
+                </div>
+                <h5 class="card-title">Auditoria de Logs</h5>
+                <p class="card-text text-muted">
+                    Visualize e filtre logs do sistema
+                </p>
+                <a href="/admin/auditoria" class="btn btn-warning">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backup -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-database text-info display-3"></i>
+                </div>
+                <h5 class="card-title">Backup do Banco</h5>
+                <p class="card-text text-muted">
+                    Crie e restaure backups do banco
+                </p>
+                <a href="/admin/backups/listar" class="btn btn-info">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% elif usuario_logado and usuario_logado.perfil == 'Professor' %}
+    <!-- ===== CARDS PROFESSOR ===== -->
+
+    <!-- Minhas Turmas -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-calendar2-week text-primary display-3"></i>
+                </div>
+                <h5 class="card-title">Minhas Turmas</h5>
+                <p class="card-text text-muted">
+                    Visualize as turmas que você leciona
+                </p>
+                <a href="/usuario/minhas-turmas" class="btn btn-primary">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meus Chamados -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-headset text-danger display-3"></i>
+                </div>
+                <h5 class="card-title">Meus Chamados</h5>
+                <p class="card-text text-muted">
+                    Abra chamados de suporte e acompanhe
+                </p>
+                {% if chamados_abertos > 0 %}
+                <div class="mb-3">
+                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                </div>
+                {% endif %}
+                <a href="/chamados/listar" class="btn btn-danger">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% elif usuario_logado and usuario_logado.perfil == 'Aluno' %}
+    <!-- ===== CARDS ALUNO ===== -->
+
+    <!-- Minhas Matrículas -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-card-checklist text-success display-3"></i>
+                </div>
+                <h5 class="card-title">Minhas Matrículas</h5>
+                <p class="card-text text-muted">
+                    Visualize suas matrículas em turmas
+                </p>
+                <a href="/usuario/minhas-matriculas" class="btn btn-success">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meus Pagamentos -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-cash-coin text-warning display-3"></i>
+                </div>
+                <h5 class="card-title">Meus Pagamentos</h5>
+                <p class="card-text text-muted">
+                    Visualize seu histórico de pagamentos
+                </p>
+                <a href="/usuario/meus-pagamentos" class="btn btn-warning">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meus Chamados -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-headset text-danger display-3"></i>
+                </div>
+                <h5 class="card-title">Meus Chamados</h5>
+                <p class="card-text text-muted">
+                    Abra chamados de suporte e acompanhe
+                </p>
+                {% if chamados_abertos > 0 %}
+                <div class="mb-3">
+                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                </div>
+                {% endif %}
+                <a href="/chamados/listar" class="btn btn-danger">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
     {% else %}
+    <!-- ===== CARDS USUÁRIO COMUM ===== -->
     <!-- Chamados para usuários comuns -->
     <div class="col">
         <div class="card h-100 shadow-sm shadow-hover">

@@ -4,6 +4,7 @@ Rotas administrativas para gerenciamento de matrículas.
 Fornece CRUD completo de matrículas para administradores.
 """
 from typing import Optional
+from datetime import datetime
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
@@ -13,9 +14,8 @@ from util.perfis import Perfil
 from util.flash_messages import informar_sucesso, informar_erro
 from util.template_util import criar_templates
 from util.logger_config import logger
-from util.rate_limiter import RateLimiter
-from util.exceptions import FormValidationError
-from util.rate_limiter import obter_identificador_cliente
+from util.rate_limiter import RateLimiter, obter_identificador_cliente
+from util.exceptions import ErroValidacaoFormulario
 
 from repo import matricula_repo, usuario_repo, turma_repo
 from model.matricula_model import Matricula
@@ -27,7 +27,7 @@ router = APIRouter(prefix="/admin/matriculas")
 admin_matriculas_limiter = RateLimiter(max_tentativas=10, janela_minutos=1)
 
 # Templates
-templates = criar_templates("templates/admin/matriculas")
+templates = criar_templates()
 
 
 @router.get("/listar")
@@ -35,21 +35,12 @@ templates = criar_templates("templates/admin/matriculas")
 async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todas as matrículas cadastradas"""
     matriculas = matricula_repo.obter_todos()
-    alunos = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
-    turmas = turma_repo.obter_todos()
-
-    # Criar dicionários para lookup
-    alunos_dict = {aluno.id: aluno.nome for aluno in alunos}
-    # turmas may not have 'nome' attribute if model differs; use defensively
-    turmas_dict = {getattr(turma, 'id_turma', getattr(turma, 'id', None)): getattr(turma, 'nome', '') for turma in turmas}
 
     return templates.TemplateResponse(
         "admin/matriculas/listar.html",
         {
             "request": request,
-            "matriculas": matriculas,
-            "alunos_dict": alunos_dict,
-            "turmas_dict": turmas_dict
+            "matriculas": matriculas
         }
     )
 
@@ -85,6 +76,8 @@ async def post_cadastrar(
     request: Request,
     id_aluno: int = Form(...),
     id_turma: int = Form(...),
+    valor_mensalidade: float = Form(...),
+    dia_vencimento: int = Form(...),
     usuario_logado: Optional[dict] = None
 ):
     """Cadastra uma nova matrícula"""
@@ -99,12 +92,19 @@ async def post_cadastrar(
     # Armazena dados do formulário
     dados_formulario: dict = {
         "id_aluno": id_aluno,
-        "id_turma": id_turma
+        "id_turma": id_turma,
+        "valor_mensalidade": valor_mensalidade,
+        "dia_vencimento": dia_vencimento
     }
 
     try:
         # Validar com DTO
-        dto = CriarMatriculaDTO(id_aluno=id_aluno, id_turma=id_turma)
+        dto = CriarMatriculaDTO(
+            id_aluno=id_aluno,
+            id_turma=id_turma,
+            valor_mensalidade=valor_mensalidade,
+            dia_vencimento=dia_vencimento
+        )
 
         # Verificar se aluno existe
         aluno = usuario_repo.obter_por_id(dto.id_aluno)
@@ -150,13 +150,20 @@ async def post_cadastrar(
                 {"request": request, **dados_formulario}
             )
 
+        # Criar data de vencimento (usando o dia informado no mês atual)
+        hoje = datetime.now()
+        data_vencimento = datetime(hoje.year, hoje.month, dto.dia_vencimento)
+
         # Criar matrícula
-        from datetime import datetime
         matricula = Matricula(
-            id=0,
+            id_matricula=0,
             id_aluno=dto.id_aluno,
             id_turma=dto.id_turma,
-            data_matricula=datetime.now()
+            data_matricula=datetime.now(),
+            valor_mensalidade=dto.valor_mensalidade,
+            data_vencimento=data_vencimento,
+            turma=None,
+            aluno=None
         )
 
         matricula_repo.inserir(matricula)
@@ -168,7 +175,7 @@ async def post_cadastrar(
     except ValidationError as e:
         dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
         dados_formulario["turmas"] = turma_repo.obter_todos()
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/matriculas/cadastrar.html",
             dados_formulario=dados_formulario,
@@ -188,7 +195,15 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
 
     alunos = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
     turmas = turma_repo.obter_todos()
-    dados_matricula = matricula.__dict__.copy()
+
+    # Preparar dados para o template
+    dados_matricula = {
+        "id_matricula": matricula.id_matricula,
+        "id_aluno": matricula.id_aluno,
+        "id_turma": matricula.id_turma,
+        "valor_mensalidade": matricula.valor_mensalidade,
+        "dia_vencimento": matricula.data_vencimento.day if matricula.data_vencimento else 5
+    }
 
     return templates.TemplateResponse(
         "admin/matriculas/editar.html",
@@ -209,6 +224,8 @@ async def post_editar(
     id: int,
     id_aluno: int = Form(...),
     id_turma: int = Form(...),
+    valor_mensalidade: float = Form(...),
+    dia_vencimento: int = Form(...),
     usuario_logado: Optional[dict] = None
 ):
     """Edita uma matrícula existente"""
@@ -228,14 +245,22 @@ async def post_editar(
 
     # Armazena dados do formulário
     dados_formulario: dict = {
-        "id": id,
+        "id_matricula": id,
         "id_aluno": id_aluno,
-        "id_turma": id_turma
+        "id_turma": id_turma,
+        "valor_mensalidade": valor_mensalidade,
+        "dia_vencimento": dia_vencimento
     }
 
     try:
         # Validar com DTO
-        dto = AlterarMatriculaDTO(id=id, id_aluno=id_aluno, id_turma=id_turma)
+        dto = AlterarMatriculaDTO(
+            id=id,
+            id_aluno=id_aluno,
+            id_turma=id_turma,
+            valor_mensalidade=valor_mensalidade,
+            dia_vencimento=dia_vencimento
+        )
 
         # Verificar se aluno existe
         aluno = usuario_repo.obter_por_id(dto.id_aluno)
@@ -246,7 +271,7 @@ async def post_editar(
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/editar.html",
-                {"request": request, **dados_formulario}
+                {"request": request, "dados": dados_formulario, **dados_formulario}
             )
 
         # Verificar se turma existe
@@ -258,15 +283,23 @@ async def post_editar(
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/editar.html",
-                {"request": request, **dados_formulario}
+                {"request": request, "dados": dados_formulario, **dados_formulario}
             )
+
+        # Criar data de vencimento
+        hoje = datetime.now()
+        data_vencimento = datetime(hoje.year, hoje.month, dto.dia_vencimento)
 
         # Atualizar matrícula
         matricula_atualizada = Matricula(
-            id=id,
+            id_matricula=id,
             id_aluno=dto.id_aluno,
             id_turma=dto.id_turma,
-            data_matricula=matricula_atual.data_matricula
+            data_matricula=matricula_atual.data_matricula,
+            valor_mensalidade=dto.valor_mensalidade,
+            data_vencimento=data_vencimento,
+            turma=None,
+            aluno=None
         )
 
         matricula_repo.alterar(matricula_atualizada)
@@ -279,7 +312,7 @@ async def post_editar(
         dados_formulario["matricula"] = matricula_repo.obter_por_id(id)
         dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
         dados_formulario["turmas"] = turma_repo.obter_todos()
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/matriculas/editar.html",
             dados_formulario=dados_formulario,
@@ -303,6 +336,16 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
 
     if not matricula:
         informar_erro(request, "Matrícula não encontrada")
+        return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se há pagamentos associados a esta matrícula
+    from repo import pagamento_repo
+    pagamentos = pagamento_repo.obter_por_matricula(id)
+    if pagamentos:
+        informar_erro(
+            request,
+            f"Não é possível excluir esta matrícula pois há {len(pagamentos)} pagamento(s) associado(s)."
+        )
         return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     matricula_repo.excluir(id)

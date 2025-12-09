@@ -11,7 +11,7 @@
         </div>
 
         <div class="card shadow-sm">
-            <form method="POST" action="/admin/turmas/editar/{{ dados.id if dados.id is defined else turma.id }}">
+            <form method="POST" action="/admin/turmas/editar/{{ dados.id_turma if dados.id_turma is defined else turma.id_turma }}">
                 <div class="card-body p-4">
                     <div class="row">
                         <div class="col-12">
@@ -26,7 +26,7 @@
                         <div class="col-md-6 mb-3">
                             {% set atividades_dict = {} %}
                             {% for ativ in atividades %}
-                            {% set _ = atividades_dict.update({ativ.id|string: ativ.nome}) %}
+                            {% set _ = atividades_dict.update({ativ.id_atividade|string: ativ.nome}) %}
                             {% endfor %}
                             {{ field(name='id_atividade', label='Atividade', type='select', required=true,
                                    options=atividades_dict, value=dados.id_atividade) }}

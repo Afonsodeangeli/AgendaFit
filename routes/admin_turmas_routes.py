@@ -7,7 +7,6 @@ from typing import Optional
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
-from datetime import time
 
 from util.auth_decorator import requer_autenticacao
 from util.perfis import Perfil
@@ -15,7 +14,7 @@ from util.flash_messages import informar_sucesso, informar_erro
 from util.template_util import criar_templates
 from util.logger_config import logger
 from util.rate_limiter import RateLimiter, obter_identificador_cliente
-from util.exceptions import FormValidationError
+from util.exceptions import ErroValidacaoFormulario
 
 from repo import turma_repo, atividade_repo, usuario_repo
 from model.turma_model import Turma
@@ -27,7 +26,7 @@ router = APIRouter(prefix="/admin/turmas")
 admin_turmas_limiter = RateLimiter(max_tentativas=10, janela_minutos=1)
 
 # Templates
-templates = criar_templates("templates/admin/turmas")
+templates = criar_templates()
 
 
 @router.get("/listar")
@@ -35,20 +34,12 @@ templates = criar_templates("templates/admin/turmas")
 async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todas as turmas cadastradas"""
     turmas = turma_repo.obter_todos()
-    atividades = atividade_repo.obter_todos()
-    professores = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
-
-    # Criar dicionários para lookup
-    atividades_dict = {ativ.id: ativ.nome for ativ in atividades}
-    professores_dict = {prof.id: prof.nome for prof in professores}
 
     return templates.TemplateResponse(
         "admin/turmas/listar.html",
         {
             "request": request,
-            "turmas": turmas,
-            "atividades_dict": atividades_dict,
-            "professores_dict": professores_dict
+            "turmas": turmas
         }
     )
 
@@ -122,14 +113,15 @@ async def post_cadastrar(
 
         # Criar turma
         turma = Turma(
-            id=0,
+            id_turma=0,
             nome=dto.nome,
             id_atividade=dto.id_atividade,
             id_professor=dto.id_professor,
             horario_inicio=dto.horario_inicio,
             horario_fim=dto.horario_fim,
             dias_semana=dto.dias_semana,
-            vagas=dto.vagas
+            vagas=dto.vagas,
+            data_cadastro=None
         )
 
         turma_repo.inserir(turma)
@@ -141,7 +133,7 @@ async def post_cadastrar(
     except ValidationError as e:
         dados_formulario["atividades"] = atividade_repo.obter_todos()
         dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/turmas/cadastrar.html",
             dados_formulario=dados_formulario,
@@ -237,7 +229,7 @@ async def post_editar(
 
     # Armazena dados do formulário
     dados_formulario: dict = {
-        "id": id,
+        "id_turma": id,
         "nome": nome,
         "id_atividade": id_atividade,
         "id_professor": id_professor,
@@ -269,7 +261,7 @@ async def post_editar(
             dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
             return templates.TemplateResponse(
                 "admin/turmas/editar.html",
-                {"request": request, **dados_formulario}
+                {"request": request, "dados": dados_formulario, **dados_formulario}
             )
 
         # Verificar se professor existe
@@ -281,19 +273,20 @@ async def post_editar(
             dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
             return templates.TemplateResponse(
                 "admin/turmas/editar.html",
-                {"request": request, **dados_formulario}
+                {"request": request, "dados": dados_formulario, **dados_formulario}
             )
 
         # Atualizar turma
         turma_atualizada = Turma(
-            id=id,
+            id_turma=id,
             nome=dto.nome,
             id_atividade=dto.id_atividade,
             id_professor=dto.id_professor,
             horario_inicio=dto.horario_inicio,
             horario_fim=dto.horario_fim,
             dias_semana=dto.dias_semana,
-            vagas=dto.vagas
+            vagas=dto.vagas,
+            data_cadastro=turma_atual.data_cadastro
         )
 
         turma_repo.alterar(turma_atualizada)
@@ -306,7 +299,7 @@ async def post_editar(
         dados_formulario["turma"] = turma_repo.obter_por_id(id)
         dados_formulario["atividades"] = atividade_repo.obter_todos()
         dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/turmas/editar.html",
             dados_formulario=dados_formulario,

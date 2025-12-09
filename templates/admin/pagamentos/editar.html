@@ -1,0 +1,61 @@
+{% extends "base_privada.html" %}
+{% from "macros/form_fields.html" import field with context %}
+
+{% block titulo %}Editar Pagamento{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-cash-coin"></i> Editar Pagamento</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <form method="POST" action="/admin/pagamentos/editar/{{ dados.id_pagamento if dados.id_pagamento is defined else pagamento.id_pagamento }}">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-12">
+                            {% include "components/alerta_erro.html" %}
+                        </div>
+
+                        <!-- Informações do pagamento (somente leitura) -->
+                        <div class="col-12 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">Informações do Pagamento</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Aluno:</strong></p>
+                                            <p class="text-muted">{{ pagamento.aluno.nome if pagamento.aluno else 'N/A' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Data do Pagamento:</strong></p>
+                                            <p class="text-muted">{{ pagamento.data_pagamento.strftime('%d/%m/%Y %H:%M') if pagamento.data_pagamento else '-' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {{ field(name='valor_pago', label='Valor Pago (R$)', type='number',
+                                   required=true, value=dados.valor_pago,
+                                   attributes={'min': '0.01', 'step': '0.01'}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-4">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Salvar Alterações
+                        </button>
+                        <a href="/admin/pagamentos/listar" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
