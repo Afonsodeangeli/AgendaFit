@@ -3,6 +3,7 @@ Configurações e fixtures para testes pytest.
 
 Fornece fixtures reutilizáveis e helpers para testes da aplicação.
 """
+
 # ============================================================
 # CRÍTICO: Configurar banco de dados ANTES de qualquer import
 # que possa carregar db_util.py (via repos ou outros módulos)
@@ -11,14 +12,14 @@ import os
 import tempfile
 
 # Criar arquivo temporário para o banco de testes
-_test_db = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.db')
+_test_db = tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".db")
 _TEST_DB_PATH = _test_db.name
 _test_db.close()
 
 # Configurar variáveis de ambiente ANTES de importar qualquer módulo da aplicação
-os.environ['DATABASE_PATH'] = _TEST_DB_PATH
-os.environ['RESEND_API_KEY'] = ''
-os.environ['LOG_LEVEL'] = 'ERROR'
+os.environ["DATABASE_PATH"] = _TEST_DB_PATH
+os.environ["RESEND_API_KEY"] = ""
+os.environ["LOG_LEVEL"] = "ERROR"
 
 # ============================================================
 # Agora sim, importar o resto (db_util já lerá o valor correto)
@@ -51,18 +52,29 @@ def setup_test_database():
 def limpar_rate_limiter():
     """Limpa o rate limiter antes de cada teste para evitar bloqueios"""
     # Importar após configuração do banco de dados
-    from routes.auth_routes import login_limiter, cadastro_limiter, esqueci_senha_limiter
+    from routes.auth_routes import (
+        login_limiter,
+        cadastro_limiter,
+        esqueci_senha_limiter,
+    )
     from routes.admin_usuarios_routes import admin_usuarios_limiter
-    from routes.admin_backups_routes import admin_backups_limiter, backup_download_limiter
+    from routes.admin_backups_routes import (
+        admin_backups_limiter,
+        backup_download_limiter,
+    )
     from routes.admin_configuracoes_routes import admin_config_limiter
     from routes.chamados_routes import chamado_criar_limiter, chamado_responder_limiter
     from routes.admin_chamados_routes import admin_chamado_responder_limiter
     from routes.usuario_routes import (
-        upload_foto_limiter, alterar_senha_limiter, form_get_limiter
+        upload_foto_limiter,
+        alterar_senha_limiter,
+        form_get_limiter,
     )
     from routes.chat_routes import (
-        chat_mensagem_limiter, chat_sala_limiter,
-        busca_usuarios_limiter, chat_listagem_limiter
+        chat_mensagem_limiter,
+        chat_sala_limiter,
+        busca_usuarios_limiter,
+        chat_listagem_limiter,
     )
     from routes.public_routes import public_limiter
     from routes.examples_routes import examples_limiter
@@ -150,13 +162,13 @@ def limpar_banco_dados():
 
             # Limpar apenas tabelas que existem (respeitando foreign keys)
             # Limpar chamado_interacao antes de chamado (devido à FK)
-            if 'chamado_interacao' in tabelas_existentes:
+            if "chamado_interacao" in tabelas_existentes:
                 cursor.execute("DELETE FROM chamado_interacao")
-            if 'chamado' in tabelas_existentes:
+            if "chamado" in tabelas_existentes:
                 cursor.execute("DELETE FROM chamado")
-            if 'usuario' in tabelas_existentes:
+            if "usuario" in tabelas_existentes:
                 cursor.execute("DELETE FROM usuario")
-            if 'configuracao' in tabelas_existentes:
+            if "configuracao" in tabelas_existentes:
                 cursor.execute("DELETE FROM configuracao")
 
             # Resetar autoincrement (limpar sqlite_sequence se existir)
@@ -180,13 +192,13 @@ def limpar_banco_dados():
 @pytest.fixture(scope="function")
 def client():
     """
-    Cliente de teste FastAPI com sessão limpa para cada teste
+    Aluno de teste FastAPI com sessão limpa para cada teste
     Importa app DEPOIS de configurar o banco de dados
     """
     # Importar aqui para garantir que as configurações de teste sejam aplicadas
     from main import app
 
-    # Criar cliente de teste
+    # Criar aluno de teste
     with TestClient(app) as test_client:
         yield test_client
 
@@ -198,7 +210,7 @@ def usuario_teste():
         "nome": "Usuario Teste",
         "email": "teste@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.ALUNO.value  # Usa Enum Perfil
+        "perfil": Perfil.ALUNO.value,  # Usa Enum Perfil
     }
 
 
@@ -209,7 +221,7 @@ def admin_teste():
         "nome": "Admin Teste",
         "email": "admin@example.com",
         "senha": "Admin@123",
-        "perfil": Perfil.ADMIN.value  # Usa Enum Perfil
+        "perfil": Perfil.ADMIN.value,  # Usa Enum Perfil
     }
 
 
@@ -219,15 +231,22 @@ def criar_usuario(client):
     Fixture que retorna uma função para criar usuários
     Útil para criar múltiplos usuários em um teste
     """
-    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.ALUNO.value):
+
+    def _criar_usuario(
+        nome: str, email: str, senha: str, perfil: str = Perfil.ALUNO.value
+    ):
         """Cadastra um usuário via endpoint de cadastro"""
-        response = client.post("/cadastrar", data={
-            "perfil": perfil,
-            "nome": nome,
-            "email": email,
-            "senha": senha,
-            "confirmar_senha": senha
-        }, follow_redirects=False)
+        response = client.post(
+            "/cadastrar",
+            data={
+                "perfil": perfil,
+                "nome": nome,
+                "email": email,
+                "senha": senha,
+                "confirmar_senha": senha,
+            },
+            follow_redirects=False,
+        )
         return response
 
     return _criar_usuario
@@ -237,43 +256,39 @@ def criar_usuario(client):
 def fazer_login(client):
     """
     Fixture que retorna uma função para fazer login
-    Retorna o cliente já autenticado
+    Retorna o aluno já autenticado
     """
+
     def _fazer_login(email: str, senha: str):
-        """Faz login e retorna o cliente autenticado"""
-        response = client.post("/login", data={
-            "email": email,
-            "senha": senha
-        }, follow_redirects=False)
+        """Faz login e retorna o aluno autenticado"""
+        response = client.post(
+            "/login", data={"email": email, "senha": senha}, follow_redirects=False
+        )
         return response
 
     return _fazer_login
 
 
 @pytest.fixture
-def cliente_autenticado(client, criar_usuario, fazer_login, usuario_teste):
+def aluno_autenticado(client, criar_usuario, fazer_login, usuario_teste):
     """
-    Fixture que retorna um cliente já autenticado
+    Fixture que retorna um aluno já autenticado
     Cria um usuário e faz login automaticamente
     """
     # Criar usuário
-    criar_usuario(
-        usuario_teste["nome"],
-        usuario_teste["email"],
-        usuario_teste["senha"]
-    )
+    criar_usuario(usuario_teste["nome"], usuario_teste["email"], usuario_teste["senha"])
 
     # Fazer login
     fazer_login(usuario_teste["email"], usuario_teste["senha"])
 
-    # Retornar cliente autenticado
+    # Retornar aluno autenticado
     return client
 
 
 @pytest.fixture
 def admin_autenticado(client, criar_usuario, fazer_login, admin_teste):
     """
-    Fixture que retorna um cliente autenticado como admin
+    Fixture que retorna um aluno autenticado como admin
     """
     # Importar para manipular diretamente o banco
     from repo import usuario_repo
@@ -286,14 +301,14 @@ def admin_autenticado(client, criar_usuario, fazer_login, admin_teste):
         nome=admin_teste["nome"],
         email=admin_teste["email"],
         senha=criar_hash_senha(admin_teste["senha"]),
-        perfil=Perfil.ADMIN.value  # Usa Enum Perfil
+        perfil=Perfil.ADMIN.value,  # Usa Enum Perfil
     )
     usuario_repo.inserir(admin)
 
     # Fazer login
     fazer_login(admin_teste["email"], admin_teste["senha"])
 
-    # Retornar cliente autenticado
+    # Retornar aluno autenticado
     return client
 
 
@@ -304,14 +319,14 @@ def professor_teste():
         "nome": "Professor Teste",
         "email": "professor@example.com",
         "senha": "Professor@123",
-        "perfil": Perfil.PROFESSOR.value
+        "perfil": Perfil.PROFESSOR.value,
     }
 
 
 @pytest.fixture
 def professor_autenticado(client, criar_usuario, fazer_login, professor_teste):
     """
-    Fixture que retorna um cliente autenticado como professor
+    Fixture que retorna um aluno autenticado como professor
     """
     # Importar para manipular diretamente o banco
     from repo import usuario_repo
@@ -324,14 +339,14 @@ def professor_autenticado(client, criar_usuario, fazer_login, professor_teste):
         nome=professor_teste["nome"],
         email=professor_teste["email"],
         senha=criar_hash_senha(professor_teste["senha"]),
-        perfil=Perfil.PROFESSOR.value
+        perfil=Perfil.PROFESSOR.value,
     )
     usuario_repo.inserir(professor)
 
     # Fazer login
     fazer_login(professor_teste["email"], professor_teste["senha"])
 
-    # Retornar cliente autenticado
+    # Retornar aluno autenticado
     return client
 
 
@@ -353,9 +368,11 @@ def criar_backup():
     """
     Fixture que retorna uma função para criar backup de teste
     """
+
     def _criar_backup():
         """Cria um backup via util/backup_util"""
         from util import backup_util
+
         sucesso, mensagem = backup_util.criar_backup()
         return sucesso, mensagem
 
@@ -363,6 +380,7 @@ def criar_backup():
 
 
 # ===== FIXTURES AVANÇADAS =====
+
 
 @pytest.fixture
 def dois_usuarios(client, criar_usuario):
@@ -378,13 +396,13 @@ def dois_usuarios(client, criar_usuario):
         "nome": "Usuario Um",
         "email": "usuario1@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.ALUNO.value
+        "perfil": Perfil.ALUNO.value,
     }
     usuario2 = {
         "nome": "Usuario Dois",
         "email": "usuario2@example.com",
         "senha": "Senha@456",
-        "perfil": Perfil.ALUNO.value
+        "perfil": Perfil.ALUNO.value,
     }
 
     # Criar ambos usuários
@@ -395,24 +413,24 @@ def dois_usuarios(client, criar_usuario):
 
 
 @pytest.fixture
-def usuario_com_foto(cliente_autenticado, foto_teste_base64):
+def usuario_com_foto(aluno_autenticado, foto_teste_base64):
     """
-    Fixture que retorna um cliente autenticado com foto de perfil.
+    Fixture que retorna um aluno autenticado com foto de perfil.
 
     Returns:
         TestClient autenticado com foto já salva
     """
     # Atualizar foto do perfil
-    response = cliente_autenticado.post(
+    response = aluno_autenticado.post(
         "/perfil/foto/atualizar",
         json={"imagem": foto_teste_base64},
-        follow_redirects=False
+        follow_redirects=False,
     )
 
     # Verificar se foto foi salva com sucesso
     assert response.status_code in [status.HTTP_200_OK, status.HTTP_303_SEE_OTHER]
 
-    return cliente_autenticado
+    return aluno_autenticado
 
 
 @pytest.fixture
@@ -423,6 +441,7 @@ def obter_ultimo_backup():
     Returns:
         Função que retorna dict com dados do último backup ou None
     """
+
     def _obter_ultimo_backup() -> Optional[dict]:
         """Obtém informações do último backup na pasta backups/"""
         from util import backup_util
@@ -453,10 +472,7 @@ def criar_usuario_direto():
     from util.security import criar_hash_senha
 
     def _criar_usuario_direto(
-        nome: str,
-        email: str,
-        senha: str,
-        perfil: str = Perfil.ALUNO.value
+        nome: str, email: str, senha: str, perfil: str = Perfil.ALUNO.value
     ) -> int:
         """
         Cria usuário diretamente no banco.
@@ -471,11 +487,7 @@ def criar_usuario_direto():
             ID do usuário criado
         """
         usuario = Usuario(
-            id=0,
-            nome=nome,
-            email=email,
-            senha=criar_hash_senha(senha),
-            perfil=perfil
+            id=0, nome=nome, email=email, senha=criar_hash_senha(senha), perfil=perfil
         )
         return usuario_repo.inserir(usuario)
 
@@ -505,6 +517,6 @@ def bloquear_rate_limiter():
         Returns:
             Context manager do patch
         """
-        return patch(f'{limiter_path}.verificar', return_value=False)
+        return patch(f"{limiter_path}.verificar", return_value=False)
 
     return _bloquear_limiter

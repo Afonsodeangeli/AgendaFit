@@ -42,15 +42,15 @@
                                 <td>{{ usuario.data_cadastro|data_br if usuario.data_cadastro else '-' }}</td>
                                 <td class="text-center">
                                     {{ btn_group_crud(
-                                        usuario.id,
-                                        'usuário ' ~ usuario.nome,
-                                        '/admin/usuarios',
-                                        "excluirUsuario(%d, '%s', '%s', '%s')" | format(
-                                            usuario.id,
-                                            usuario.nome|replace("'", "\\'"),
-                                            usuario.email,
-                                            usuario.perfil
-                                        )
+                                    usuario.id,
+                                    'usuário ' ~ usuario.nome,
+                                    '/admin/usuarios',
+                                    "excluirUsuario(%d, '%s', '%s', '%s')" | format(
+                                    usuario.id,
+                                    usuario.nome|replace("'", "\\'"),
+                                    usuario.email,
+                                    usuario.perfil
+                                    )
                                     ) }}
                                 </td>
                             </tr>
@@ -66,24 +66,24 @@
                         {% if admins %}
                         | Administradores: <strong class="text-danger">{{ admins|length }}</strong>
                         {% endif %}
-                        {% set vendedores = usuarios|selectattr('perfil', 'equalto', 'Vendedor')|list %}
-                        {% if vendedores %}
-                        | Vendedores: <strong class="text-warning">{{ vendedores|length }}</strong>
+                        {% set professores = usuarios|selectattr('perfil', 'equalto', 'Professor')|list %}
+                        {% if professores %}
+                        | Professores: <strong class="text-warning">{{ professores|length }}</strong>
                         {% endif %}
-                        {% set clientes = usuarios|selectattr('perfil', 'equalto', 'Cliente')|list %}
-                        {% if clientes %}
-                        | Clientes: <strong class="text-info">{{ clientes|length }}</strong>
+                        {% set alunos = usuarios|selectattr('perfil', 'equalto', 'Aluno')|list %}
+                        {% if alunos %}
+                        | Alunos: <strong class="text-info">{{ alunos|length }}</strong>
                         {% endif %}
                     </small>
                 </div>
                 {% else %}
                 {{ empty_state(
-                    'Nenhum usuário cadastrado',
-                    'Comece cadastrando o primeiro usuário do sistema.',
-                    action_url='/admin/usuarios/cadastrar',
-                    action_text='Cadastrar Primeiro Usuário',
-                    icon='people',
-                    variant='info'
+                'Nenhum usuário cadastrado',
+                'Comece cadastrando o primeiro usuário do sistema.',
+                action_url='/admin/usuarios/cadastrar',
+                action_text='Cadastrar Primeiro Usuário',
+                icon='people',
+                variant='info'
                 ) }}
                 {% endif %}
             </div>

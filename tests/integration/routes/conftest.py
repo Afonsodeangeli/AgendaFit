@@ -5,6 +5,7 @@ Fornece fixtures reutilizaveis para testes de integracao de rotas.
 A criacao de tabelas e feita pela fixture criar_tabelas_integracao
 no conftest.py do nivel de integracao.
 """
+
 import pytest
 
 from model.chamado_model import Chamado, StatusChamado, PrioridadeChamado
@@ -17,7 +18,7 @@ def criar_chamado_admin(admin_autenticado, admin_teste):
     """
     Cria um chamado de teste para cenarios de admin.
 
-    Cria um usuario cliente e um chamado associado a ele,
+    Cria um usuario aluno e um chamado associado a ele,
     para que o admin possa responder/fechar/reabrir.
 
     Returns:
@@ -33,7 +34,7 @@ def criar_chamado_admin(admin_autenticado, admin_teste):
         nome="Aluno Chamado Teste",
         email="aluno_chamado@example.com",
         senha=criar_hash_senha("Senha@123"),
-        perfil=Perfil.ALUNO.value
+        perfil=Perfil.ALUNO.value,
     )
     aluno_id = usuario_repo.inserir(aluno)
 
@@ -43,7 +44,7 @@ def criar_chamado_admin(admin_autenticado, admin_teste):
         titulo="Chamado de Teste Admin",
         status=StatusChamado.ABERTO,
         prioridade=PrioridadeChamado.MEDIA,
-        usuario_id=aluno_id
+        usuario_id=aluno_id,
     )
     chamado_id = chamado_repo.inserir(chamado)
 
@@ -55,7 +56,7 @@ def criar_chamado_admin(admin_autenticado, admin_teste):
         mensagem="Descricao do problema inicial para teste",
         tipo=TipoInteracao.ABERTURA,
         data_interacao=None,
-        status_resultante=StatusChamado.ABERTO.value
+        status_resultante=StatusChamado.ABERTO.value,
     )
     chamado_interacao_repo.inserir(interacao)
 

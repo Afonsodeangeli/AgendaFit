@@ -7,16 +7,16 @@
       "perfil": "Administrador"
     },
     {
-      "nome": "Cliente Padrão",
-      "email": "padrao@cliente.com",
+      "nome": "Aluno Padrão",
+      "email": "padrao@aluno.com",
       "senha": "1234aA@#",
-      "perfil": "Cliente"
+      "perfil": "Aluno"
     },
     {
-      "nome": "Vendedor Padrão",
-      "email": "padrao@vendedor.com",
+      "nome": "Professor Padrão",
+      "email": "padrao@professor.com",
       "senha": "1234aA@#",
-      "perfil": "Vendedor"
+      "perfil": "Professor"
     }
   ]
 }
