@@ -20,7 +20,7 @@ from repo import (
 router = APIRouter(prefix="/admin/estatisticas")
 
 # Templates
-templates = criar_templates("templates/admin/estatisticas")
+templates = criar_templates()
 
 
 @router.get("/dashboard")
@@ -29,10 +29,10 @@ async def get_dashboard(request: Request, usuario_logado: Optional[dict] = None)
     """Exibe dashboard com estatísticas do sistema"""
 
     # Contadores gerais
-    total_alunos = len(usuario_repo.obter_por_perfil(Perfil.ALUNO.value))
-    total_professores = len(usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value))
-    total_categorias = len(categoria_repo.obter_todos())
-    total_atividades = len(atividade_repo.obter_todos())
+    total_alunos = len(usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value))
+    total_professores = len(usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value))
+    total_categorias = len(categoria_repo.obter_todas())
+    total_atividades = len(atividade_repo.obter_todas())
     total_turmas = len(turma_repo.obter_todos())
     total_matriculas = len(matricula_repo.obter_todos())
 
@@ -52,7 +52,7 @@ async def get_dashboard(request: Request, usuario_logado: Optional[dict] = None)
     top_turmas = turmas_com_contagem[:5]
 
     # Atividades mais populares
-    atividades = atividade_repo.obter_todos()
+    atividades = atividade_repo.obter_todas()
     atividades_com_contagem = []
     for atividade in atividades:
         turmas_atividade = turma_repo.obter_por_atividade(atividade.id)
@@ -71,7 +71,7 @@ async def get_dashboard(request: Request, usuario_logado: Optional[dict] = None)
     top_atividades = atividades_com_contagem[:5]
 
     # Professores e suas turmas
-    professores = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+    professores = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
     professores_com_turmas = []
     for professor in professores:
         turmas_professor = turma_repo.obter_por_professor(professor.id)

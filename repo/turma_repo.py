@@ -129,7 +129,7 @@ def obter_por_id(id: int) -> Optional[Turma]:
                 descricao=_row_get(row, "atividade_descricao") or "",
                 data_cadastro=_converter_data(_row_get(row, "data_cadastro")),
                 data_atualizacao=None,
-                categoria=None
+                categoria_nome=None
             )
 
             # Montar objeto Usuario (professor) com campos mínimos
@@ -175,7 +175,7 @@ def obter_todas() -> List[Turma]:
                 descricao=_row_get(row, "atividade_descricao") or "",
                 data_cadastro=None,
                 data_atualizacao=None,
-                categoria=None
+                categoria_nome=None
             )
 
             professor = Usuario(
@@ -226,7 +226,7 @@ def obter_por_professor(id_professor: int) -> List[Turma]:
                 descricao=_row_get(row, "atividade_descricao") or "",
                 data_cadastro=None,
                 data_atualizacao=None,
-                categoria=None
+                categoria_nome=None
             )
             turma = Turma(
                 id_turma=row["id_turma"],

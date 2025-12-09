@@ -1,5 +1,6 @@
 {% set erros = erros if erros is defined else {} %}
 {% set dados = dados if dados is defined else {} %}
+{% set usuario_logado = usuario_logado if usuario_logado is defined else obter_usuario_logado(request) %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 

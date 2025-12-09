@@ -25,6 +25,7 @@ from datetime import datetime
 from model.pagamento_model import Pagamento
 from model.matricula_model import Matricula
 from model.usuario_model import Usuario
+from model.turma_model import Turma
 from sql.pagamento_sql import *
 from util.db_util import obter_conexao as get_connection
 
@@ -54,6 +55,22 @@ def _row_get(row, key: str, default=None):
 
 def _construir_pagamento(row) -> Pagamento:
     """Constrói objeto Pagamento a partir de uma row do banco"""
+    # Construir objeto Turma mínimo com dados do JOIN
+    turma = Turma(
+        id_turma=_row_get(row, "id_turma", 0),
+        nome=_row_get(row, "turma_nome") or "",
+        id_atividade=0,
+        id_professor=0,
+        horario_inicio=None,
+        horario_fim=None,
+        dias_semana="",
+        vagas=0,
+        data_cadastro=None,
+        data_atualizacao=None,
+        atividade=None,
+        professor=None
+    )
+
     matricula = Matricula(
         id_matricula=row["id_matricula"],
         id_turma=_row_get(row, "id_turma", 0),
@@ -61,7 +78,7 @@ def _construir_pagamento(row) -> Pagamento:
         data_matricula=None,
         valor_mensalidade=_row_get(row, "valor_mensalidade", 0.0),
         data_vencimento=None,
-        turma=None,
+        turma=turma,
         aluno=None
     )
 

@@ -15,6 +15,7 @@ from util.flash_messages import obter_mensagens
 from util.config import APP_NAME, VERSION, TOAST_AUTO_HIDE_DELAY_MS
 from util.csrf_protection import obter_token_csrf, CSRF_FORM_FIELD
 from util.config_cache import config
+from model.usuario_logado_model import UsuarioLogado
 
 
 def formatar_data_br(
@@ -161,6 +162,27 @@ def csrf_input(request: Optional[Request] = None) -> str:
     return f'<input type="hidden" name="{CSRF_FORM_FIELD}" value="{token}">'
 
 
+def obter_usuario_logado_template(request: Optional[Request] = None) -> Optional[UsuarioLogado]:
+    """
+    Obtém o usuário logado da sessão para uso nos templates.
+
+    Esta função é disponibilizada como variável global no Jinja2
+    para permitir acesso ao usuário logado em qualquer template
+    sem necessidade de passar explicitamente nas rotas.
+
+    Args:
+        request: Request object (obtido do contexto do template)
+
+    Returns:
+        Instância de UsuarioLogado ou None se não logado
+    """
+    if not request:
+        return None
+
+    dados = request.session.get("usuario_logado")
+    return UsuarioLogado.from_dict(dados) if dados else None
+
+
 def criar_templates() -> Jinja2Templates:
     """
     Cria instância de Jinja2Templates com configurações customizadas.
@@ -197,6 +219,10 @@ def criar_templates() -> Jinja2Templates:
     # IMPORTANTE: Esta função precisa receber 'request' do contexto
     # Uso no template: {{ csrf_input(request) }}
     env.globals['csrf_input'] = csrf_input
+
+    # Função para obter usuário logado nos templates
+    # Uso no template: {% set usuario_logado = obter_usuario_logado(request) %}
+    env.globals['obter_usuario_logado'] = obter_usuario_logado_template
 
     # Adicionar filtros customizados
     env.filters['data_br'] = formatar_data_br

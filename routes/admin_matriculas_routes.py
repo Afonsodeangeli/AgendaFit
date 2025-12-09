@@ -49,7 +49,7 @@ async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
 @requer_autenticacao([Perfil.ADMIN.value])
 async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário de cadastro de matrícula"""
-    alunos = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+    alunos = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
     turmas = turma_repo.obter_todos()
 
     if not alunos:
@@ -110,7 +110,7 @@ async def post_cadastrar(
         aluno = usuario_repo.obter_por_id(dto.id_aluno)
         if not aluno or aluno.perfil != Perfil.ALUNO.value:
             informar_erro(request, "Aluno selecionado não existe.")
-            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/cadastrar.html",
@@ -121,7 +121,7 @@ async def post_cadastrar(
         turma = turma_repo.obter_por_id(dto.id_turma)
         if not turma:
             informar_erro(request, "Turma selecionada não existe.")
-            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/cadastrar.html",
@@ -132,7 +132,7 @@ async def post_cadastrar(
         matricula_existente = matricula_repo.obter_por_aluno_e_turma(dto.id_aluno, dto.id_turma)
         if matricula_existente:
             informar_erro(request, "Este aluno já está matriculado nesta turma.")
-            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/cadastrar.html",
@@ -143,7 +143,7 @@ async def post_cadastrar(
         total_matriculas = len(matricula_repo.obter_por_turma(dto.id_turma))
         if total_matriculas >= turma.vagas:
             informar_erro(request, "Esta turma não possui vagas disponíveis.")
-            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/cadastrar.html",
@@ -173,7 +173,7 @@ async def post_cadastrar(
         return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+        dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
         dados_formulario["turmas"] = turma_repo.obter_todos()
         raise ErroValidacaoFormulario(
             validation_error=e,
@@ -193,7 +193,7 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
         informar_erro(request, "Matrícula não encontrada")
         return RedirectResponse("/admin/matriculas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
-    alunos = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+    alunos = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
     turmas = turma_repo.obter_todos()
 
     # Preparar dados para o template
@@ -267,7 +267,7 @@ async def post_editar(
         if not aluno or aluno.perfil != Perfil.ALUNO.value:
             informar_erro(request, "Aluno selecionado não existe.")
             dados_formulario["matricula"] = matricula_atual
-            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/editar.html",
@@ -279,7 +279,7 @@ async def post_editar(
         if not turma:
             informar_erro(request, "Turma selecionada não existe.")
             dados_formulario["matricula"] = matricula_atual
-            dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+            dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
             dados_formulario["turmas"] = turma_repo.obter_todos()
             return templates.TemplateResponse(
                 "admin/matriculas/editar.html",
@@ -310,7 +310,7 @@ async def post_editar(
 
     except ValidationError as e:
         dados_formulario["matricula"] = matricula_repo.obter_por_id(id)
-        dados_formulario["alunos"] = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+        dados_formulario["alunos"] = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
         dados_formulario["turmas"] = turma_repo.obter_todos()
         raise ErroValidacaoFormulario(
             validation_error=e,

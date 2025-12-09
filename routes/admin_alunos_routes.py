@@ -24,7 +24,7 @@ from dtos.aluno_dto import CriarAlunoDTO, AlterarAlunoDTO
 router = APIRouter(prefix="/admin/alunos")
 
 # Criar instancia de templates
-templates = criar_templates("templates")
+templates = criar_templates()
 
 # Rate limiter para operações administrativas
 admin_alunos_limiter = RateLimiter(max_tentativas=10, janela_minutos=1)
@@ -47,7 +47,7 @@ def verificar_email_disponivel_aluno(email: str, id_excluir: Optional[int] = Non
 @requer_autenticacao([Perfil.ADMIN.value])
 async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todos os alunos cadastrados"""
-    alunos = usuario_repo.obter_por_perfil(Perfil.ALUNO.value)
+    alunos = usuario_repo.obter_todos_por_perfil(Perfil.ALUNO.value)
 
     return templates.TemplateResponse(
         "admin/alunos/listar.html",
@@ -260,15 +260,3 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
 
     informar_sucesso(request, "Aluno excluído com sucesso!")
     return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
-
-
-@router.get("/cadastrar")
-@requer_autenticacao([Perfil.ADMIN.value])
-async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
-    """Exibe formulário de cadastro de aluno"""
-    return templates.TemplateResponse(
-        "admin/alunos/cadastrar.html",
-        {
-            "request": request,
-        }
-    )

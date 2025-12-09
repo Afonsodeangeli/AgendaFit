@@ -93,8 +93,8 @@ async def post_cadastrar(
         atividade = atividade_repo.obter_por_id(dto.id_atividade)
         if not atividade:
             informar_erro(request, "Atividade selecionada não existe.")
-            dados_formulario["atividades"] = atividade_repo.obter_todos()
-            dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+            dados_formulario["atividades"] = atividade_repo.obter_todas()
+            dados_formulario["professores"] = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
             return templates.TemplateResponse(
                 "admin/turmas/cadastrar.html",
                 {"request": request, **dados_formulario}
@@ -104,8 +104,8 @@ async def post_cadastrar(
         professor = usuario_repo.obter_por_id(dto.id_professor)
         if not professor or professor.perfil != Perfil.PROFESSOR.value:
             informar_erro(request, "Professor selecionado não existe.")
-            dados_formulario["atividades"] = atividade_repo.obter_todos()
-            dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+            dados_formulario["atividades"] = atividade_repo.obter_todas()
+            dados_formulario["professores"] = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
             return templates.TemplateResponse(
                 "admin/turmas/cadastrar.html",
                 {"request": request, **dados_formulario}
@@ -131,8 +131,8 @@ async def post_cadastrar(
         return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     except ValidationError as e:
-        dados_formulario["atividades"] = atividade_repo.obter_todos()
-        dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+        dados_formulario["atividades"] = atividade_repo.obter_todas()
+        dados_formulario["professores"] = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
         raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/turmas/cadastrar.html",
@@ -151,8 +151,8 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
         informar_erro(request, "Turma não encontrada")
         return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
-    atividades = atividade_repo.obter_todos()
-    professores = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+    atividades = atividade_repo.obter_todas()
+    professores = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
     dados_turma = turma.__dict__.copy()
 
     # Converter horários para string formato HH:MM
@@ -177,8 +177,8 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
 @requer_autenticacao([Perfil.ADMIN.value])
 async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário de cadastro de turma"""
-    atividades = atividade_repo.obter_todos()
-    professores = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+    atividades = atividade_repo.obter_todas()
+    professores = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
 
     if not atividades:
         informar_erro(request, "É necessário cadastrar pelo menos uma atividade antes de criar turmas.")
@@ -257,8 +257,8 @@ async def post_editar(
         if not atividade:
             informar_erro(request, "Atividade selecionada não existe.")
             dados_formulario["turma"] = turma_atual
-            dados_formulario["atividades"] = atividade_repo.obter_todos()
-            dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+            dados_formulario["atividades"] = atividade_repo.obter_todas()
+            dados_formulario["professores"] = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
             return templates.TemplateResponse(
                 "admin/turmas/editar.html",
                 {"request": request, "dados": dados_formulario, **dados_formulario}
@@ -269,8 +269,8 @@ async def post_editar(
         if not professor or professor.perfil != Perfil.PROFESSOR.value:
             informar_erro(request, "Professor selecionado não existe.")
             dados_formulario["turma"] = turma_atual
-            dados_formulario["atividades"] = atividade_repo.obter_todos()
-            dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+            dados_formulario["atividades"] = atividade_repo.obter_todas()
+            dados_formulario["professores"] = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
             return templates.TemplateResponse(
                 "admin/turmas/editar.html",
                 {"request": request, "dados": dados_formulario, **dados_formulario}
@@ -297,8 +297,8 @@ async def post_editar(
 
     except ValidationError as e:
         dados_formulario["turma"] = turma_repo.obter_por_id(id)
-        dados_formulario["atividades"] = atividade_repo.obter_todos()
-        dados_formulario["professores"] = usuario_repo.obter_por_perfil(Perfil.PROFESSOR.value)
+        dados_formulario["atividades"] = atividade_repo.obter_todas()
+        dados_formulario["professores"] = usuario_repo.obter_todos_por_perfil(Perfil.PROFESSOR.value)
         raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/turmas/editar.html",

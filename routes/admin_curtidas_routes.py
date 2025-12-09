@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Form, Request, logger, status
+from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
@@ -8,6 +8,7 @@ from repo import curtida_repo
 from util.auth_decorator import requer_autenticacao
 from util.exceptions import ErroValidacaoFormulario
 from util.flash_messages import informar_erro, informar_sucesso
+from util.logger_config import logger
 from util.perfis import Perfil
 from util.rate_limiter import RateLimiter, obter_identificador_cliente
 from util.template_util import criar_templates
