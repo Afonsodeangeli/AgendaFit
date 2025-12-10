@@ -232,7 +232,7 @@ async def get_excluir(request: Request, id: int, usuario_logado: Optional[dict] 
 
     # Se chegar aqui, proceeder com exclusão (fallback para GET)
     atividade_repo.excluir(id)
-    logger.info(f"Atividade {id} excluída por admin {usuario_logado.id} (via GET)")
+    logger.info(f"Atividade {id} excluída por admin {usuario_logado.id} (via GET fallback)")
 
     informar_sucesso(request, "Atividade excluída com sucesso!")
     return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)

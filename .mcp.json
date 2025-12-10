@@ -4,7 +4,7 @@
       "type": "stdio",
       "command": "node",
       "args": [
-        "/Users/maroquio/Projetos/runware-mcp-server/server.js"
+        "/home/maroquio/Projects/runware-mcp-server/server.js"
       ],
       "env": {
         "RUNWARE_API_KEY": "${RUNWARE_API_KEY}",
