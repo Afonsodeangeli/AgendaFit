@@ -3,94 +3,129 @@
 {% block titulo %}Turmas{% endblock %}
 
 {% block content %}
-<div class="row">
+<!-- Cabeçalho Turmas Fitness -->
+<div class="row mb-4">
     <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="bi bi-people-fill"></i> Turmas</h2>
-            <a href="/admin/turmas/cadastrar" class="btn btn-success">
-                <i class="bi bi-plus-circle"></i> Nova Turma
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold" style="font-family: 'Montserrat', sans-serif; color: var(--fitness-blue);">
+                    <i class="bi bi-calendar2-week me-2 icon-blue"></i>Turmas Fitness
+                </h2>
+                <p class="text-body-secondary mb-0">Gerencie todas as turmas e horários da academia</p>
+            </div>
+            <a href="/admin/turmas/cadastrar" class="btn btn-fitness-primary">
+                <i class="bi bi-plus-circle me-1"></i> Nova Turma
             </a>
         </div>
-
-        {% if turmas %}
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th style="width: 20%">Nome</th>
-                                <th style="width: 15%">Atividade</th>
-                                <th style="width: 15%">Professor</th>
-                                <th style="width: 15%">Horário</th>
-                                <th style="width: 15%">Dias</th>
-                                <th style="width: 10%" class="text-center">Vagas</th>
-                                <th class="text-center" style="width: 10%">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for turma in turmas %}
-                            <tr>
-                                <td>
-                                    <strong>{{ turma.nome }}</strong>
-                                </td>
-                                <td>
-                                    <span class="badge bg-primary">
-                                        {{ turma.atividade.nome if turma.atividade else 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ turma.professor.nome if turma.professor else 'N/A' }}
-                                </td>
-                                <td>
-                                    <small>
-                                        {{ turma.horario_inicio.strftime('%H:%M') if turma.horario_inicio else '' }} -
-                                        {{ turma.horario_fim.strftime('%H:%M') if turma.horario_fim else '' }}
-                                    </small>
-                                </td>
-                                <td>
-                                    <small>{{ turma.dias_semana }}</small>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-secondary">{{ turma.vagas }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="/admin/turmas/editar/{{ turma.id_turma }}"
-                                           class="btn btn-outline-primary"
-                                           title="Editar turma">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <button type="button"
-                                                class="btn btn-outline-danger"
-                                                title="Excluir turma"
-                                                onclick="excluirTurma({{ turma.id_turma }}, '{{ turma.nome|replace("'", "\\'") }}')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card-footer text-muted">
-                <small><i class="bi bi-info-circle"></i> Total: {{ turmas|length }} turma(s)</small>
-            </div>
-        </div>
-        {% else %}
-        <div class="alert alert-info" role="alert">
-            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhuma turma cadastrada</h4>
-            <p>Não há turmas cadastradas no sistema. Clique em "Nova Turma" para começar.</p>
-            <hr>
-            <a href="/admin/turmas/cadastrar" class="btn btn-success">
-                <i class="bi bi-plus-circle"></i> Cadastrar Primeira Turma
-            </a>
-        </div>
-        {% endif %}
     </div>
 </div>
+
+{% if turmas %}
+<!-- Grid de Turmas em Cards Visuais -->
+<div class="row g-4">
+    {% for turma in turmas %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card card-fitness h-100 bg-body overflow-hidden">
+            <!-- Header do Card com Gradiente -->
+            <div style="background: linear-gradient(135deg, var(--fitness-orange) 0%, var(--fitness-purple) 100%); height: 80px; display: flex; align-items: center; justify-content: center; color: white;">
+                <div class="text-center">
+                    <i class="bi bi-activity fs-1"></i>
+                    <p class="mb-0 small fw-bold">{{ turma.atividade.nome if turma.atividade else 'N/A' }}</p>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Nome da Turma -->
+                <h5 class="card-title fw-bold mb-3" style="color: var(--fitness-orange);">
+                    {{ turma.nome }}
+                </h5>
+
+                <!-- Informações em Grid -->
+                <div class="row g-3 mb-4 small">
+                    <!-- Professor -->
+                    <div class="col-6">
+                        <div class="text-center p-2" style="background: rgba(255, 107, 53, 0.05); border-radius: 8px;">
+                            <i class="bi bi-person-circle icon-orange mb-2 d-block"></i>
+                            <small class="fw-bold" style="color: var(--fitness-orange);">Professor</small>
+                            <p class="mb-0 text-body-secondary" style="font-size: 0.8rem;">
+                                {{ turma.professor.nome[:15] if turma.professor else 'N/A' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Horário -->
+                    <div class="col-6">
+                        <div class="text-center p-2" style="background: rgba(0, 78, 137, 0.05); border-radius: 8px;">
+                            <i class="bi bi-clock icon-blue mb-2 d-block"></i>
+                            <small class="fw-bold" style="color: var(--fitness-blue);">Horário</small>
+                            <p class="mb-0 text-body-secondary" style="font-size: 0.8rem;">
+                                {{ turma.horario_inicio.strftime('%H:%M') if turma.horario_inicio else '' }}-{{ turma.horario_fim.strftime('%H:%M') if turma.horario_fim else '' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dias e Vagas -->
+                <div class="mb-3">
+                    <small class="fw-bold text-body-secondary">Dias:</small>
+                    <p class="mb-2 text-body-secondary">{{ turma.dias_semana }}</p>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar"
+                             style="width: {{ (turma.vagas / 30) * 100 }}%; background: var(--gradient-hero-primary);"
+                             aria-valuenow="{{ turma.vagas }}" aria-valuemin="0" aria-valuemax="30">
+                            <small class="fw-bold text-white">{{ turma.vagas }} vagas</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações -->
+                <div class="btn-group w-100" role="group">
+                    <a href="/admin/turmas/editar/{{ turma.id_turma }}"
+                       class="btn btn-sm btn-fitness-secondary"
+                       title="Editar turma">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            title="Excluir turma"
+                            onclick="excluirTurma({{ turma.id_turma }}, '{{ turma.nome|replace("'", "\\'") }}')">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Rodapé com Total -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert border-0 rounded-3" style="background: rgba(26, 162, 96, 0.1); border-left: 4px solid var(--fitness-green);">
+            <i class="bi bi-info-circle me-2 icon-green fw-bold"></i>
+            <strong>Total:</strong> {{ turmas|length }} turma(s) cadastrada(s)
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- Estado Vazio -->
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card card-fitness border-0 shadow-sm" style="padding: 60px 20px; text-align: center;">
+            <i class="bi bi-inbox" style="font-size: 4rem; color: var(--fitness-orange); opacity: 0.3; margin-bottom: 20px;"></i>
+            <h4 class="fw-bold text-body-secondary mb-2">Nenhuma turma cadastrada</h4>
+            <p class="text-body-secondary mb-4">
+                Comece criando sua primeira turma para gerenciar atividades e alunos.
+            </p>
+            <a href="/admin/turmas/cadastrar" class="btn btn-fitness-primary">
+                <i class="bi bi-plus-circle me-1"></i> Cadastrar Primeira Turma
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block scripts %}

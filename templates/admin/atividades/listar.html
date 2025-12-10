@@ -3,81 +3,101 @@
 {% block titulo %}Atividades{% endblock %}
 
 {% block content %}
-<div class="row">
+<!-- Cabeçalho Atividades Fitness -->
+<div class="row mb-4">
     <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="bi bi-activity"></i> Atividades Físicas</h2>
-            <a href="/admin/atividades/cadastrar" class="btn btn-success">
-                <i class="bi bi-plus-circle"></i> Nova Atividade
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold" style="font-family: 'Montserrat', sans-serif; color: var(--fitness-green);">
+                    <i class="bi bi-lightning-fill me-2 icon-green"></i>Atividades Físicas
+                </h2>
+                <p class="text-body-secondary mb-0">Cadastre e gerencie todas as atividades oferecidas</p>
+            </div>
+            <a href="/admin/atividades/cadastrar" class="btn btn-fitness-primary">
+                <i class="bi bi-plus-circle me-1"></i> Nova Atividade
             </a>
         </div>
+    </div>
+</div>
 
-        {% if atividades %}
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th style="width: 25%">Nome</th>
-                                <th style="width: 20%">Categoria</th>
-                                <th style="width: 45%">Descrição</th>
-                                <th class="text-center" style="width: 10%">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for atividade in atividades %}
-                            <tr>
-                                <td>
-                                    <strong>{{ atividade.nome }}</strong>
-                                </td>
-                                <td>
-                                    {% if atividade.categoria_nome %}
-                                    <span class="badge bg-secondary">{{ atividade.categoria_nome }}</span>
-                                    {% else %}
-                                    <em class="text-muted">Sem categoria</em>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if atividade.descricao %}
-                                    {{ atividade.descricao[:100] }}{% if atividade.descricao|length > 100 %}...{% endif %}
-                                    {% else %}
-                                    <em class="text-muted">Sem descrição</em>
-                                    {% endif %}
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="/admin/atividades/editar/{{ atividade.id_atividade }}"
-                                           class="btn btn-outline-primary"
-                                           title="Editar atividade">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <button type="button"
-                                            class="btn btn-outline-danger"
-                                            title="Excluir atividade"
-                                            data-id="{{ atividade.id_atividade }}"
-                                            data-nome="{{ atividade.nome|e }}"
-                                            onclick="excluirAtividadeElement(this)">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+{% if atividades %}
+<!-- Grid de Atividades em Cards Visuais -->
+<div class="row g-4">
+    {% for atividade in atividades %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card card-fitness h-100 bg-body overflow-hidden d-flex flex-column">
+            <!-- Header do Card com Ícone Fitness -->
+            <div style="background: linear-gradient(135deg, #1AA260 0%, #00BCD4 100%); height: 100px; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="bi bi-heart-pulse" style="font-size: 3rem; opacity: 0.8;"></i>
+            </div>
+
+            <div class="card-body flex-grow-1 d-flex flex-column">
+                <!-- Nome da Atividade -->
+                <h5 class="card-title fw-bold mb-2" style="color: var(--fitness-green);">
+                    {{ atividade.nome }}
+                </h5>
+
+                <!-- Categoria Badge -->
+                {% if atividade.categoria_nome %}
+                <div class="mb-3">
+                    <span class="badge-fitness-green rounded-pill" style="display: inline-block;">
+                        <i class="bi bi-tag me-1"></i>{{ atividade.categoria_nome }}
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- Descrição -->
+                <p class="card-text text-body-secondary mb-auto" style="font-size: 0.95rem; line-height: 1.5;">
+                    {% if atividade.descricao %}
+                    {{ atividade.descricao[:120] }}{% if atividade.descricao|length > 120 %}...{% endif %}
+                    {% else %}
+                    <em class="text-muted">Sem descrição</em>
+                    {% endif %}
+                </p>
+
+                <!-- Ações -->
+                <div class="btn-group w-100 mt-4" role="group">
+                    <a href="/admin/atividades/editar/{{ atividade.id_atividade }}"
+                       class="btn btn-sm btn-fitness-secondary"
+                       title="Editar atividade">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            title="Excluir atividade"
+                            data-id="{{ atividade.id_atividade }}"
+                            data-nome="{{ atividade.nome|e }}"
+                            onclick="excluirAtividadeElement(this)">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
                 </div>
             </div>
-            <div class="card-footer text-muted">
-                <small><i class="bi bi-info-circle"></i> Total: {{ atividades|length }} atividade(s)</small>
-            </div>
         </div>
-        {% else %}
-        <div class="alert alert-info" role="alert">
-            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Nenhuma atividade cadastrada</h4>
-            <p>Não há atividades cadastradas no sistema. Clique em "Nova Atividade" para começar.</p>
-            <hr>
-            <a href="/admin/atividades/cadastrar" class="btn btn-success">
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Rodapé com Total -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert border-0 rounded-3" style="background: rgba(0, 78, 137, 0.1); border-left: 4px solid var(--fitness-blue);">
+            <i class="bi bi-info-circle me-2 icon-blue fw-bold"></i>
+            <strong>Total:</strong> {{ atividades|length }} atividade(s) cadastrada(s)
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- Estado Vazio -->
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card card-fitness border-0 shadow-sm" style="padding: 60px 20px; text-align: center;">
+            <i class="bi bi-inbox" style="font-size: 4rem; color: var(--fitness-green); opacity: 0.3; margin-bottom: 20px;"></i>
+            <h4 class="fw-bold text-body-secondary mb-2">Nenhuma atividade cadastrada</h4>
+            <p class="text-body-secondary mb-4">
+                Comece criando sua primeira atividade para oferecer aos seus alunos.
+            </p>
+            <a href="/admin/atividades/cadastrar" class="btn btn-fitness-primary">
                 <i class="bi bi-plus-circle"></i> Cadastrar Primeira Atividade
             </a>
         </div>

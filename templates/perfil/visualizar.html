@@ -4,50 +4,97 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-8 mx-auto">
-        <!-- Cabeçalho do Perfil -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body text-center py-5">
-                <div class="mb-4">
+    <div class="col-md-10 mx-auto">
+        <!-- Banner Fitness com Gradiente -->
+        <div class="card card-fitness mb-4 overflow-hidden">
+            <!-- Header Gradiente -->
+            <div style="background: linear-gradient(135deg, #FF6B35 0%, #9B51E0 100%); height: 120px;"></div>
+
+            <!-- Conteúdo Perfil -->
+            <div class="card-body p-5 position-relative" style="margin-top: -60px;">
+                <div class="text-center mb-5">
+                    <!-- Foto de Perfil Grande e Circular -->
                     <img src="{{ usuario.id|foto_usuario }}" alt="Foto de Perfil" id="profile-photo"
-                        class="rounded-circle border border-3 border-primary object-fit-cover" width="150" height="150"
-                        title="Clique para alterar a foto">
+                        class="rounded-circle border-5 border-white object-fit-cover shadow-lg"
+                        width="180" height="180"
+                        title="Clique para alterar a foto"
+                        style="cursor: pointer;">
+
+                    <!-- Nome -->
+                    <h1 class="fw-bold mt-4 mb-2" style="font-family: 'Montserrat', sans-serif; color: var(--fitness-orange);">
+                        {{ usuario.nome }}
+                    </h1>
+
+                    <!-- Email -->
+                    <p class="text-body-secondary mb-3">
+                        <i class="bi bi-envelope me-1"></i> {{ usuario.email }}
+                    </p>
+
+                    <!-- Badge de Perfil com Cor Dinâmica -->
+                    <p class="mb-3">
+                        {% if usuario.perfil == 'Administrador' %}
+                        <span class="badge-fitness-orange rounded-pill" style="display: inline-block;">
+                            <i class="bi bi-person-badge me-1"></i>{{ usuario.perfil }}
+                        </span>
+                        {% elif usuario.perfil == 'Professor' %}
+                        <span class="badge-fitness-blue rounded-pill" style="display: inline-block;">
+                            <i class="bi bi-person-badge me-1"></i>{{ usuario.perfil }}
+                        </span>
+                        {% elif usuario.perfil == 'Aluno' %}
+                        <span class="badge-fitness-green rounded-pill" style="display: inline-block;">
+                            <i class="bi bi-person-badge me-1"></i>{{ usuario.perfil }}
+                        </span>
+                        {% else %}
+                        <span class="badge bg-secondary rounded-pill" style="display: inline-block;">
+                            <i class="bi bi-person-badge me-1"></i>{{ usuario.perfil }}
+                        </span>
+                        {% endif %}
+                    </p>
+
+                    <!-- Data de Cadastro -->
+                    {% if usuario.data_cadastro %}
+                    <p class="text-body-secondary small">
+                        <i class="bi bi-calendar-check me-1"></i>
+                        Membro desde <strong>{{ usuario.data_cadastro|data_br }}</strong>
+                    </p>
+                    {% endif %}
                 </div>
 
-                <h2 class="mb-2">{{ usuario.nome }}</h2>
-                <p class="text-muted mb-3">
-                    <i class="bi bi-envelope"></i> {{ usuario.email }}
-                </p>
-                <p class="mb-3">
-                    <span
-                        class="badge bg-{% if usuario.perfil == 'Administrador' %}danger{% else %}info{% endif %} px-3 py-2">
-                        <i class="bi bi-person-badge"></i>
-                        {{ usuario.perfil }}
-                    </span>
-                </p>
-                {% if usuario.data_cadastro %}
-                <p class="text-muted small">
-                    <i class="bi bi-calendar-check"></i> Membro desde {{ usuario.data_cadastro|data_br }}
-                </p>
-                {% endif %}
-            </div>
-        </div>
-        <!-- Ações do Perfil -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <a href="/usuario/perfil/editar" class="btn btn-primary w-100 btn-lg">
-                    <i class="bi bi-pencil-square"></i> Editar Dados
-                </a>
-            </div>
-            <div class="col-md-4">
-                <a href="/usuario/perfil/alterar-senha" class="btn btn-warning w-100 btn-lg">
-                    <i class="bi bi-key-fill"></i> Alterar Senha
-                </a>
-            </div>
-            <div class="col-md-4">
-                <button type="button" class="btn btn-info w-100 btn-lg" id="btn-change-photo">
-                    <i class="bi bi-camera-fill"></i> Alterar Foto
-                </button>
+                <!-- Ações do Perfil - Grid de Cards -->
+                <div class="row g-3">
+                    <!-- Editar Dados -->
+                    <div class="col-md-4">
+                        <a href="/usuario/perfil/editar" class="text-decoration-none">
+                            <div class="card card-fitness h-100 bg-body text-center p-4">
+                                <i class="bi bi-pencil-square icon-orange fs-2 mb-3"></i>
+                                <h6 class="fw-bold mb-2" style="color: var(--fitness-orange);">Editar Dados</h6>
+                                <small class="text-body-secondary">Atualize suas informações pessoais</small>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Alterar Senha -->
+                    <div class="col-md-4">
+                        <a href="/usuario/perfil/alterar-senha" class="text-decoration-none">
+                            <div class="card card-fitness h-100 bg-body text-center p-4">
+                                <i class="bi bi-key-fill icon-blue fs-2 mb-3"></i>
+                                <h6 class="fw-bold mb-2" style="color: var(--fitness-blue);">Alterar Senha</h6>
+                                <small class="text-body-secondary">Mude sua senha de acesso</small>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Alterar Foto -->
+                    <div class="col-md-4">
+                        <button type="button" class="text-decoration-none w-100 border-0 bg-transparent p-0" id="btn-change-photo">
+                            <div class="card card-fitness h-100 bg-body text-center p-4">
+                                <i class="bi bi-camera-fill icon-green fs-2 mb-3"></i>
+                                <h6 class="fw-bold mb-2" style="color: var(--fitness-green);">Alterar Foto</h6>
+                                <small class="text-body-secondary">Mude sua foto de perfil</small>
+                            </div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

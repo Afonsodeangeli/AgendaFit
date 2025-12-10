@@ -18,6 +18,7 @@ class_extra='',
 help_text='',
 id=none,
 attributes=none,
+prepend_icon=none,
 append_icon=none,
 append_button_onclick='',
 radio_style='default',
@@ -263,6 +264,32 @@ decimal_suffix=''
             if autofocus %}autofocus{% endif %} {% for attr, attr_value in extra_attrs.items() %}{{ attr
             }}="{{ attr_value }}" {% endfor %}>
         <label for="{{ field_id }}">{{ label }}</label>
+        {% if has_error %}
+        <div class="invalid-feedback">
+            {{ field_error }}
+        </div>
+        {% endif %}
+    </div>
+    {% if help_text %}
+    <div class="form-text">{{ help_text }}</div>
+    {% endif %}
+</div>
+
+{# ========== INPUT COM ÍCONE PREPEND (input-group) ========== #}
+{% elif prepend_icon %}
+<div class="{{ wrapper_class }}">
+    <div class="input-group">
+        <span class="input-group-text">
+            <i class="bi {{ prepend_icon }}"></i>
+        </span>
+        <div class="form-floating">
+            <input type="{{ type }}" class="form-control {{ class_extra }} {% if has_error %}is-invalid{% endif %}"
+                id="{{ field_id }}" name="{{ name }}" value="{{ field_value }}" placeholder="{{ field_placeholder }}" {%
+                if disabled %}disabled{% endif %} {% if readonly %}readonly{% endif %} {% if required %}required{% endif
+                %} {% if autofocus %}autofocus{% endif %} {% for attr, attr_value in extra_attrs.items() %}{{ attr
+                }}="{{ attr_value }}" {% endfor %}>
+            <label for="{{ field_id }}">{{ label }}</label>
+        </div>
         {% if has_error %}
         <div class="invalid-feedback">
             {{ field_error }}
