@@ -7,12 +7,12 @@ com estilos e acessibilidade consistentes.
 
 {% macro btn_icon(url, icon, variant='primary', title='', aria_label='', size='sm', onclick='', extra_classes='') %}
 {#
-Botão com ícone (link ou button)
+Botão com ícone (link ou button) - Suporta variantes Fitness
 
 Args:
 url: URL de destino (para links) ou '#' (para buttons)
 icon: Nome do ícone Bootstrap Icons (sem o prefixo 'bi-')
-variant: Variante do Bootstrap (primary, secondary, success, danger, warning, info)
+variant: Variante (primary, secondary, success, danger, warning, info, fitness-primary, fitness-secondary)
 title: Tooltip ao passar o mouse
 aria_label: Label de acessibilidade para leitores de tela
 size: Tamanho do botão ('sm', 'md', 'lg')
@@ -22,16 +22,17 @@ extra_classes: Classes CSS adicionais
 Retorna:
 Link (<a>) se onclick vazio, Button (<button>) se onclick presente
         #}
+        {% set btn_class = 'btn-fitness-primary' if variant == 'fitness-primary' else 'btn-fitness-secondary' if variant == 'fitness-secondary' else 'btn-outline-' ~ variant %}
         {% if onclick %}
         <button type="button"
-            class="btn btn-{% if size != 'md' %}{{ size }} {% endif %}btn-outline-{{ variant }} {{ extra_classes }}" {%
+            class="btn btn-{% if size != 'md' %}{{ size }} {% endif %}{{ btn_class }} {{ extra_classes }}" {%
             if title %}title="{{ title }}" {% endif %} {% if aria_label %}aria-label="{{ aria_label }}" {% endif %}
             onclick="{{ onclick }}">
             <i class="bi bi-{{ icon }}"></i>
         </button>
         {% else %}
         <a href="{{ url }}"
-            class="btn btn-{% if size != 'md' %}{{ size }} {% endif %}btn-outline-{{ variant }} {{ extra_classes }}" {%
+            class="btn btn-{% if size != 'md' %}{{ size }} {% endif %}{{ btn_class }} {{ extra_classes }}" {%
             if title %}title="{{ title }}" {% endif %} {% if aria_label %}aria-label="{{ aria_label }}" {% endif %}>
             <i class="bi bi-{{ icon }}"></i>
         </a>
