@@ -221,11 +221,12 @@ async def get_excluir(request: Request, id: int, usuario_logado: Optional[dict] 
 
     # Verificar se há turmas associadas
     from repo import turma_repo
-    turmas = turma_repo.obter_por_atividade(id)
-    if turmas:
+    todas_turmas = turma_repo.obter_todas()
+    turmas_atividade = [t for t in todas_turmas if t.id_atividade == id]
+    if turmas_atividade:
         informar_erro(
             request,
-            f"Não é possível excluir esta atividade pois há {len(turmas)} turma(s) associada(s) a ela."
+            f"Não é possível excluir esta atividade pois há {len(turmas_atividade)} turma(s) associada(s) a ela."
         )
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -257,11 +258,12 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
 
     # Verificar se há turmas associadas a esta atividade
     from repo import turma_repo
-    turmas = turma_repo.obter_por_atividade(id)
-    if turmas:
+    todas_turmas = turma_repo.obter_todas()
+    turmas_atividade = [t for t in todas_turmas if t.id_atividade == id]
+    if turmas_atividade:
         informar_erro(
             request,
-            f"Não é possível excluir esta atividade pois há {len(turmas)} turma(s) associada(s) a ela."
+            f"Não é possível excluir esta atividade pois há {len(turmas_atividade)} turma(s) associada(s) a ela."
         )
         return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
 
