@@ -4,23 +4,23 @@
 
 {% block content %}
 
-<!-- Cabeçalho de Boas-Vindas - Design Moderno com Gradiente -->
+<!-- Cabeçalho de Boas-Vindas Fitness - Design Energético -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="position-relative overflow-hidden rounded-4 shadow"
-             style="background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-emphasis) 100%);">
-            <div class="position-relative p-4" data-bs-theme="dark">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="d-none d-md-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 p-3">
-                        <i class="bi bi-house-door-fill fs-2"></i>
+        <div class="position-relative overflow-hidden rounded-4 shadow-lg hero-fitness"
+             style="background: linear-gradient(135deg, #FF6B35 0%, #9B51E0 100%); min-height: 120px;">
+            <div class="position-relative p-5 d-flex align-items-center" data-bs-theme="dark" style="min-height: 120px;">
+                <div class="d-flex align-items-center gap-4 w-100">
+                    <div class="d-none d-md-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-15 p-4" style="min-width: 80px;">
+                        <i class="bi bi-heart-pulse text-white fs-1"></i>
                     </div>
                     <div>
-                        <h1 class="mb-1 h3 fw-bold">
-                            Olá, {{ usuario_logado.nome.split()[0] }}! 👋
+                        <h1 class="mb-1 h2 fw-bold text-white" style="font-family: 'Montserrat', sans-serif;">
+                            Bem-vindo, {{ usuario_logado.nome.split()[0] }}! 💪
                         </h1>
-                        <p class="mb-0 text-white-50">
+                        <p class="mb-0 text-white" style="opacity: 0.9;">
                             <i class="bi bi-calendar-check me-1"></i>
-                            Bem-vindo ao seu painel de controle
+                            Seu painel de controle fitness
                         </p>
                     </div>
                 </div>
@@ -33,16 +33,16 @@
 <div class="row g-4 mb-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
     <!-- Meu Perfil -->
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm card-hover">
+        <div class="card card-fitness h-100 bg-body">
             <div class="card-body text-center p-4">
-                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 p-4 mb-3">
-                    <i class="bi bi-person-circle text-primary fs-1"></i>
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 mb-3" style="background: rgba(255, 107, 53, 0.1);">
+                    <i class="bi bi-person-circle icon-orange fs-1"></i>
                 </div>
-                <h5 class="card-title fw-bold mb-2">Meu Perfil</h5>
+                <h5 class="card-title fw-bold mb-2" style="color: var(--fitness-orange);">Meu Perfil</h5>
                 <p class="card-text text-body-secondary mb-4">
                     Visualize e edite suas informações pessoais
                 </p>
-                <a href="/usuario/perfil/visualizar" class="btn btn-primary rounded-pill px-4">
+                <a href="/usuario/perfil/visualizar" class="btn btn-fitness-primary rounded-pill px-4">
                     <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>

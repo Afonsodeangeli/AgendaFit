@@ -28,9 +28,9 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-body-tertiary">
-    <!-- Navbar Privada (Área Autenticada) - Design Moderno -->
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm" data-bs-theme="dark"
-         style="background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-emphasis) 100%);">
+    <!-- Navbar Privada (Área Autenticada) - Design Moderno Fitness -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm navbar-fitness" data-bs-theme="dark"
+         style="background: linear-gradient(135deg, #FF6B35 0%, #9B51E0 100%);">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" href="/usuario">
                 <img src="/static/img/logo.svg" alt="Logo" height="32" class="d-inline-block"
@@ -203,19 +203,19 @@
     {% include 'components/chat_widget.html' %}
     {% endif %}
 
-    <!-- Footer Moderno -->
-    <footer class="mt-auto border-top bg-body">
+    <!-- Footer Fitness Moderno -->
+    <footer class="mt-auto border-top bg-body" style="background: linear-gradient(180deg, rgba(248,249,250,0.8) 0%, rgba(248,249,250,1) 100%);">
         <div class="container py-3">
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
                 <div class="d-flex align-items-center gap-2">
                     <img src="/static/img/logo.svg" alt="Logo" height="20" onerror="this.style.display='none'">
-                    <small class="text-body-secondary">&copy; 2025 {{ APP_NAME }}</small>
+                    <small class="text-body-secondary">&copy; 2025 {{ APP_NAME }} - Seu parceiro em Atividades Físicas</small>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                    <a href="/usuario" class="link-body-emphasis text-decoration-none small link-opacity-75 link-opacity-100-hover">
+                    <a href="/usuario" class="link-fitness text-decoration-none small" title="Ir para Dashboard">
                         <i class="bi bi-speedometer2 me-1"></i>Dashboard
                     </a>
-                    <a href="/chamados/listar" class="link-body-emphasis text-decoration-none small link-opacity-75 link-opacity-100-hover">
+                    <a href="/chamados/listar" class="link-fitness text-decoration-none small" title="Ir para Suporte">
                         <i class="bi bi-headset me-1"></i>Suporte
                     </a>
                 </div>

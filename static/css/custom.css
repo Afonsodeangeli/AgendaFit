@@ -1,14 +1,53 @@
+/* ===== GOOGLE FONTS IMPORT ===== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
+
 /* ===== CUSTOM VARIABLES ===== */
 /* Complementa as variáveis nativas do Bootstrap 5.3 */
 :root {
-    /* Transições suaves */
-    --transition-base: all 0.3s ease-in-out;
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Cores Fitness - Paleta Energética */
+    --fitness-orange: #FF6B35;
+    --fitness-orange-dark: #E55A2B;
+    --fitness-blue: #004E89;
+    --fitness-blue-dark: #003A6B;
+    --fitness-green: #1AA260;
+    --fitness-green-light: #00BCD4;
+    --fitness-red: #F9564F;
+    --fitness-purple: #9B51E0;
 
-    /* Sombras customizadas */
+    /* Gradientes Fitness */
+    --gradient-hero-primary: linear-gradient(135deg, #FF6B35 0%, #F9564F 100%);
+    --gradient-hero-secondary: linear-gradient(135deg, #FF6B35 0%, #9B51E0 100%);
+    --gradient-card-accent: linear-gradient(135deg, #1AA260 0%, #00BCD4 100%);
+    --gradient-dark-overlay: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%);
+    --gradient-subtle: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(155,81,224,0.1) 100%);
+
+    /* Sombras Fitness */
     --shadow-soft: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
     --shadow-medium: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     --shadow-strong: 0 12px 24px rgba(0, 0, 0, 0.12);
+    --shadow-fitness-soft: 0 4px 12px rgba(255, 107, 53, 0.12);
+    --shadow-fitness-strong: 0 12px 28px rgba(255, 107, 53, 0.18);
+
+    /* Border Radius Fitness */
+    --radius-card: 16px;
+    --radius-button: 50px;
+    --radius-input: 12px;
+
+    /* Transições suaves */
+    --transition-base: all 0.3s ease-in-out;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.2s ease-out;
+}
+
+/* ===== TIPOGRAFIA CUSTOMIZADA ===== */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 /* ===== UTILITY CLASSES - Bootstrap 5.3 Enhanced ===== */
@@ -168,4 +207,248 @@
         border-bottom-right-radius: var(--bs-btn-border-radius);
         border-bottom-left-radius: 0;
     }
+}
+
+/* ===== CLASSES UTILITÁRIAS FITNESS ===== */
+
+/* Botões Fitness */
+.btn-fitness-primary {
+    background: var(--gradient-hero-primary);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: var(--radius-button);
+    padding: 0.75rem 2rem;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.btn-fitness-primary:hover {
+    background: var(--gradient-hero-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+    color: white;
+}
+
+.btn-fitness-secondary {
+    border: 2px solid var(--fitness-orange);
+    background: transparent;
+    color: var(--fitness-orange);
+    font-weight: 600;
+    border-radius: var(--radius-button);
+    padding: 0.65rem 1.9rem;
+    transition: var(--transition-smooth);
+}
+
+.btn-fitness-secondary:hover {
+    background: var(--fitness-orange);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Cards Fitness */
+.card-fitness {
+    border: none;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-fitness-soft);
+    transition: var(--transition-smooth);
+    overflow: hidden;
+}
+
+.card-fitness:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-fitness-strong);
+}
+
+.card-fitness.bg-gradient-orange {
+    background: var(--gradient-hero-primary) !important;
+    color: white;
+}
+
+/* Hero Fitness */
+.hero-fitness {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-fitness::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-dark-overlay);
+    z-index: 1;
+}
+
+.hero-fitness > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Stats Cards */
+.stats-card {
+    border: none;
+    border-radius: var(--radius-card);
+    padding: 1.5rem;
+    text-align: center;
+    background: white;
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-smooth);
+}
+
+.stats-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
+}
+
+.stats-card .stats-value {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--gradient-hero-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stats-card .stats-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--bs-body-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Badges Fitness */
+.badge-fitness-orange {
+    background-color: var(--fitness-orange) !important;
+    color: white !important;
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 0.5rem 1rem !important;
+}
+
+.badge-fitness-blue {
+    background-color: var(--fitness-blue) !important;
+    color: white !important;
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 0.5rem 1rem !important;
+}
+
+.badge-fitness-green {
+    background-color: var(--fitness-green) !important;
+    color: white !important;
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 0.5rem 1rem !important;
+}
+
+/* Inputs Fitness */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--fitness-orange);
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+
+.form-control,
+.form-select {
+    border-radius: var(--radius-input);
+    border-color: #e0e0e0;
+    transition: var(--transition-fast);
+}
+
+/* Progress Bars Fitness */
+.progress {
+    border-radius: var(--radius-input);
+    background-color: #f0f0f0;
+    height: 8px;
+}
+
+.progress-bar {
+    background: var(--gradient-hero-primary);
+    border-radius: var(--radius-input);
+}
+
+/* Text Utilities */
+.text-fitness-orange {
+    color: var(--fitness-orange) !important;
+}
+
+.text-fitness-blue {
+    color: var(--fitness-blue) !important;
+}
+
+.text-fitness-green {
+    color: var(--fitness-green) !important;
+}
+
+/* Background Utilities */
+.bg-fitness-orange {
+    background-color: var(--fitness-orange) !important;
+}
+
+.bg-fitness-blue {
+    background-color: var(--fitness-blue) !important;
+}
+
+.bg-fitness-green {
+    background-color: var(--fitness-green) !important;
+}
+
+.bg-fitness-orange-light {
+    background: rgba(255, 107, 53, 0.1) !important;
+    color: var(--fitness-orange);
+}
+
+.bg-fitness-blue-light {
+    background: rgba(0, 78, 137, 0.1) !important;
+    color: var(--fitness-blue);
+}
+
+.bg-fitness-green-light {
+    background: rgba(26, 162, 96, 0.1) !important;
+    color: var(--fitness-green);
+}
+
+/* Icon Colors */
+.icon-orange {
+    color: var(--fitness-orange);
+}
+
+.icon-blue {
+    color: var(--fitness-blue);
+}
+
+.icon-green {
+    color: var(--fitness-green);
+}
+
+/* Smooth Transitions for Links */
+a.link-fitness {
+    color: var(--fitness-orange);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    position: relative;
+}
+
+a.link-fitness:hover {
+    color: var(--fitness-orange-dark);
+}
+
+a.link-fitness::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: var(--fitness-orange);
+    transition: width var(--transition-smooth);
+}
+
+a.link-fitness:hover::after {
+    width: 100%;
 }
