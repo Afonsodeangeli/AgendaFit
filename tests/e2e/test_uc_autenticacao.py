@@ -186,21 +186,18 @@ class TestAutenticacao:
 
         assert "/login" in page.url
 
-    def test_uc009_cadastro_admin_sucesso(self, page: Page, base_url: str):
+    def test_uc009_cadastro_nao_permite_admin_publico(self, page: Page, base_url: str):
         """
-        UC-009: Usuario deve conseguir se cadastrar como Administrador.
+        UC-009: Cadastro publico nao deve permitir perfil Administrador.
+
+        O perfil Administrador so pode ser criado via admin ou seed.
         """
         cadastro = CadastroPage(page, base_url)
         cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=gerar_nome_unico(),
-            email=gerar_email_unico(),
-            senha="Teste@123456"
-        )
-        cadastro.aguardar_navegacao_login()
 
-        assert "/login" in page.url
+        # Verificar que nao existe opcao de Administrador no formulario
+        admin_option = page.locator('label[for="perfil_Administrador"]')
+        assert admin_option.count() == 0, "Opcao Administrador nao deve existir no cadastro publico"
 
     def test_uc009_cadastro_email_duplicado(self, page: Page, base_url: str):
         """
@@ -292,10 +289,10 @@ class TestAutenticacao:
         )
         cadastro.aguardar_navegacao_login()
 
-        # Solicitar recuperacao
-        page.goto(f"{base_url}/recuperar-senha")
+        # Solicitar recuperacao (URL correta e /esqueci-senha)
+        page.goto(f"{base_url}/esqueci-senha")
         page.fill('input[name="email"]', email)
-        page.locator('button[type="submit"]').click()
+        page.locator('button[type="submit"]').first.click()
 
         page.wait_for_timeout(1000)
 
@@ -320,8 +317,14 @@ class TestAutenticacao:
 
         page.wait_for_timeout(1000)
 
-        # Deve redirecionar ou mostrar erro
-        assert "/login" in page.url or "/recuperar" in page.url or "token" in page.content().lower()
+        # Sem token, deve retornar erro 422 ou redirecionar
+        conteudo = page.content().lower()
+        assert (
+            "/esqueci-senha" in page.url
+            or "422" in conteudo
+            or "token" in conteudo
+            or "required" in conteudo
+        )
 
     def test_uc011_pagina_redefinir_token_invalido(self, page: Page, base_url: str):
         """
@@ -331,9 +334,10 @@ class TestAutenticacao:
 
         page.wait_for_timeout(1000)
 
+        # Deve redirecionar para esqueci-senha ou mostrar erro
         conteudo = page.content().lower()
         assert (
             "invalido" in conteudo
             or "expirado" in conteudo
-            or "/login" in page.url
+            or "/esqueci-senha" in page.url
         )

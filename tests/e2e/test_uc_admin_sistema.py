@@ -25,33 +25,16 @@ from tests.e2e.test_e2e_helpers import (
     AdminAuditoriaPage,
     gerar_email_unico,
     gerar_nome_unico,
+    logar_com_seed_admin,
 )
 
 
 class TestAdminConfiguracoes:
     """Testes para casos de uso de configuracoes do sistema."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-062: Visualizar todas as configuracoes
@@ -154,27 +137,9 @@ class TestAdminConfiguracoes:
 class TestAdminTemas:
     """Testes para casos de uso de temas visuais."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-064: Visualizar temas disponiveis
@@ -242,27 +207,9 @@ class TestAdminTemas:
 class TestAdminBackups:
     """Testes para casos de uso de backups."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-066: Listar todos os backups
@@ -411,27 +358,9 @@ class TestAdminBackups:
 class TestAdminAuditoria:
     """Testes para casos de uso de auditoria/logs."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-071: Visualizar logs do sistema

@@ -15,33 +15,16 @@ from tests.e2e.test_e2e_helpers import (
     AdminCategoriasPage,
     gerar_email_unico,
     gerar_nome_unico,
+    logar_com_seed_admin,
 )
 
 
 class TestAdminCategorias:
     """Testes para casos de uso de gestao de categorias pelo admin."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-038: Listar todas as categorias
@@ -156,7 +139,7 @@ class TestAdminCategorias:
         admin_categorias.navegar_cadastrar()
 
         # Tentar criar com nome vazio
-        page.locator('button[type="submit"]').click()
+        page.locator('button[type="submit"]').first.click()
 
         page.wait_for_timeout(1000)
 
@@ -201,7 +184,7 @@ class TestAdminCategorias:
             campo_nome = page.locator('input[name="nome"]')
             if campo_nome.is_visible():
                 campo_nome.fill("Categoria Editada E2E")
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
 
                 page.wait_for_timeout(1000)
 
@@ -227,7 +210,7 @@ class TestAdminCategorias:
             campo_descricao = page.locator('textarea[name="descricao"]')
             if campo_descricao.is_visible():
                 campo_descricao.fill("Nova descricao editada via teste E2E")
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
 
     # =========================================================================
     # UC-041: Excluir categoria

@@ -17,33 +17,16 @@ from tests.e2e.test_e2e_helpers import (
     AlunoPagamentosPage,
     gerar_email_unico,
     gerar_nome_unico,
+    logar_com_seed_admin,
 )
 
 
 class TestAdminPagamentos:
     """Testes para casos de uso de gestao de pagamentos pelo admin."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-057: Listar todos os pagamentos
@@ -145,7 +128,7 @@ class TestAdminPagamentos:
 
                 # Preencher valor
                 page.fill('input[name="valor_pago"]', "100.00")
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
 
                 page.wait_for_timeout(1000)
 
@@ -176,7 +159,7 @@ class TestAdminPagamentos:
             campo_valor = page.locator('input[name="valor_pago"]')
             if campo_valor.is_visible():
                 campo_valor.fill("200.00")
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
 
                 page.wait_for_timeout(1000)
 

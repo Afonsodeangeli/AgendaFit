@@ -21,6 +21,7 @@ from tests.e2e.test_e2e_helpers import (
     AdminChamadosPage,
     gerar_email_unico,
     gerar_nome_unico,
+    logar_com_seed_admin,
 )
 
 
@@ -225,7 +226,7 @@ class TestChamadosUsuario:
             campo_mensagem = page.locator('textarea[name="mensagem"]')
             if campo_mensagem.is_visible():
                 campo_mensagem.fill("Resposta adicional ao chamado")
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
 
     # =========================================================================
     # UC-021: Excluir chamado proprio
@@ -268,27 +269,9 @@ class TestChamadosUsuario:
 class TestChamadosAdmin:
     """Testes para casos de uso de chamados (Admin)."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-022: Listar todos os chamados do sistema (Admin)
@@ -375,7 +358,7 @@ class TestChamadosAdmin:
                 if select_status.is_visible():
                     select_status.select_option(index=1)  # Seleciona segunda opcao
 
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
                 page.wait_for_timeout(1000)
 
     # =========================================================================

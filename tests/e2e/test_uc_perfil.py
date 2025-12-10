@@ -101,7 +101,7 @@ class TestPerfilUsuario:
         # Editar nome
         nome_novo = gerar_nome_unico()
         page.fill('input[name="nome"]', nome_novo)
-        page.locator('button[type="submit"]').click()
+        page.locator('button[type="submit"]').first.click()
 
         page.wait_for_timeout(1000)
 
@@ -127,7 +127,7 @@ class TestPerfilUsuario:
         campo_email = page.locator('input[name="email"]')
         if campo_email.is_visible():
             campo_email.fill(email_novo)
-            page.locator('button[type="submit"]').click()
+            page.locator('button[type="submit"]').first.click()
 
             page.wait_for_timeout(1000)
 

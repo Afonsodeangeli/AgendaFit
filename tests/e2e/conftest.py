@@ -236,6 +236,17 @@ def usuario_e2e_dados():
     }
 
 
+@pytest.fixture(scope="session")
+def base_url(e2e_server: str) -> str:
+    """
+    Fixture que fornece a URL base para os testes.
+
+    Sobrescreve o fixture base_url do pytest-base-url para usar
+    o servidor E2E iniciado dinamicamente.
+    """
+    return e2e_server
+
+
 # Marca todos os testes nesta pasta como e2e
 def pytest_collection_modifyitems(items):
     """Adiciona marca 'e2e' a todos os testes nesta pasta."""

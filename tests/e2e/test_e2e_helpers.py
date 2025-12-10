@@ -3,9 +3,54 @@ Funcoes auxiliares e Page Objects para testes E2E.
 
 Fornece helpers para interacoes comuns com a UI.
 """
+import time
+import uuid
 from typing import Optional
 
 from playwright.sync_api import Page, expect
+
+
+# =============================================================================
+# CREDENCIAIS DO SEED DATA (usuarios padrao criados automaticamente)
+# =============================================================================
+
+# O seed data cria usuarios padrao para cada perfil com a senha padrao
+SEED_ADMIN_EMAIL = "padrao@administrador.com"
+SEED_ADMIN_SENHA = "1234aA@#"
+
+SEED_PROFESSOR_EMAIL = "padrao@professor.com"
+SEED_PROFESSOR_SENHA = "1234aA@#"
+
+SEED_ALUNO_EMAIL = "padrao@aluno.com"
+SEED_ALUNO_SENHA = "1234aA@#"
+
+
+# =============================================================================
+# FUNCOES GERADORAS DE DADOS UNICOS
+# =============================================================================
+
+
+def gerar_email_unico() -> str:
+    """
+    Gera um email unico para testes.
+
+    Returns:
+        Email no formato teste_<timestamp>_<uuid>@teste.com
+    """
+    timestamp = int(time.time() * 1000)
+    uid = uuid.uuid4().hex[:6]
+    return f"teste_{timestamp}_{uid}@teste.com"
+
+
+def gerar_nome_unico() -> str:
+    """
+    Gera um nome unico para testes.
+
+    Returns:
+        Nome no formato "Usuario Teste <uuid>"
+    """
+    uid = uuid.uuid4().hex[:8]
+    return f"Usuario Teste {uid}"
 
 
 # =============================================================================
@@ -165,6 +210,10 @@ class CadastroPage:
         except Exception:
             return False
 
+    def esta_na_pagina_cadastro(self) -> bool:
+        """Verifica se esta na pagina de cadastro."""
+        return "/cadastrar" in self.page.url
+
 
 class LoginPage:
     """Page Object para a pagina de login."""
@@ -319,7 +368,7 @@ class RecuperarSenhaPage(BasePage):
     def solicitar_recuperacao(self, email: str) -> None:
         """Solicita recuperacao de senha."""
         self.page.fill('input[name="email"]', email)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
     def esta_na_pagina_recuperacao(self) -> bool:
         """Verifica se esta na pagina de recuperacao."""
@@ -362,14 +411,14 @@ class PerfilPage(BasePage):
         """Edita dados do perfil."""
         self.page.fill('input[name="nome"]', nome)
         self.page.fill('input[name="email"]', email)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
     def alterar_senha(self, senha_atual: str, senha_nova: str, confirmar: str) -> None:
         """Altera senha do usuario."""
         self.page.fill('input[name="senha_atual"]', senha_atual)
         self.page.fill('input[name="senha_nova"]', senha_nova)
         self.page.fill('input[name="confirmar_senha"]', confirmar)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
 
 # =============================================================================
@@ -393,7 +442,7 @@ class ChamadosPage(BasePage):
         self.page.fill('input[name="titulo"]', titulo)
         self.page.fill('textarea[name="descricao"]', descricao)
         self.page.select_option('select[name="prioridade"]', prioridade)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
     def visualizar_chamado(self, chamado_id: int) -> None:
         """Visualiza detalhes de um chamado."""
@@ -403,7 +452,7 @@ class ChamadosPage(BasePage):
         """Responde a um chamado."""
         self.page.goto(f"{self.base_url}/chamados/{chamado_id}/visualizar")
         self.page.fill('textarea[name="mensagem"]', mensagem)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
 
 # =============================================================================
@@ -437,7 +486,7 @@ class AdminUsuariosPage(BasePage):
             self.page.fill('input[name="numero_documento"]', documento)
         if telefone:
             self.page.fill('input[name="telefone"]', telefone)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
     def editar_usuario(self, usuario_id: int) -> None:
         """Navega para edicao de usuario."""
@@ -460,7 +509,7 @@ class AdminCategoriasPage(BasePage):
         self.page.fill('input[name="nome"]', nome)
         if descricao:
             self.page.fill('textarea[name="descricao"]', descricao)
-        self.page.locator('button[type="submit"]').click()
+        self.page.get_by_role("button", name="Cadastrar").click()
 
     def editar_categoria(self, categoria_id: int) -> None:
         """Navega para edicao de categoria."""
@@ -485,7 +534,7 @@ class AdminAtividadesPage(BasePage):
             self.page.fill('textarea[name="descricao"]', descricao)
         if id_categoria:
             self.page.select_option('select[name="id_categoria"]', id_categoria)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
 
 class AdminTurmasPage(BasePage):
@@ -511,7 +560,7 @@ class AdminTurmasPage(BasePage):
         self.page.fill('input[name="horario_fim"]', horario_fim)
         self.page.fill('input[name="dias_semana"]', dias_semana)
         self.page.fill('input[name="vagas"]', vagas)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
 
 class AdminMatriculasPage(BasePage):
@@ -533,7 +582,7 @@ class AdminMatriculasPage(BasePage):
         self.page.select_option('select[name="id_turma"]', id_turma)
         self.page.fill('input[name="valor_mensalidade"]', valor_mensalidade)
         self.page.fill('input[name="dia_vencimento"]', dia_vencimento)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
 
 class AdminPagamentosPage(BasePage):
@@ -551,7 +600,7 @@ class AdminPagamentosPage(BasePage):
         """Cadastra um novo pagamento."""
         self.page.select_option('select[name="id_matricula"]', id_matricula)
         self.page.fill('input[name="valor_pago"]', valor_pago)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
 
 class AdminConfiguracoesPage(BasePage):
@@ -576,7 +625,7 @@ class AdminTemaPage(BasePage):
     def aplicar_tema(self, tema: str) -> None:
         """Aplica um tema."""
         self.page.click(f'[data-tema="{tema}"]')
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
     def esta_na_pagina_temas(self) -> bool:
         """Verifica se esta na pagina de temas."""
@@ -610,7 +659,7 @@ class AdminAuditoriaPage(BasePage):
         """Filtra logs por data e nivel."""
         self.page.fill('input[name="data"]', data)
         self.page.select_option('select[name="nivel"]', nivel)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
     def esta_na_pagina_auditoria(self) -> bool:
         """Verifica se esta na pagina de auditoria."""
@@ -629,7 +678,7 @@ class AdminChamadosPage(BasePage):
         self.page.goto(f"{self.base_url}/admin/chamados/{chamado_id}/responder")
         self.page.fill('textarea[name="mensagem"]', mensagem)
         self.page.select_option('select[name="status_chamado"]', status)
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('button[type="submit"]').first.click()
 
     def fechar_chamado(self, chamado_id: int) -> None:
         """Fecha um chamado."""
@@ -706,9 +755,61 @@ def criar_usuario_e_logar(
     login.aguardar_navegacao_usuario()
 
 
-def criar_admin_e_logar(page: Page, base_url: str, nome: str, email: str, senha: str) -> None:
+def criar_admin_e_logar(page: Page, base_url: str, nome: str = None, email: str = None, senha: str = None) -> None:
     """
-    Cria um admin via cadastro e faz login.
-    Nota: No sistema real, admin pode precisar ser criado de outra forma.
+    Faz login com admin do seed (nao cria novo, usa o existente).
+
+    O perfil Administrador nao esta disponivel no cadastro publico.
+    Os testes usam o admin criado pelo seed_data.
+
+    Args:
+        page: Pagina Playwright
+        base_url: URL base do servidor
+        nome, email, senha: Ignorados (mantidos para compatibilidade)
     """
-    criar_usuario_e_logar(page, base_url, "Administrador", nome, email, senha)
+    login = LoginPage(page, base_url)
+    login.navegar()
+    login.fazer_login(SEED_ADMIN_EMAIL, SEED_ADMIN_SENHA)
+    login.aguardar_navegacao_usuario()
+
+
+def logar_com_seed_admin(page: Page, base_url: str) -> None:
+    """
+    Faz login com o admin do seed data.
+
+    Args:
+        page: Pagina Playwright
+        base_url: URL base do servidor
+    """
+    login = LoginPage(page, base_url)
+    login.navegar()
+    login.fazer_login(SEED_ADMIN_EMAIL, SEED_ADMIN_SENHA)
+    login.aguardar_navegacao_usuario()
+
+
+def logar_com_seed_professor(page: Page, base_url: str) -> None:
+    """
+    Faz login com o professor do seed data.
+
+    Args:
+        page: Pagina Playwright
+        base_url: URL base do servidor
+    """
+    login = LoginPage(page, base_url)
+    login.navegar()
+    login.fazer_login(SEED_PROFESSOR_EMAIL, SEED_PROFESSOR_SENHA)
+    login.aguardar_navegacao_usuario()
+
+
+def logar_com_seed_aluno(page: Page, base_url: str) -> None:
+    """
+    Faz login com o aluno do seed data.
+
+    Args:
+        page: Pagina Playwright
+        base_url: URL base do servidor
+    """
+    login = LoginPage(page, base_url)
+    login.navegar()
+    login.fazer_login(SEED_ALUNO_EMAIL, SEED_ALUNO_SENHA)
+    login.aguardar_navegacao_usuario()

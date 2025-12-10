@@ -16,33 +16,16 @@ from tests.e2e.test_e2e_helpers import (
     AdminCategoriasPage,
     gerar_email_unico,
     gerar_nome_unico,
+    logar_com_seed_admin,
 )
 
 
 class TestAdminAtividades:
     """Testes para casos de uso de gestao de atividades pelo admin."""
 
-    def _criar_admin_e_logar(self, page: Page, base_url: str) -> tuple:
-        """Helper para criar admin e fazer login."""
-        email = gerar_email_unico()
-        senha = "Teste@123456"
-        nome = gerar_nome_unico()
-
-        cadastro = CadastroPage(page, base_url)
-        cadastro.navegar()
-        cadastro.cadastrar(
-            perfil="Administrador",
-            nome=nome,
-            email=email,
-            senha=senha
-        )
-        cadastro.aguardar_navegacao_login()
-
-        login = LoginPage(page, base_url)
-        login.fazer_login(email, senha)
-        login.aguardar_navegacao_usuario()
-
-        return email, senha, nome
+    def _criar_admin_e_logar(self, page: Page, base_url: str) -> None:
+        """Faz login com admin do seed data."""
+        logar_com_seed_admin(page, base_url)
 
     # =========================================================================
     # UC-042: Listar todas as atividades
@@ -134,7 +117,7 @@ class TestAdminAtividades:
             select_categoria.select_option(index=1)  # Seleciona primeira opcao valida
 
         page.fill('textarea[name="descricao"]', "Descricao da atividade de teste E2E")
-        page.locator('button[type="submit"]').click()
+        page.locator('button[type="submit"]').first.click()
 
         page.wait_for_timeout(1000)
 
@@ -157,7 +140,7 @@ class TestAdminAtividades:
 
         nome_atividade = f"Atividade Sem Cat {gerar_email_unico()[:6]}"
         page.fill('input[name="nome"]', nome_atividade)
-        page.locator('button[type="submit"]').click()
+        page.locator('button[type="submit"]').first.click()
 
         page.wait_for_timeout(1000)
 
@@ -171,7 +154,7 @@ class TestAdminAtividades:
         admin_atividades.navegar_cadastrar()
 
         # Tentar criar sem nome
-        page.locator('button[type="submit"]').click()
+        page.locator('button[type="submit"]').first.click()
 
         page.wait_for_timeout(1000)
 
@@ -205,7 +188,7 @@ class TestAdminAtividades:
             campo_nome = page.locator('input[name="nome"]')
             if campo_nome.is_visible():
                 campo_nome.fill("Atividade Editada E2E")
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
 
                 page.wait_for_timeout(1000)
 
@@ -234,7 +217,7 @@ class TestAdminAtividades:
             campo_descricao = page.locator('textarea[name="descricao"]')
             if campo_descricao.is_visible():
                 campo_descricao.fill("Nova descricao da atividade via teste E2E")
-                page.locator('button[type="submit"]').click()
+                page.locator('button[type="submit"]').first.click()
 
     def test_uc044_admin_alterar_categoria_atividade(self, page: Page, base_url: str):
         """
@@ -277,7 +260,7 @@ class TestAdminAtividades:
         # Criar atividade para excluir
         admin_atividades.navegar_cadastrar()
         page.fill('input[name="nome"]', f"Atividade Para Excluir {gerar_email_unico()[:6]}")
-        page.locator('button[type="submit"]').click()
+        page.locator('button[type="submit"]').first.click()
 
         page.wait_for_timeout(1000)
 
