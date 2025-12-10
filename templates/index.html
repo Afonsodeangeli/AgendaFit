@@ -3,111 +3,167 @@
 {% block titulo %}Bem-vindo!{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
+<!-- Hero Section - Design Moderno com Gradiente -->
 <div class="mb-5">
-    <div class="bg-primary text-white rounded-4 shadow-lg p-5 pb-3">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">
-                    Bem-vindo ao {{ APP_NAME }}
-                </h1>
-                <p class="lead mb-4">
-                    Uma plataforma completa e moderna para gerenciar suas atividades de forma simples e eficiente.
-                </p>
-                <div class="d-flex gap-3 flex-column flex-sm-row">
-                    <a href="/cadastrar" class="btn btn-light btn-lg">
-                        <i class="bi bi-person-plus"></i> Criar Conta
-                    </a>
-                    <a href="/login" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-box-arrow-in-right"></i> Entrar
-                    </a>
+    <div class="position-relative overflow-hidden rounded-4 shadow-lg"
+         style="background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-indigo) 50%, var(--bs-purple) 100%);">
+        <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)"/>
+            </svg>
+        </div>
+        <div class="position-relative p-4 p-md-5" data-bs-theme="dark">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <span class="badge text-bg-light text-primary rounded-pill px-3 py-2 mb-3">
+                        <i class="bi bi-stars me-1"></i>Plataforma de Gestão de Academia
+                    </span>
+                    <h1 class="display-4 fw-bold text-white mb-3 lh-sm">
+                        Bem-vindo ao <span class="text-warning">{{ APP_NAME }}</span>
+                    </h1>
+                    <p class="lead text-white-50 mb-4">
+                        Gerencie turmas, matrículas e pagamentos de forma simples e eficiente.
+                        Uma solução completa para academias e centros esportivos.
+                    </p>
+                    <div class="d-flex gap-3 flex-column flex-sm-row">
+                        <a href="/cadastrar" class="btn btn-warning btn-lg rounded-pill px-4 d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-person-plus-fill"></i>
+                            <span>Começar Agora</span>
+                        </a>
+                        <a href="/login" class="btn btn-outline-light btn-lg rounded-pill px-4 d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Já tenho conta</span>
+                        </a>
+                    </div>
+                    <!-- Stats rápidos -->
+                    <div class="d-flex gap-4 mt-4 pt-3 border-top border-white border-opacity-25">
+                        <div class="text-center">
+                            <div class="h4 fw-bold text-white mb-0"><i class="bi bi-shield-check"></i></div>
+                            <small class="text-white-50">Seguro</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h4 fw-bold text-white mb-0"><i class="bi bi-phone"></i></div>
+                            <small class="text-white-50">Responsivo</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h4 fw-bold text-white mb-0"><i class="bi bi-lightning"></i></div>
+                            <small class="text-white-50">Rápido</small>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-6 text-center mt-4 mt-lg-0">
-                <i class="bi bi-laptop fs-hero opacity-25"></i>
+                <div class="col-lg-5 text-center d-none d-lg-block">
+                    <div class="position-relative">
+                        <i class="bi bi-calendar-check display-1 text-white opacity-25" style="font-size: 12rem;"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Recursos Section -->
+<!-- Recursos Section - Design com Cards Modernos -->
 <div class="mb-5" id="recursos">
     <div class="text-center mb-5">
-        <h2 class="fw-bold">Recursos Principais</h2>
-        <p class="text-muted">Tudo que você precisa em um só lugar</p>
+        <span class="badge text-bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-2">
+            <i class="bi bi-puzzle me-1"></i>Funcionalidades
+        </span>
+        <h2 class="fw-bold display-6">Recursos Principais</h2>
+        <p class="text-body-secondary col-lg-6 mx-auto">
+            Tudo que você precisa para gerenciar sua academia em um só lugar
+        </p>
     </div>
 
     <div class="row g-4">
         <!-- Recurso 1 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm card-hover bg-body">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-shield-check text-primary display-3"></i>
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 p-3 mb-3">
+                        <i class="bi bi-shield-check text-primary fs-3"></i>
                     </div>
-                    <h5 class="card-title">Segurança</h5>
-                    <p class="card-text text-muted">
-                        Sistema seguro com autenticação robusta e criptografia de dados
+                    <h5 class="card-title fw-semibold">Segurança Avançada</h5>
+                    <p class="card-text text-body-secondary">
+                        Sistema seguro com autenticação robusta, criptografia de senhas e proteção contra ataques.
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- Recurso 2 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm card-hover bg-body">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-person-circle text-info display-3"></i>
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-info bg-opacity-10 p-3 mb-3">
+                        <i class="bi bi-calendar2-week text-info fs-3"></i>
                     </div>
-                    <h5 class="card-title">Perfil Personalizável</h5>
-                    <p class="card-text text-muted">
-                        Personalize seu perfil com foto e informações pessoais
+                    <h5 class="card-title fw-semibold">Gestão de Turmas</h5>
+                    <p class="card-text text-body-secondary">
+                        Organize turmas por atividade, horário e professor. Controle vagas e horários facilmente.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recurso 3 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm card-hover bg-body">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-success bg-opacity-10 p-3 mb-3">
+                        <i class="bi bi-cash-coin text-success fs-3"></i>
+                    </div>
+                    <h5 class="card-title fw-semibold">Controle Financeiro</h5>
+                    <p class="card-text text-body-secondary">
+                        Gerencie matrículas e pagamentos dos alunos com histórico completo e relatórios.
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- Recurso 4 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm card-hover bg-body">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-speedometer2 text-warning display-3"></i>
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-warning bg-opacity-10 p-3 mb-3">
+                        <i class="bi bi-phone text-warning fs-3"></i>
                     </div>
-                    <h5 class="card-title">Rápido e Responsivo</h5>
-                    <p class="card-text text-muted">
-                        Interface moderna que funciona em qualquer dispositivo
+                    <h5 class="card-title fw-semibold">Design Responsivo</h5>
+                    <p class="card-text text-body-secondary">
+                        Interface moderna que se adapta a qualquer dispositivo: celular, tablet ou computador.
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- Recurso 5 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm card-hover bg-body">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-bell text-danger display-3"></i>
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10 p-3 mb-3">
+                        <i class="bi bi-headset text-danger fs-3"></i>
                     </div>
-                    <h5 class="card-title">Notificações</h5>
-                    <p class="card-text text-muted">
-                        Receba alertas e notificações sobre suas atividades
+                    <h5 class="card-title fw-semibold">Sistema de Chamados</h5>
+                    <p class="card-text text-body-secondary">
+                        Suporte integrado com sistema de chamados para comunicação entre usuários e administração.
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- Recurso 6 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm card-hover bg-body">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-gear text-secondary display-3"></i>
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-secondary bg-opacity-10 p-3 mb-3">
+                        <i class="bi bi-palette text-secondary fs-3"></i>
                     </div>
-                    <h5 class="card-title">Configurável</h5>
-                    <p class="card-text text-muted">
-                        Ajuste o sistema de acordo com suas preferências
+                    <h5 class="card-title fw-semibold">Temas Personalizáveis</h5>
+                    <p class="card-text text-body-secondary">
+                        Escolha entre diversos temas visuais para personalizar a aparência do sistema.
                     </p>
                 </div>
             </div>
@@ -115,45 +171,57 @@
     </div>
 </div>
 
-<!-- CTA Section -->
+<!-- CTA Section - Design com Gradiente -->
 <div class="mb-5">
-    <div class="card bg-primary text-white shadow-lg shadow-hover">
-        <div class="card-body text-center p-5">
-            <h2 class="fw-bold mb-4">Pronto para começar?</h2>
-            <p class="lead mb-4">
-                Crie sua conta gratuitamente e comece a usar agora mesmo!
+    <div class="position-relative overflow-hidden rounded-4 shadow-lg"
+         style="background: linear-gradient(135deg, var(--bs-success) 0%, var(--bs-teal) 100%);">
+        <div class="position-relative p-4 p-md-5 text-center" data-bs-theme="dark">
+            <span class="badge text-bg-light text-success rounded-pill px-3 py-2 mb-3">
+                <i class="bi bi-rocket-takeoff me-1"></i>Comece Hoje
+            </span>
+            <h2 class="fw-bold text-white mb-3">Pronto para começar?</h2>
+            <p class="lead text-white-50 mb-4 col-lg-8 mx-auto">
+                Crie sua conta gratuitamente e comece a gerenciar sua academia de forma profissional!
             </p>
             <div class="d-flex justify-content-center gap-3 flex-column flex-sm-row">
-                <a href="/cadastrar" class="btn btn-light btn-lg">
-                    <i class="bi bi-person-plus"></i> Criar Conta Grátis
+                <a href="/cadastrar" class="btn btn-light btn-lg rounded-pill px-4 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <span>Criar Conta Grátis</span>
                 </a>
-                <a href="/login" class="btn btn-outline-light btn-lg">
-                    <i class="bi bi-box-arrow-in-right"></i> Já tenho conta
+                <a href="/sobre" class="btn btn-outline-light btn-lg rounded-pill px-4 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Saber Mais</span>
                 </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- FAQ Section (Opcional) -->
+<!-- FAQ Section - Design Moderno -->
 <div class="mb-5">
     <div class="text-center mb-5">
-        <h2 class="fw-bold">Perguntas Frequentes</h2>
-        <p class="text-muted">Tire suas dúvidas sobre o sistema</p>
+        <span class="badge text-bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-2">
+            <i class="bi bi-question-circle me-1"></i>Dúvidas
+        </span>
+        <h2 class="fw-bold display-6">Perguntas Frequentes</h2>
+        <p class="text-body-secondary col-lg-6 mx-auto">
+            Tire suas dúvidas sobre o sistema
+        </p>
     </div>
 
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <div class="accordion" id="faqAccordion">
+            <div class="accordion accordion-flush" id="faqAccordion">
                 <!-- FAQ 1 -->
-                <div class="accordion-item">
+                <div class="accordion-item border rounded-3 mb-3 shadow-sm overflow-hidden">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        <button class="accordion-button bg-body" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            <i class="bi bi-person-plus text-primary me-2"></i>
                             Como criar uma conta?
                         </button>
                     </h2>
                     <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
+                        <div class="accordion-body text-body-secondary">
                             Basta clicar em "Criar Conta" no menu superior, preencher seus dados e confirmar.
                             O processo é rápido e gratuito!
                         </div>
@@ -161,15 +229,16 @@
                 </div>
 
                 <!-- FAQ 2 -->
-                <div class="accordion-item">
+                <div class="accordion-item border rounded-3 mb-3 shadow-sm overflow-hidden">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        <button class="accordion-button collapsed bg-body" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq2">
+                            <i class="bi bi-shield-lock text-primary me-2"></i>
                             O sistema é seguro?
                         </button>
                     </h2>
                     <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
+                        <div class="accordion-body text-body-secondary">
                             Sim! Utilizamos criptografia de ponta e as melhores práticas de segurança para
                             proteger seus dados. Suas senhas são armazenadas de forma segura e nunca são expostas.
                         </div>
@@ -177,15 +246,16 @@
                 </div>
 
                 <!-- FAQ 3 -->
-                <div class="accordion-item">
+                <div class="accordion-item border rounded-3 mb-3 shadow-sm overflow-hidden">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        <button class="accordion-button collapsed bg-body" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq3">
+                            <i class="bi bi-pencil-square text-primary me-2"></i>
                             Posso alterar meus dados depois?
                         </button>
                     </h2>
                     <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
+                        <div class="accordion-body text-body-secondary">
                             Claro! Você pode atualizar seus dados pessoais, foto de perfil e senha a qualquer
                             momento através da seção "Meu Perfil" no seu dashboard.
                         </div>
@@ -193,15 +263,16 @@
                 </div>
 
                 <!-- FAQ 4 -->
-                <div class="accordion-item">
+                <div class="accordion-item border rounded-3 mb-3 shadow-sm overflow-hidden">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        <button class="accordion-button collapsed bg-body" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq4">
+                            <i class="bi bi-key text-primary me-2"></i>
                             Esqueci minha senha, o que fazer?
                         </button>
                     </h2>
                     <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
+                        <div class="accordion-body text-body-secondary">
                             Na tela de login, clique em "Esqueci minha senha" e siga as instruções.
                             Você receberá um e-mail com um link para redefinir sua senha.
                         </div>

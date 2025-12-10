@@ -1,24 +1,57 @@
-/* Variáveis de cores */
+/* ===== CUSTOM VARIABLES ===== */
+/* Complementa as variáveis nativas do Bootstrap 5.3 */
 :root {
-    --primary-color: #0d6efd;
-    --secondary-color: #6c757d;
-    --success-color: #198754;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --info-color: #0dcaf0;
-    --light-color: #f8f9fa;
-    --dark-color: #212529;
+    /* Transições suaves */
+    --transition-base: all 0.3s ease-in-out;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Sombras customizadas */
+    --shadow-soft: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-strong: 0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* ===== UTILITY CLASSES ===== */
+/* ===== UTILITY CLASSES - Bootstrap 5.3 Enhanced ===== */
 
-/* Hover effects */
+/* Card hover effect - Moderno e suave */
+.card-hover {
+    transition: var(--transition-smooth);
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-strong) !important;
+}
+
+/* Shadow hover - Efeito sutil para elementos interativos */
 .shadow-hover {
-    transition: box-shadow 0.3s ease-in-out;
+    transition: var(--transition-base);
 }
 
 .shadow-hover:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-medium) !important;
+    transform: translateY(-2px);
+}
+
+/* Link hover com underline animado */
+.link-hover-underline {
+    position: relative;
+    text-decoration: none !important;
+}
+
+.link-hover-underline::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+}
+
+.link-hover-underline:hover::after {
+    width: 100%;
 }
 
 /* Font sizes */

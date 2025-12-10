@@ -4,15 +4,27 @@
 
 {% block content %}
 
-<!-- Cabeçalho de Boas-Vindas -->
+<!-- Cabeçalho de Boas-Vindas - Design Moderno com Gradiente -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="bg-primary text-white rounded p-4 shadow-sm">
-            <h1 class="mb-2">
-                <i class="bi bi-house-door"></i>
-                Bem-vindo(a), {{ usuario_logado.nome }}!
-            </h1>
-            <p class="mb-0 lead">Este é o seu painel de controle pessoal.</p>
+        <div class="position-relative overflow-hidden rounded-4 shadow"
+             style="background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-emphasis) 100%);">
+            <div class="position-relative p-4" data-bs-theme="dark">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-none d-md-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 p-3">
+                        <i class="bi bi-house-door-fill fs-2"></i>
+                    </div>
+                    <div>
+                        <h1 class="mb-1 h3 fw-bold">
+                            Olá, {{ usuario_logado.nome.split()[0] }}! 👋
+                        </h1>
+                        <p class="mb-0 text-white-50">
+                            <i class="bi bi-calendar-check me-1"></i>
+                            Bem-vindo ao seu painel de controle
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -21,17 +33,17 @@
 <div class="row g-4 mb-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
     <!-- Meu Perfil -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-person-circle text-primary display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-person-circle text-primary fs-1"></i>
                 </div>
-                <h5 class="card-title">Meu Perfil</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Meu Perfil</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Visualize e edite suas informações pessoais
                 </p>
-                <a href="/usuario/perfil/visualizar" class="btn btn-primary">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/usuario/perfil/visualizar" class="btn btn-primary rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -42,17 +54,17 @@
 
     <!-- Categorias -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-tags text-secondary display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-tags text-secondary fs-1"></i>
                 </div>
-                <h5 class="card-title">Categorias</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Categorias</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Gerencie as categorias de atividades
                 </p>
-                <a href="/admin/categorias/listar" class="btn btn-secondary">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/categorias/listar" class="btn btn-secondary rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -60,17 +72,17 @@
 
     <!-- Atividades -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-activity text-info display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-info bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-activity text-info fs-1"></i>
                 </div>
-                <h5 class="card-title">Atividades</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Atividades</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Gerencie as atividades da academia
                 </p>
-                <a href="/admin/atividades/listar" class="btn btn-info">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/atividades/listar" class="btn btn-info rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -78,17 +90,17 @@
 
     <!-- Turmas -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-calendar2-week text-primary display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-calendar2-week text-primary fs-1"></i>
                 </div>
-                <h5 class="card-title">Turmas</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Turmas</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Gerencie as turmas e horários
                 </p>
-                <a href="/admin/turmas/listar" class="btn btn-primary">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/turmas/listar" class="btn btn-primary rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -96,17 +108,17 @@
 
     <!-- Matrículas -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-card-checklist text-warning display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-card-checklist text-warning fs-1"></i>
                 </div>
-                <h5 class="card-title">Matrículas</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Matrículas</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Gerencie as matrículas dos alunos
                 </p>
-                <a href="/admin/matriculas/listar" class="btn btn-warning">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/matriculas/listar" class="btn btn-warning rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -114,17 +126,17 @@
 
     <!-- Pagamentos -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-cash-coin text-success display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-cash-coin text-success fs-1"></i>
                 </div>
-                <h5 class="card-title">Pagamentos</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Pagamentos</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Gerencie os pagamentos dos alunos
                 </p>
-                <a href="/admin/pagamentos/listar" class="btn btn-success">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/pagamentos/listar" class="btn btn-success rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -132,17 +144,17 @@
 
     <!-- Usuários -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-people text-success display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-people text-success fs-1"></i>
                 </div>
-                <h5 class="card-title">Usuários</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Usuários</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Gerencie os usuários cadastrados no sistema
                 </p>
-                <a href="/admin/usuarios/listar" class="btn btn-success">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/usuarios/listar" class="btn btn-success rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -150,22 +162,22 @@
 
     <!-- Chamados Admin -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-headset text-danger fs-1"></i>
                 </div>
-                <h5 class="card-title">Chamados</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Chamados</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Gerencie chamados de suporte dos usuários
                 </p>
                 {% if chamados_pendentes > 0 %}
                 <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_pendentes }} pendente(s)</span>
+                    <span class="badge bg-danger rounded-pill">{{ chamados_pendentes }} pendente(s)</span>
                 </div>
                 {% endif %}
-                <a href="/admin/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/chamados/listar" class="btn btn-danger rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -173,17 +185,17 @@
 
     <!-- Personalizar Tema -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-palette text-danger display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-palette text-danger fs-1"></i>
                 </div>
-                <h5 class="card-title">Personalizar Tema</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Personalizar Tema</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Escolha entre diversos temas visuais
                 </p>
-                <a href="/admin/tema" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/tema" class="btn btn-danger rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -191,17 +203,17 @@
 
     <!-- Auditoria -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-journal-text text-warning display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-journal-text text-warning fs-1"></i>
                 </div>
-                <h5 class="card-title">Auditoria de Logs</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Auditoria de Logs</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Visualize e filtre logs do sistema
                 </p>
-                <a href="/admin/auditoria" class="btn btn-warning">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/auditoria" class="btn btn-warning rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -209,17 +221,17 @@
 
     <!-- Backup -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-database text-info display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-info bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-database text-info fs-1"></i>
                 </div>
-                <h5 class="card-title">Backup do Banco</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Backup do Banco</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Crie e restaure backups do banco
                 </p>
-                <a href="/admin/backups/listar" class="btn btn-info">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/admin/backups/listar" class="btn btn-info rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -230,17 +242,17 @@
 
     <!-- Minhas Turmas -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-calendar2-week text-primary display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-calendar2-week text-primary fs-1"></i>
                 </div>
-                <h5 class="card-title">Minhas Turmas</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Minhas Turmas</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Visualize as turmas que você leciona
                 </p>
-                <a href="/usuario/minhas-turmas" class="btn btn-primary">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/usuario/minhas-turmas" class="btn btn-primary rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -248,22 +260,22 @@
 
     <!-- Meus Chamados -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-headset text-danger fs-1"></i>
                 </div>
-                <h5 class="card-title">Meus Chamados</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Meus Chamados</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Abra chamados de suporte e acompanhe
                 </p>
                 {% if chamados_abertos > 0 %}
                 <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                    <span class="badge bg-danger rounded-pill">{{ chamados_abertos }} em aberto</span>
                 </div>
                 {% endif %}
-                <a href="/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/chamados/listar" class="btn btn-danger rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -274,17 +286,17 @@
 
     <!-- Minhas Matrículas -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-card-checklist text-success display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-card-checklist text-success fs-1"></i>
                 </div>
-                <h5 class="card-title">Minhas Matrículas</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Minhas Matrículas</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Visualize suas matrículas em turmas
                 </p>
-                <a href="/usuario/minhas-matriculas" class="btn btn-success">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/usuario/minhas-matriculas" class="btn btn-success rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -292,17 +304,17 @@
 
     <!-- Meus Pagamentos -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-cash-coin text-warning display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-cash-coin text-warning fs-1"></i>
                 </div>
-                <h5 class="card-title">Meus Pagamentos</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Meus Pagamentos</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Visualize seu histórico de pagamentos
                 </p>
-                <a href="/usuario/meus-pagamentos" class="btn btn-warning">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/usuario/meus-pagamentos" class="btn btn-warning rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -310,22 +322,22 @@
 
     <!-- Meus Chamados -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-headset text-danger fs-1"></i>
                 </div>
-                <h5 class="card-title">Meus Chamados</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Meus Chamados</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Abra chamados de suporte e acompanhe
                 </p>
                 {% if chamados_abertos > 0 %}
                 <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                    <span class="badge bg-danger rounded-pill">{{ chamados_abertos }} em aberto</span>
                 </div>
                 {% endif %}
-                <a href="/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/chamados/listar" class="btn btn-danger rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -335,22 +347,22 @@
     <!-- ===== CARDS USUÁRIO COMUM ===== -->
     <!-- Chamados para usuários comuns -->
     <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 p-4 mb-3">
+                    <i class="bi bi-headset text-danger fs-1"></i>
                 </div>
-                <h5 class="card-title">Meus Chamados</h5>
-                <p class="card-text text-muted">
+                <h5 class="card-title fw-bold mb-2">Meus Chamados</h5>
+                <p class="card-text text-body-secondary mb-4">
                     Abra chamados de suporte e acompanhe suas solicitações
                 </p>
                 {% if chamados_abertos > 0 %}
                 <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                    <span class="badge bg-danger rounded-pill">{{ chamados_abertos }} em aberto</span>
                 </div>
                 {% endif %}
-                <a href="/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                <a href="/chamados/listar" class="btn btn-danger rounded-pill px-4">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Acessar
                 </a>
             </div>
         </div>
@@ -358,14 +370,25 @@
     {% endif %}
 </div>
 
-<!-- Estatísticas ou Informações Adicionais -->
+<!-- Dica do Dia -->
 <div class="row">
     <div class="col-12">
-        <div class="alert alert-info" role="alert">
-            <i class="bi bi-lightbulb"></i>
-            <strong>Dica do Dia:</strong>
-            Mantenha suas informações sempre atualizadas em "Meu Perfil" para garantir uma melhor experiência no
-            sistema.
+        <div class="alert border-0 rounded-4 shadow-sm" role="alert"
+             style="background: linear-gradient(135deg, var(--bs-info-bg-subtle) 0%, var(--bs-cyan-bg-subtle) 100%);">
+            <div class="d-flex align-items-start gap-3">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-info bg-opacity-10 p-2">
+                    <i class="bi bi-lightbulb-fill text-info fs-4"></i>
+                </div>
+                <div class="flex-fill">
+                    <h6 class="alert-heading fw-bold mb-1">
+                        <i class="bi bi-stars me-1"></i>Dica do Dia
+                    </h6>
+                    <p class="mb-0 text-body-secondary">
+                        Mantenha suas informações sempre atualizadas em "Meu Perfil" para garantir uma melhor experiência no
+                        sistema.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

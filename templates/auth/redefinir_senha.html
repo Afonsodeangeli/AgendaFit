@@ -4,22 +4,34 @@
 {% block titulo %}Redefinir Senha{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-fill justify-content-center">
-    <div class="row align-items-center justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5">
-            <div class="card shadow">
+<div class="d-flex flex-column flex-fill justify-content-center py-4">
+    <div class="row align-items-center justify-content-center g-0">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
                 <form method="POST" action="/redefinir-senha">
                     {{ csrf_input() }}
-                    <div class="card-body p-4">
-                        <h3 class="card-title text-center mb-4">
-                            <i class="bi bi-shield-lock"></i> Redefinir Senha
-                        </h3>
 
+                    <!-- Header do Card com Gradiente -->
+                    <div class="text-center p-4 text-white"
+                         style="background: linear-gradient(135deg, var(--bs-info) 0%, var(--bs-cyan) 100%);">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 p-3 mb-3">
+                            <i class="bi bi-shield-lock-fill fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">Redefinir Senha</h3>
+                        <p class="text-white-50 mb-0 small">Crie uma nova senha segura</p>
+                    </div>
+
+                    <div class="card-body p-4">
                         <div class="row">
-                            <div class="col-12">
-                                <p class="text-muted text-center mb-4">
-                                    Digite sua nova senha abaixo.
-                                </p>
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-light border-0 bg-body-secondary rounded-3 mb-0">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-info-circle text-info fs-5"></i>
+                                        <small class="text-body-secondary">
+                                            Digite sua nova senha abaixo. Certifique-se de que ela atenda aos requisitos de segurança.
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-12 mb-3">
@@ -32,13 +44,15 @@
 
                             <div class="col-12 mb-3">
                                 {{ field(name='senha', label='Nova Senha', type='password', required=true,
-                                autofocus=true,
+                                autofocus=true, prepend_icon='bi-lock',
+                                append_icon='bi-eye', append_button_onclick="alternarVisibilidadeSenha('senha')",
                                 attributes={'minlength': 8}) }}
                             </div>
 
                             <div class="col-12 mb-1">
                                 {{ field(name='confirmar_senha', label='Confirmar Nova Senha', type='password',
-                                required=true,
+                                required=true, prepend_icon='bi-lock-fill',
+                                append_icon='bi-eye', append_button_onclick="alternarVisibilidadeSenha('confirmar_senha')",
                                 attributes={'minlength': 8}) }}
                             </div>
 
@@ -49,20 +63,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer p-4">
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-shield-lock"></i> Redefinir Senha
+                    <div class="card-footer bg-body-tertiary border-0 p-4">
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-info btn-lg rounded-pill">
+                                <i class="bi bi-shield-check me-2"></i>Redefinir Senha
                             </button>
-                        </div>
 
-                        <hr class="my-4">
-
-                        <p class="text-center mb-0">
-                            <a href="/login" class="text-decoration-none">
-                                <i class="bi bi-arrow-left"></i> Voltar ao Login
+                            <a href="/login" class="btn btn-outline-secondary rounded-pill">
+                                <i class="bi bi-arrow-left me-2"></i>Voltar ao Login
                             </a>
-                        </p>
+                        </div>
                     </div>
                 </form>
             </div>

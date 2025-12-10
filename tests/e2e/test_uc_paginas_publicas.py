@@ -123,8 +123,8 @@ class TestPaginasPublicas:
         login = LoginPage(page, base_url)
         login.navegar()
 
-        # Verifica presenca de link para cadastro
-        link_cadastro = page.locator('a[href*="cadastro"]')
+        # Verifica presenca de link para cadastro (href="/cadastrar")
+        link_cadastro = page.locator('a[href*="cadastrar"]')
         expect(link_cadastro.first).to_be_visible()
 
     def test_uc003_pagina_login_contem_link_recuperar_senha(self, page: Page, base_url: str):
@@ -134,8 +134,8 @@ class TestPaginasPublicas:
         login = LoginPage(page, base_url)
         login.navegar()
 
-        # Verifica presenca de link para recuperar senha
-        link_recuperar = page.locator('a[href*="recuperar"]')
+        # Verifica presenca de link para recuperar senha (href="/esqueci-senha")
+        link_recuperar = page.locator('a[href*="esqueci-senha"]')
         expect(link_recuperar.first).to_be_visible()
 
     # =========================================================================
@@ -168,7 +168,8 @@ class TestPaginasPublicas:
         expect(page.locator('input[name="nome"]')).to_be_visible()
         expect(page.locator('input[name="email"]')).to_be_visible()
         expect(page.locator('input[name="senha"]')).to_be_visible()
-        expect(page.locator('select[name="perfil"]')).to_be_visible()
+        # Perfil usa radio buttons, nao select
+        expect(page.locator('input[name="perfil"]').first).to_be_visible()
 
     def test_uc004_pagina_cadastro_contem_perfis(self, page: Page, base_url: str):
         """
@@ -177,12 +178,11 @@ class TestPaginasPublicas:
         cadastro = CadastroPage(page, base_url)
         cadastro.navegar()
 
-        # Verifica que o select de perfil tem opcoes
-        select_perfil = page.locator('select[name="perfil"]')
-        opcoes = select_perfil.locator('option')
+        # Verifica que os radio buttons de perfil existem (Aluno e Professor)
+        radio_perfil = page.locator('input[name="perfil"]')
 
-        # Deve haver pelo menos as opcoes de perfil
-        assert opcoes.count() >= 2
+        # Deve haver pelo menos 2 opcoes de perfil (Aluno e Professor)
+        assert radio_perfil.count() >= 2
 
     # =========================================================================
     # UC-005: Solicitar recuperacao de senha
@@ -259,5 +259,5 @@ class TestPaginasPublicas:
             "invalido" in conteudo
             or "expirado" in conteudo
             or "/login" in page.url
-            or "/recuperar" in page.url
+            or "/esqueci-senha" in page.url
         )

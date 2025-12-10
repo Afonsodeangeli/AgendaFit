@@ -363,7 +363,7 @@ class RecuperarSenhaPage(BasePage):
 
     def navegar(self) -> None:
         """Navega para a pagina de recuperacao de senha."""
-        self.page.goto(f"{self.base_url}/recuperar-senha")
+        self.page.goto(f"{self.base_url}/esqueci-senha")
 
     def solicitar_recuperacao(self, email: str) -> None:
         """Solicita recuperacao de senha."""
@@ -372,7 +372,7 @@ class RecuperarSenhaPage(BasePage):
 
     def esta_na_pagina_recuperacao(self) -> bool:
         """Verifica se esta na pagina de recuperacao."""
-        return "/recuperar-senha" in self.page.url
+        return "/esqueci-senha" in self.page.url
 
 
 # =============================================================================

@@ -4,23 +4,34 @@
 {% block titulo %}Recuperar Senha{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-fill justify-content-center">
-    <div class="row align-items-center justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5">
-            <div class="card shadow">
+<div class="d-flex flex-column flex-fill justify-content-center py-4">
+    <div class="row align-items-center justify-content-center g-0">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
                 <form method="POST" action="/esqueci-senha">
                     {{ csrf_input() }}
-                    <div class="card-body p-4">
-                        <h3 class="card-title text-center mb-4">
-                            <i class="bi bi-key"></i> Recuperar Senha
-                        </h3>
 
+                    <!-- Header do Card com Gradiente -->
+                    <div class="text-center p-4 text-white"
+                         style="background: linear-gradient(135deg, var(--bs-warning) 0%, var(--bs-orange) 100%);">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 p-3 mb-3">
+                            <i class="bi bi-key-fill fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">Recuperar Senha</h3>
+                        <p class="text-white-50 mb-0 small">Enviaremos um link de recuperação</p>
+                    </div>
+
+                    <div class="card-body p-4">
                         <div class="row">
                             <div class="col-12 mb-3">
-                                <p class="text-muted text-center mb-0">
-                                    Não se preocupe! Basta informar seu e-mail cadastrado e enviaremos um link para
-                                    redefinição de senha.
-                                </p>
+                                <div class="alert alert-light border-0 bg-body-secondary rounded-3 mb-0">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-info-circle text-primary fs-5"></i>
+                                        <small class="text-body-secondary">
+                                            Informe seu e-mail cadastrado e enviaremos um link para redefinição de senha.
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-12 mb-3">
@@ -28,20 +39,19 @@
                             </div>
 
                             <div class="col-12">
-                                {{ field(name='email', label='E-mail', type='email', required=true, autofocus=true) }}
+                                {{ field(name='email', label='E-mail cadastrado', type='email', required=true, autofocus=true,
+                                   prepend_icon='bi-envelope') }}
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer p-4">
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-envelope"></i> Enviar Link de Recuperação
+                    <div class="card-footer bg-body-tertiary border-0 p-4">
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-warning btn-lg rounded-pill">
+                                <i class="bi bi-envelope-paper me-2"></i>Enviar Link
                             </button>
 
-                            <hr class="my-4">
-
-                            <a href="/login" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left"></i> Voltar ao Login
+                            <a href="/login" class="btn btn-outline-secondary rounded-pill">
+                                <i class="bi bi-arrow-left me-2"></i>Voltar ao Login
                             </a>
                         </div>
                     </div>
