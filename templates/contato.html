@@ -1,0 +1,132 @@
+{% extends "base_publica.html" %}
+
+{% block titulo %}Contato{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="position-relative overflow-hidden rounded-4 shadow-lg hero-fitness"
+             style="background: linear-gradient(135deg, #FF6B35 0%, #9B51E0 100%); min-height: 200px;">
+            <div class="position-relative p-5 text-center" data-bs-theme="dark">
+                <h1 class="display-5 fw-bold text-white mb-2" style="font-family: 'Montserrat', sans-serif;">
+                    <i class="bi bi-envelope-heart me-2"></i>Entre em Contato
+                </h1>
+                <p class="lead text-white mb-0" style="opacity: 0.9;">
+                    Estamos prontos para atender você!
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Formulário de Contato -->
+    <div class="col-lg-8">
+        <div class="card card-fitness shadow-sm border-0">
+            <div class="card-body p-4">
+                <h4 class="card-title fw-bold mb-4" style="color: var(--fitness-blue);">
+                    <i class="bi bi-send me-2"></i>Envie sua Mensagem
+                </h4>
+
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nome" class="form-label fw-semibold">Nome Completo</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" id="nome" placeholder="Seu nome completo" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="email" class="form-label fw-semibold">E-mail</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" placeholder="seu@email.com" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="telefone" class="form-label fw-semibold">Telefone</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input type="tel" class="form-control" id="telefone" placeholder="(00) 00000-0000">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="assunto" class="form-label fw-semibold">Assunto</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                                <select class="form-select" id="assunto" required>
+                                    <option value="" selected disabled>Selecione um assunto</option>
+                                    <option value="informacoes">Informações sobre planos</option>
+                                    <option value="matricula">Dúvidas sobre matrícula</option>
+                                    <option value="horarios">Horários das aulas</option>
+                                    <option value="outros">Outros assuntos</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="mensagem" class="form-label fw-semibold">Mensagem</label>
+                            <textarea class="form-control" id="mensagem" rows="5"
+                                      placeholder="Digite sua mensagem aqui..." required></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="button" class="btn btn-fitness-primary btn-lg rounded-pill px-5"
+                                    onclick="alert('Mensagem enviada com sucesso! (Demonstração)')">
+                                <i class="bi bi-send me-2"></i>Enviar Mensagem
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações de Contato -->
+    <div class="col-lg-4">
+        <div class="card card-fitness shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-4" style="color: var(--fitness-green);">
+                    <i class="bi bi-geo-alt me-2"></i>Localização
+                </h5>
+                <p class="text-body-secondary mb-0">
+                    <i class="bi bi-pin-map me-2"></i>
+                    Rua das Atividades Físicas, 123<br>
+                    Centro - Cachoeiro de Itapemirim/ES<br>
+                    CEP: 29300-000
+                </p>
+            </div>
+        </div>
+
+        <div class="card card-fitness shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-4" style="color: var(--fitness-orange);">
+                    <i class="bi bi-telephone me-2"></i>Telefones
+                </h5>
+                <p class="text-body-secondary mb-2">
+                    <i class="bi bi-phone me-2"></i>(28) 99999-9999
+                </p>
+                <p class="text-body-secondary mb-0">
+                    <i class="bi bi-whatsapp me-2"></i>(28) 98888-8888
+                </p>
+            </div>
+        </div>
+
+        <div class="card card-fitness shadow-sm border-0">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-4" style="color: var(--fitness-blue);">
+                    <i class="bi bi-envelope me-2"></i>E-mail
+                </h5>
+                <p class="text-body-secondary mb-0">
+                    <i class="bi bi-at me-2"></i>contato@agendafit.com.br
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

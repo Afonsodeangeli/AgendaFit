@@ -83,3 +83,24 @@ async def sobre(request: Request):
         "sobre.html",
         {"request": request}
     )
+
+@router.get("/contato")
+async def contato(request: Request):
+    """
+    Página de Contato
+    """
+    # Rate limiting por IP
+    ip = obter_identificador_cliente(request)
+    if not public_limiter.verificar(ip):
+        informar_erro(request, "Muitas requisições. Aguarde alguns minutos.")
+        logger.warning(f"Rate limit excedido para página pública - IP: {ip}")
+        return templates_public.TemplateResponse(
+            "errors/429.html",
+            {"request": request},
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS
+        )
+
+    return templates_public.TemplateResponse(
+        "contato.html",
+        {"request": request}
+    )

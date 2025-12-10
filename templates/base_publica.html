@@ -56,6 +56,12 @@
                             <i class="bi bi-info-circle me-1"></i>Sobre
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 rounded-pill {{ 'active bg-white bg-opacity-10' if request.path == '/contato' else '' }}"
+                            href="/contato">
+                            <i class="bi bi-envelope me-1"></i>Contato
+                        </a>
+                    </li>
                 </ul>
 
                 <!-- Menu do Usuário (se logado) ou Botões de Login/Cadastro -->
