@@ -209,6 +209,34 @@ async def post_editar(
         )
 
 
+@router.get("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exibe página de confirmação de exclusão (fallback)"""
+    atividade = atividade_repo.obter_por_id(id)
+
+    if not atividade:
+        informar_erro(request, "Atividade não encontrada")
+        return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se há turmas associadas
+    from repo import turma_repo
+    turmas = turma_repo.obter_por_atividade(id)
+    if turmas:
+        informar_erro(
+            request,
+            f"Não é possível excluir esta atividade pois há {len(turmas)} turma(s) associada(s) a ela."
+        )
+        return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Se chegar aqui, proceeder com exclusão (fallback para GET)
+    atividade_repo.excluir(id)
+    logger.info(f"Atividade {id} excluída por admin {usuario_logado.id} (via GET)")
+
+    informar_sucesso(request, "Atividade excluída com sucesso!")
+    return RedirectResponse("/admin/atividades/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
