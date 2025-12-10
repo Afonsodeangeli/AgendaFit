@@ -227,6 +227,41 @@ async def post_editar(
         )
 
 
+@router.get("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui um aluno"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_alunos_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    aluno = usuario_repo.obter_por_id(id)
+
+    if not aluno or aluno.perfil != Perfil.ALUNO.value:
+        informar_erro(request, "Aluno não encontrado")
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se há matrículas associadas a este aluno
+    from repo import matricula_repo
+    matriculas = matricula_repo.obter_por_aluno(id)
+    if matriculas:
+        informar_erro(
+            request,
+            f"Não é possível excluir este aluno pois há {len(matriculas)} matrícula(s) ativa(s)."
+        )
+        return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    usuario_repo.excluir(id)
+    logger.info(f"Aluno {id} excluído por admin {usuario_logado.id}")
+
+    informar_sucesso(request, "Aluno excluído com sucesso!")
+    return RedirectResponse("/admin/alunos/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):

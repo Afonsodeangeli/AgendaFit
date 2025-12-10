@@ -332,6 +332,41 @@ async def post_editar(
         )
 
 
+@router.get("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui um usuário"""
+    if not usuario_logado:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_usuarios_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/usuarios/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Obter usuário ou retornar 404
+    usuario = obter_ou_404(
+        usuario_repo.obter_por_id(id),
+        request,
+        "Usuário não encontrado",
+        "/admin/usuarios/listar"
+    )
+    if isinstance(usuario, RedirectResponse):
+        return usuario
+
+    # Impedir exclusão do próprio usuário
+    if usuario.id == usuario_logado.id:
+        informar_erro(request, "Você não pode excluir seu próprio usuário")
+        logger.warning(f"Admin {usuario_logado.id} tentou excluir a si mesmo")
+        return RedirectResponse("/admin/usuarios/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    usuario_repo.excluir(id)
+    logger.info(f"Usuário {id} ({usuario.email}) excluído por admin {usuario_logado.id}")
+    informar_sucesso(request, "Usuário excluído com sucesso!")
+    return RedirectResponse("/admin/usuarios/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):

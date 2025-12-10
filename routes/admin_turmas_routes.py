@@ -307,6 +307,41 @@ async def post_editar(
         )
 
 
+@router.get("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui uma turma"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_turmas_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    turma = turma_repo.obter_por_id(id)
+
+    if not turma:
+        informar_erro(request, "Turma não encontrada")
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se há matrículas associadas a esta turma
+    from repo import matricula_repo
+    matriculas = matricula_repo.obter_por_turma(id)
+    if matriculas:
+        informar_erro(
+            request,
+            f"Não é possível excluir esta turma pois há {len(matriculas)} matrícula(s) de aluno(s)."
+        )
+        return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    turma_repo.excluir(id)
+    logger.info(f"Turma {id} excluída por admin {usuario_logado.id}")
+
+    informar_sucesso(request, "Turma excluída com sucesso!")
+    return RedirectResponse("/admin/turmas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):

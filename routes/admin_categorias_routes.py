@@ -192,6 +192,41 @@ async def post_editar(
         )
 
 
+@router.get("/excluir/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exclui uma categoria (fallback GET)"""
+    assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not admin_categorias_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento e tente novamente.")
+        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    categoria = categoria_repo.obter_por_id(id)
+
+    if not categoria:
+        informar_erro(request, "Categoria não encontrada")
+        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Verificar se há atividades associadas a esta categoria
+    from repo import atividade_repo
+    atividades = atividade_repo.obter_por_categoria(id)
+    if atividades:
+        informar_erro(
+            request,
+            f"Não é possível excluir esta categoria pois há {len(atividades)} atividade(s) associada(s) a ela."
+        )
+        return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    categoria_repo.excluir(id)
+    logger.info(f"Categoria {id} excluída por admin {usuario_logado.id}")
+
+    informar_sucesso(request, "Categoria excluída com sucesso!")
+    return RedirectResponse("/admin/categorias/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
