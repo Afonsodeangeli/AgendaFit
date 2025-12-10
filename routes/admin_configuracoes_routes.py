@@ -16,9 +16,6 @@ from pydantic import ValidationError
 # DTOs
 from dtos.configuracao_dto import SalvarConfiguracaoLoteDTO
 
-# Models
-from model.usuario_logado_model import UsuarioLogado
-
 # Repositories
 from repo import configuracao_repo
 
@@ -68,7 +65,7 @@ admin_config_limiter = DynamicRateLimiter(
 
 @router.get("/configuracoes")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def get_listar_configuracoes(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_listar_configuracoes(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todas as configurações agrupadas por categoria"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -109,7 +106,7 @@ async def get_listar_configuracoes(request: Request, usuario_logado: Optional[Us
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_salvar_lote_configuracoes(
     request: Request,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Salva múltiplas configurações de uma vez (salvamento em lote).
@@ -209,7 +206,7 @@ async def post_salvar_lote_configuracoes(
 
 @router.get("/tema")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def get_tema(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_tema(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe seletor de temas visuais da aplicação"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -250,7 +247,7 @@ async def get_tema(request: Request, usuario_logado: Optional[UsuarioLogado] = N
 async def post_aplicar_tema(
     request: Request,
     tema: str = Form(...),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Aplica um tema visual selecionado
@@ -375,7 +372,7 @@ def _ler_log_arquivo(data: str, nivel: str) -> tuple[str, int, Optional[str]]:
 
 @router.get("/auditoria")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def get_auditoria(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_auditoria(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe página de auditoria de logs do sistema"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -399,7 +396,7 @@ async def post_filtrar_auditoria(
     request: Request,
     data: str = Form(...),
     nivel: str = Form(...),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Filtra logs do sistema por data e nível

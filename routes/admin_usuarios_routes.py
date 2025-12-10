@@ -16,7 +16,6 @@ from dtos.usuario_dto import CriarUsuarioDTO, AlterarUsuarioDTO
 
 # Models
 from model.usuario_model import Usuario
-from model.usuario_logado_model import UsuarioLogado
 
 # Repositories
 from repo import usuario_repo
@@ -55,7 +54,7 @@ admin_usuarios_limiter = DynamicRateLimiter(
 
 @router.get("/")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def index(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def index(request: Request, usuario_logado: Optional[dict] = None):
     """Redireciona para lista de usuários"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -64,7 +63,7 @@ async def index(request: Request, usuario_logado: Optional[UsuarioLogado] = None
 
 @router.get("/listar")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def listar(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todos os usuários do sistema"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -77,7 +76,7 @@ async def listar(request: Request, usuario_logado: Optional[UsuarioLogado] = Non
 
 @router.get("/cadastrar")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def get_cadastrar(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário de cadastro de usuário"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -99,7 +98,7 @@ async def post_cadastrar(
     data_nascimento: Optional[str] = Form(None),
     numero_documento: str = Form(""),
     telefone: str = Form(""),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """Cadastra um novo usuário"""
     if not usuario_logado:
@@ -191,7 +190,7 @@ async def post_cadastrar(
 
 @router.get("/editar/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def get_editar(request: Request, id: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Exibe formulário de alteração de usuário"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -233,7 +232,7 @@ async def post_editar(
     data_nascimento: Optional[str] = Form(None),
     numero_documento: str = Form(""),
     telefone: str = Form(""),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """Altera dados de um usuário"""
     if not usuario_logado:
@@ -335,7 +334,7 @@ async def post_editar(
 
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def post_excluir(request: Request, id: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Exclui um usuário"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)

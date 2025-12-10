@@ -27,7 +27,6 @@ from dtos.chamado_interacao_dto import CriarInteracaoDTO
 # Models
 from model.chamado_model import Chamado, StatusChamado, PrioridadeChamado
 from model.chamado_interacao_model import ChamadoInteracao, TipoInteracao
-from model.usuario_logado_model import UsuarioLogado
 
 # Repositories
 from repo import chamado_repo, chamado_interacao_repo
@@ -72,7 +71,7 @@ chamado_responder_limiter = DynamicRateLimiter(
 
 @router.get("/listar")
 @requer_autenticacao()
-async def listar(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todos os chamados do usuário logado."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -87,7 +86,7 @@ async def listar(request: Request, usuario_logado: Optional[UsuarioLogado] = Non
 
 @router.get("/cadastrar")
 @requer_autenticacao()
-async def get_cadastrar(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário de abertura de chamado."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -104,7 +103,7 @@ async def post_cadastrar(
     titulo: str = Form(),
     descricao: str = Form(),
     prioridade: str = Form(default="Média"),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """Cadastra um novo chamado."""
     if not usuario_logado:
@@ -185,7 +184,7 @@ async def post_cadastrar(
 
 @router.get("/{id}/visualizar")
 @requer_autenticacao()
-async def visualizar(request: Request, id: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def visualizar(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Exibe detalhes de um chamado específico com histórico de interações."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -228,7 +227,7 @@ async def post_responder(
     request: Request,
     id: int,
     mensagem: str = Form(),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """Permite que o usuário adicione uma resposta/mensagem ao seu próprio chamado."""
     if not usuario_logado:
@@ -306,7 +305,7 @@ async def post_responder(
 
 @router.post("/{id}/excluir")
 @requer_autenticacao()
-async def post_excluir(request: Request, id: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Exclui um chamado do usuário (apenas se aberto e sem respostas de admin)."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)

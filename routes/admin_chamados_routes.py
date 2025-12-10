@@ -27,7 +27,6 @@ from dtos.chamado_interacao_dto import CriarInteracaoDTO
 # Models
 from model.chamado_model import StatusChamado
 from model.chamado_interacao_model import ChamadoInteracao, TipoInteracao
-from model.usuario_logado_model import UsuarioLogado
 
 # Repositories
 from repo import chamado_repo, chamado_interacao_repo
@@ -65,7 +64,7 @@ admin_chamado_responder_limiter = DynamicRateLimiter(
 
 @router.get("/listar")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def listar(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todos os chamados do sistema (apenas administradores)."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -79,7 +78,7 @@ async def listar(request: Request, usuario_logado: Optional[UsuarioLogado] = Non
 
 @router.get("/{id}/responder")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def get_responder(request: Request, id: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_responder(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Exibe formulário para responder um chamado com histórico completo."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -113,7 +112,7 @@ async def post_responder(
     id: int,
     mensagem: str = Form(),
     status_chamado: str = Form(),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """Salva resposta do administrador ao chamado e atualiza status."""
     if not usuario_logado:
@@ -196,7 +195,7 @@ async def post_responder(
 
 @router.post("/{id}/fechar")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def fechar(request: Request, id: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def fechar(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Fecha um chamado alterando apenas o status, sem adicionar mensagem."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -228,7 +227,7 @@ async def fechar(request: Request, id: int, usuario_logado: Optional[UsuarioLoga
 
 @router.post("/{id}/reabrir")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def reabrir(request: Request, id: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def reabrir(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Reabre um chamado fechado, alterando status para 'Em Análise'."""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)

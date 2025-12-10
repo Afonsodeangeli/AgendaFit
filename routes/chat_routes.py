@@ -19,9 +19,6 @@ from pydantic import ValidationError
 # DTOs
 from dtos.chat_dto import CriarSalaDTO, EnviarMensagemDTO
 
-# Models
-from model.usuario_logado_model import UsuarioLogado
-
 # Repositories
 from repo import chat_sala_repo, chat_participante_repo, chat_mensagem_repo, usuario_repo
 
@@ -76,7 +73,7 @@ chat_listagem_limiter = DynamicRateLimiter(
 
 @router.get("/stream")
 @requer_autenticacao()
-async def stream_mensagens(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def stream_mensagens(request: Request, usuario_logado: Optional[dict] = None):
     """
     Endpoint SSE para receber mensagens em tempo real.
     Cada usuário mantém UMA conexão que recebe mensagens de TODAS as suas salas.
@@ -121,7 +118,7 @@ async def stream_mensagens(request: Request, usuario_logado: Optional[UsuarioLog
 async def criar_ou_obter_sala(
     request: Request,
     outro_usuario_id: int = Form(...),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Cria ou obtém uma sala de chat entre o usuário logado e outro usuário.
@@ -187,7 +184,7 @@ async def listar_conversas(
     request: Request,
     limit: int = 12,
     offset: int = 0,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Lista conversas do usuário (salas com última mensagem e contador de não lidas).
@@ -273,7 +270,7 @@ async def listar_mensagens(
     sala_id: str,
     limit: int = 50,
     offset: int = 0,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Lista mensagens de uma sala específica com paginação.
@@ -327,7 +324,7 @@ async def enviar_mensagem(
     request: Request,
     sala_id: str = Form(...),
     mensagem: str = Form(...),
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Envia uma mensagem em uma sala.
@@ -411,7 +408,7 @@ async def enviar_mensagem(
 async def marcar_como_lidas(
     request: Request,
     sala_id: str,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Marca todas as mensagens de uma sala como lidas para o usuário logado.
@@ -451,7 +448,7 @@ async def marcar_como_lidas(
 async def buscar_usuarios(
     request: Request,
     q: str,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Busca usuários por termo (para autocomplete).
@@ -505,7 +502,7 @@ async def buscar_usuarios(
 @requer_autenticacao()
 async def contar_nao_lidas_total(
     request: Request,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Conta o total de mensagens não lidas em todas as salas do usuário.

@@ -7,7 +7,6 @@ from typing import Optional
 from fastapi import APIRouter, Request, status
 from fastapi.responses import RedirectResponse, FileResponse
 
-from model.usuario_logado_model import UsuarioLogado
 from util.auth_decorator import requer_autenticacao
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
@@ -41,7 +40,7 @@ backup_download_limiter = DynamicRateLimiter(
 
 @router.get("/listar")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def get_listar(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_listar(request: Request, usuario_logado: Optional[dict] = None):
     """
     Exibe lista de backups disponíveis
 
@@ -67,7 +66,7 @@ async def get_listar(request: Request, usuario_logado: Optional[UsuarioLogado] =
 
 @router.post("/criar")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def post_criar(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def post_criar(request: Request, usuario_logado: Optional[dict] = None):
     """
     Cria um novo backup do banco de dados
 
@@ -103,7 +102,7 @@ async def post_criar(request: Request, usuario_logado: Optional[UsuarioLogado] =
 async def post_restaurar(
     request: Request,
     nome_arquivo: str,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Restaura um backup do banco de dados
@@ -166,7 +165,7 @@ async def post_restaurar(
 async def post_excluir(
     request: Request,
     nome_arquivo: str,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Exclui um arquivo de backup
@@ -204,7 +203,7 @@ async def post_excluir(
 async def get_download(
     request: Request,
     nome_arquivo: str,
-    usuario_logado: Optional[UsuarioLogado] = None
+    usuario_logado: Optional[dict] = None
 ):
     """
     Faz download de um arquivo de backup

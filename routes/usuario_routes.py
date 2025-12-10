@@ -13,9 +13,6 @@ from pydantic import ValidationError
 # DTOs
 from dtos.perfil_dto import EditarPerfilDTO, AlterarSenhaDTO
 
-# Models
-from model.usuario_logado_model import UsuarioLogado
-
 # Repositories
 from repo import usuario_repo, chamado_repo, turma_repo, matricula_repo, pagamento_repo
 
@@ -68,7 +65,7 @@ form_get_limiter = DynamicRateLimiter(
 
 @router.get("/usuario")
 @requer_autenticacao()
-async def dashboard(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def dashboard(request: Request, usuario_logado: Optional[dict] = None):
     """
     Dashboard do usuário (área privada)
     Requer autenticação
@@ -95,7 +92,7 @@ async def dashboard(request: Request, usuario_logado: Optional[UsuarioLogado] = 
 
 @router.get("/usuario/perfil/visualizar")
 @requer_autenticacao()
-async def get_visualizar_perfil(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_visualizar_perfil(request: Request, usuario_logado: Optional[dict] = None):
     """Visualizar perfil do usuário logado"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -117,7 +114,7 @@ async def get_visualizar_perfil(request: Request, usuario_logado: Optional[Usuar
 
 @router.get("/usuario/perfil/editar")
 @requer_autenticacao()
-async def get_editar_perfil(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_editar_perfil(request: Request, usuario_logado: Optional[dict] = None):
     """Formulário para editar dados do perfil"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -150,7 +147,7 @@ async def post_editar_perfil(
     request: Request,
     nome: str = Form(),
     email: str = Form(),
-    usuario_logado: Optional[UsuarioLogado] = None,
+    usuario_logado: Optional[dict] = None,
 ):
     """Processar edição de dados do perfil"""
     if not usuario_logado:
@@ -233,7 +230,7 @@ async def post_editar_perfil(
 
 @router.get("/usuario/perfil/alterar-senha")
 @requer_autenticacao()
-async def get_alterar_senha(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_alterar_senha(request: Request, usuario_logado: Optional[dict] = None):
     """Formulário para alterar senha"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -255,7 +252,7 @@ async def post_alterar_senha(
     senha_atual: str = Form(),
     senha_nova: str = Form(),
     confirmar_senha: str = Form(),
-    usuario_logado: Optional[UsuarioLogado] = None,
+    usuario_logado: Optional[dict] = None,
 ):
     """Processar alteração de senha"""
     if not usuario_logado:
@@ -361,7 +358,7 @@ async def post_alterar_senha(
 async def post_atualizar_foto(
     request: Request,
     foto_base64: str = Form(),
-    usuario_logado: Optional[UsuarioLogado] = None,
+    usuario_logado: Optional[dict] = None,
 ):
     """Upload de foto de perfil cropada"""
     if not usuario_logado:
@@ -433,7 +430,7 @@ async def post_atualizar_foto(
 
 @router.get("/usuario/minhas-turmas")
 @requer_autenticacao([Perfil.PROFESSOR.value])
-async def get_minhas_turmas(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_minhas_turmas(request: Request, usuario_logado: Optional[dict] = None):
     """Lista as turmas do professor logado (readonly)"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -452,7 +449,7 @@ async def get_minhas_turmas(request: Request, usuario_logado: Optional[UsuarioLo
 
 @router.get("/usuario/turma/{id_turma}/alunos")
 @requer_autenticacao([Perfil.PROFESSOR.value])
-async def get_alunos_turma(request: Request, id_turma: int, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_alunos_turma(request: Request, id_turma: int, usuario_logado: Optional[dict] = None):
     """Lista os alunos de uma turma específica do professor (readonly)"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -483,7 +480,7 @@ async def get_alunos_turma(request: Request, id_turma: int, usuario_logado: Opti
 
 @router.get("/usuario/minhas-matriculas")
 @requer_autenticacao([Perfil.ALUNO.value])
-async def get_minhas_matriculas(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_minhas_matriculas(request: Request, usuario_logado: Optional[dict] = None):
     """Lista as matrículas do aluno logado (readonly)"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -502,7 +499,7 @@ async def get_minhas_matriculas(request: Request, usuario_logado: Optional[Usuar
 
 @router.get("/usuario/meus-pagamentos")
 @requer_autenticacao([Perfil.ALUNO.value])
-async def get_meus_pagamentos(request: Request, usuario_logado: Optional[UsuarioLogado] = None):
+async def get_meus_pagamentos(request: Request, usuario_logado: Optional[dict] = None):
     """Lista os pagamentos do aluno logado (readonly)"""
     if not usuario_logado:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
